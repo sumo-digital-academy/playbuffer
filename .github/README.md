@@ -1,3 +1,3 @@
 # Spy Wire
 A single-header C++ library for making simple 2D games
- ![](/.github/SpyWire.mp4)
+ ![](/.github/SpyWire.gif)
