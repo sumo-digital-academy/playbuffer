@@ -1,4 +1,4 @@
-# PlayBuffer
+![](\images\playbuffer_title.png)
 ## A single-header C++ library for making simple 2D games 
 * **PLATFORM**: Windows
 * **LANGUAGE**: C++
