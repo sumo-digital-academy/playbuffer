@@ -1,3 +1,4 @@
 # Spy Wire
-A single-header C++ library for making simple 2D games
+A simple shoot-em-up example using the GameObject manager.
+
  ![](/.github/images/SpyWire.gif)
