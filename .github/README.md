@@ -5,10 +5,10 @@
 * **ENVIRONMENT**: Visual Studio
 
 ## Why?
-> Learning C++ is often seen as dry and difficult, partly because the examples used in teaching are often abstract and unengaging. PlayBuffer has been designed to try and limit the cognitive demands of learning C++ while increasing the "payoff" for the learner.
+> Learning C++ is seen as dry and difficult, partly because the text-based examples used in teaching are often abstract and uninspiring. PlayBuffer was designed to try and limit the cognitive demands of learning C++ while increasing the "payoff" for the learner by allowing them to make simple, 2D games.
 
 ## A Learning Scaffold
->  The PlayBuffer was designed to lower the entry barrier to C++ programming and is intended as a scaffold to be discarded once the learner has outgrown it. It is not The library code itself has been written to be something that a learner could reasonably expect to understand for themselves once they have 
+>  The PlayBuffer is not a "serious" game-development framework, and is intended as a temporary "scaffold" to be discarded once the learner has outgrown it. The library code  is simple enough that that a learner could reasonably expect to explore how all of it works for themselves before moving on. It doesn't make use of any sophisticated libraries and implements its sprite rendering in software, making it an interesting platform for studying basic C++ code optimisation. 
 
-![](/.github/images/saucer.png)
+
 
