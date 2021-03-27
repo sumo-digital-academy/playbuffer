@@ -1,3 +1,4 @@
+![](/.github/images/manual.png)
 ![](/.github/images/playbuffer_title.png)
 ## A single-header C++ library for making simple 2D games 
 * **PLATFORM**: Windows
@@ -10,5 +11,5 @@
 ## A Learning Scaffold
 >  The PlayBuffer is not a "serious" game-development framework, and is intended as a temporary "scaffold" to be discarded once the learner has outgrown it. The library code  is simple enough that that a learner could reasonably expect to understand how most of it works for themselves before moving on. It doesn't make use of any sophisticated libraries and implements its sprite rendering in software, making it an interesting platform for studying basic C++ code optimisation. 
 
-![](/.github/images/manual.png)
+
 
