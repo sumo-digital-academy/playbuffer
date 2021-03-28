@@ -23,6 +23,8 @@ The PlayBuffer code is made available under the Creative Commons Attribution-No 
 
 The PlayBuffer tutorial assets are derived from the original Spyder™ game by Sumo Digital Ltd (© 2020 Sumo Digital). Permission is granted to use these resources for educational use only.
 
+<p align="center"> <img src="/.github/images/machine.png"> </p>
+
 ![](/.github/images/getting_started_title.png)
 
 ## What will you need?
@@ -47,7 +49,7 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/HelloWorld.zip)
 [![](/.github/images/manual.png)](https://github.com/sumo-digital-academy/playbuffer/blob/HelloWorld/PlayBuffer%20Manual.pdf)
 
-<p align="center"> <img src="/.github/images/machine.png"> </p>
+
 
 ![](/.github/images/next_steps_title.png)
 
