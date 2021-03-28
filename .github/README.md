@@ -35,7 +35,7 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 ## C++ Game Development Taster Workshop
 The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online tester session aimed at A-Level students. 
 
-[![](/.github/images/download.png)]()
+[![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SkyHighSpy.zip)
 [![](/.github/images/video.png)]()
 
 ## From "Hello World!" to Spy Wire
