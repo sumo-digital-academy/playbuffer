@@ -34,7 +34,9 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 
 ### From "Hello World!" to Spy Wire
 <p align="center"> <img src="/.github/images/playbuffer_manual.png"> </p>
+
 It's traditional for programming tutorials to begin by displaying "Hello World!" to the screen. This project is a useful starting point for any PlayBuffer application, but also includes a pdf manual which will take you from Hello World to your first complete shoot-'em-up game!
+
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/HelloWorld.zip)
 [![](/.github/images/video.png)](https://github.com/sumo-digital-academy/playbuffer/blob/HelloWorld/PlayBuffer%20Manual.pdf)
 
