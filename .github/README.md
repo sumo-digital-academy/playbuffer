@@ -38,6 +38,10 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/HelloWorld.zip)
 [![](/.github/images/video.png)](https://github.com/sumo-digital-academy/playbuffer/blob/HelloWorld/PlayBuffer%20Manual.pdf)
 
+<p align="center">
+  <img src="/.github/images/playbuffer_manual.png">
+</p>
+
 ### First steps
 - For a simple introduction to C++ (with a bit of maths thrown in) download this and follow this video.
 - Otherwise simply download the "Hello World" project and follow the pdf tutorial in the accompanying manual.
