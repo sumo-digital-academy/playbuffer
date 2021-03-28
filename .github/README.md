@@ -27,7 +27,7 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 
 ### What will you need?
 - A Windows-based PC (age and performance isn't too critical)
-- A free copy of the "Community Edition" of Visual Studio
+- A free copy of the "Community Edition" of Visual Studio (click Download)
 
 [![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/)
 [![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
