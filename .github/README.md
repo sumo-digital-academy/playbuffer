@@ -3,6 +3,6 @@
 ![](/.github/images/SpyWire.gif)
 
 
-This project is part of the C++ Taster Tutorial aimed at A-Level students. It provides a number of different functions which can be edited to change the behaviour of an existing game. The tutorial is largely based around using trigonometry to make things move forward in the direction they are facing.
+This project is part of the C++ taster tutorial aimed at A-Level students. It provides a number of different functions which can be edited to change the behaviour of an existing game. The tutorial is largely based around using trigonometry to make things move forward in the direction they are facing.
 
-[![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SpyWire.zip)
+[![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SkyHighSpy.zip)
