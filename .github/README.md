@@ -46,6 +46,8 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 
 <p align="center"> <img src="/.github/images/playbuffer_manual.png"> </p>
 
+<p align="center"> <img src="/.github/images/machine.png"> </p>
+
 ![](/.github/images/next_steps_title.png)
 
 ### Example Projects
