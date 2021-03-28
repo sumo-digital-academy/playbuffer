@@ -28,6 +28,12 @@ Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C
 [![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/)
 [![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
 
+### Hello World to Sky-High Spy
+It's traditional for programming tutorials to begin by displaying "Hello World!" to the screen. This project is a useufl starting point for any PlayBuffer application, but also includes a pdf manual which will take you from Hello World to your first complete shoot-'em-up game!
+
+[![](/.github/images/download.png)]()
+[![](/.github/images/video.png)]()
+
 ### First steps
 - For a simple introduction to C++ (with a bit of maths thrown in) download this and follow this video.
 - Otherwise simply download the "Hello World" project and follow the pdf tutorial in the accompanying manual.
