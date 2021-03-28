@@ -46,9 +46,10 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 
 <p align="center"> <img src="/.github/images/playbuffer_manual.png"> </p>
 
+![](/.github/images/next_steps_title.png)
 
-
-
+### Example Projects
+Each branch of the playbuffer repo contains a different example project made using the PlayBuffer (making it possible to easily link and download the latest version of each project). Simply modify the current branch from the dropdown in the top left corner of the window to browse other projects.
 
 
 
