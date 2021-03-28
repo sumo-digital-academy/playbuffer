@@ -16,6 +16,8 @@ The PlayBuffer is not a "serious" game-development framework, and is intended to
   <img src="/.github/images/rocket.png">
 </p>
 
+## Legal
+Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C++ code is made available under the Creative Commons Attribution-No Derivatives 4.0 International Public License: https://creativecommons.org/licenses/by-nd/4.0/legalcode.
 
 
 ## Getting Started
