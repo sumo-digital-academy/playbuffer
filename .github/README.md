@@ -52,7 +52,7 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 ![](/.github/images/next_steps_title.png)
 
 ## Example Projects
-Each branch of the playbuffer repo contains a different example project made using the PlayBuffer (making it possible to easily link and download the latest version of each project). Simply select a different branch from the dropdown in the top left corner of the window to browse other projects (where it currently says HelloWorld).
+The other branchs on the PlayBuffer repo are all different projects branched from the basic Hello World example. You can select a different branch from the dropdown in the top left corner of the main project page (where it currently says HelloWorld).
 
 ![](/.github/images/faq_title.png)
 
