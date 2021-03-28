@@ -32,6 +32,12 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 [![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/)
 [![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
 
+### C++ Game Development "Taster" session
+The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online tester session aimed at A-Level students. 
+
+[![](/.github/images/download.png)]()
+[![](/.github/images/video.png)]()
+
 ### From "Hello World!" to Spy Wire
 It's traditional for programming tutorials to begin by displaying "Hello World!" to the screen. This project is a useful starting point for any PlayBuffer application, but also includes a pdf manual which will take you from Hello World to your first complete shoot-'em-up game!
 
@@ -42,9 +48,7 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 
 
 
-### First steps
-- For a simple introduction to C++ (with a bit of maths thrown in) download this and follow this video.
-- Otherwise simply download the "Hello World" project and follow the pdf tutorial in the accompanying manual.
+
 
 
 
