@@ -17,7 +17,11 @@ The PlayBuffer is not a "serious" game-development framework, and is intended to
 </p>
 
 ## Legal
-Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C++ code is made available under the Creative Commons Attribution-No Derivatives 4.0 International Public License: https://creativecommons.org/licenses/by-nd/4.0/legalcode.
+Copyright 2020 Sumo Digital Limited. Spyder™ is a trade mark of Sumo Group plc. 
+
+The PlayBuffer code is made available under the Creative Commons Attribution-No Derivatives 4.0 International Public License: https://creativecommons.org/licenses/by-nd/4.0/legalcode.
+
+The PlayBuffer tutorial assets are derived from the original Spyder™ game by Sumo Digital Ltd (© 2020 Sumo Digital). Permission is granted to use these resources for educational use only.
 
 ## Getting Started
 
