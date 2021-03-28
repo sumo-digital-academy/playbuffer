@@ -37,13 +37,13 @@ float DefaultMeteorSpeed()
 	return 10.0f;
 }
 
-// Controls the movement of the rocket ship in the test environment
+// Controls the movement of the rocket ship in the tutorial mode
 void UpdatePlayerMovement( float& x, float& y, float& angle, float& speed )
 {
 	
 }
 
-// Controls the movement of lasers in the test environment
+// Controls the movement of lasers in the tutorial mode
 void UpdateLaserMovement( float& x, float& y, float& angle, float& speed )
 {
 
