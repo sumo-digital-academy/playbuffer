@@ -23,7 +23,7 @@ The PlayBuffer code is made available under the Creative Commons Attribution-No 
 
 The PlayBuffer tutorial assets are derived from the original Spyder™ game by Sumo Digital Ltd (© 2020 Sumo Digital). Permission is granted to use these resources for educational use only.
 
-## Getting Started
+![](/.github/images/getting_started_title.png)
 
 ### What will you need?
 - A Windows-based PC (age and performance isn't too critical)
