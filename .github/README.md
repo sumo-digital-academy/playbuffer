@@ -54,7 +54,7 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 ## Example Projects
 Each branch of the playbuffer repo contains a different example project made using the PlayBuffer (making it possible to easily link and download the latest version of each project). Simply modify the current branch from the dropdown in the top left corner of the window to browse other projects.
 
-## FAQ
+![](/.github/images/faq_title.png)
 
  **Q**: Can I make a game using the PlayBuffer and sell/distribute the executable? 
  
