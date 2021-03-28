@@ -1,7 +1,7 @@
 #pragma once
 
 // Function declarations from Editable.cpp
-bool IsTestEnvironment();
+bool IsRocketTutorial();
 
 int DefaultNumAsteroids();
 int DefaultNumMeteors();

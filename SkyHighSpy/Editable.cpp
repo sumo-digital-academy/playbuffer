@@ -1,8 +1,8 @@
 #include "Play.h"
 #include "Editable.h"
 
-// Return true for test environment, false for normal game play
-bool IsTestEnvironment() 
+// Return true to swap the spider for the rocket, false for normal game play
+bool IsRocketTutorial() 
 {
 	return false;
 }
@@ -19,7 +19,7 @@ int DefaultNumMeteors()
 	return 1;
 }
 
-// Controls the initial movement speed of the player when flying
+// Controls the initial movement speed of the spider when flying
 float DefaultPlayerSpeed()
 {
 	return 10.0f;
