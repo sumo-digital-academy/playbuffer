@@ -19,14 +19,14 @@ The PlayBuffer is not a "serious" game-development framework, and is intended to
 ## Legal
 Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C++ code is made available under the Creative Commons Attribution-No Derivatives 4.0 International Public License: https://creativecommons.org/licenses/by-nd/4.0/legalcode.
 
-
 ## Getting Started
 
 ### What will you need?
 - A Windows-based PC (age and performance isn't too critical)
 - A free copy of the "Community Edition" of Visual Studio
 
-[![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/) Visual Studio 2019
+[![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/)
+[![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
 
 ### First steps
 - For a simple introduction to C++ (with a bit of maths thrown in) download this and follow this video.
