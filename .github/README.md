@@ -28,6 +28,6 @@ The PlayBuffer is not a "serious" game-development framework, and is intended to
 - Otherwise simply download the "Hello World" project and follow the pdf tutorial in the accompanying manual.
 
 
-![](/.github/images/manual.png)
+
 
 
