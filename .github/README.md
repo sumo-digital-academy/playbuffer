@@ -11,7 +11,7 @@ Learning C++ is often seen as dry and difficult, partly because the examples use
 ## A Learning Scaffold
 The PlayBuffer is not a "serious" game-development framework, and is intended to be used as a temporary "scaffold" to be discarded once the learner has outgrown it. The library code is simple enough that that a learner could reasonably expect to understand how most of it works for themselves before moving on to a more sophisticated framework. It uses the simplest native Windows libraries (no DirectX/OpenGl/Vulcan) and implements sprite rendering in software, making it an interesting platform for studying basic C++ code optimisation. 
 
-<p align="center">
+<p align="center"> 
   <img src="/.github/images/rocket.gif">
   <img src="/.github/images/rocket.png">
 </p>
@@ -33,12 +33,12 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 [![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
 
 ### From "Hello World!" to Spy Wire
-<p align="center"> <img src="/.github/images/playbuffer_manual.png"> </p>
-
 It's traditional for programming tutorials to begin by displaying "Hello World!" to the screen. This project is a useful starting point for any PlayBuffer application, but also includes a pdf manual which will take you from Hello World to your first complete shoot-'em-up game!
 
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/HelloWorld.zip)
-[![](/.github/images/video.png)](https://github.com/sumo-digital-academy/playbuffer/blob/HelloWorld/PlayBuffer%20Manual.pdf)
+[![](/.github/images/manual.png)](https://github.com/sumo-digital-academy/playbuffer/blob/HelloWorld/PlayBuffer%20Manual.pdf)
+
+<p align="center"> <img src="/.github/images/playbuffer_manual.png"> </p>
 
 
 
