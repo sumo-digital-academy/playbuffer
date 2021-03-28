@@ -24,7 +24,9 @@ Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C
 
 ### What will you need?
 - A Windows-based PC (age and performance isn't too critical)
-- A free copy of the "Community Edition" of Visual Studio: see this video to download and get set up.
+- A free copy of the "Community Edition" of Visual Studio
+
+[![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/) Visual Studio 2019
 
 ### First steps
 - For a simple introduction to C++ (with a bit of maths thrown in) download this and follow this video.
