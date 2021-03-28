@@ -4,3 +4,5 @@
 
 
 A simple shoot-'em-up example using the GameObject manager. Note that this is also the completed solution to the tutorial example in the PlayBuffer manual.
+
+[![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SpyWire.zip)
