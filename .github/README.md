@@ -56,9 +56,9 @@ Each branch of the playbuffer repo contains a different example project made usi
 
 ![](/.github/images/faq_title.png)
 
- **Q**: Can I make a game using the PlayBuffer and sell/distribute the executable? 
+ **Can I make a game using the PlayBuffer and sell/distribute the executable?**
  
- **A**: Yes. Provided that you're not selling or distributing anything containing the tutorial assets or the PlayBuffer source code then what you do with your executables is entirely your business!
+Yes. Provided that you're not selling or distributing anything containing the tutorial assets or the PlayBuffer source code then what you do with your executables is entirely your business!
  
  ##
  
