@@ -1,4 +1,4 @@
-![](/.github/images/sky_high_spy.png)
+![](/.github/images/sky_high_spy_title.png)
 
 ![](/.github/images/SkyHighSpy.gif)
 
