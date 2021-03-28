@@ -31,7 +31,7 @@ Copyright 2020 Sumo Digital Limited. SPYDER is a trade mark of Sumo Group plc. C
 ### Hello World to Spy Wire
 It's traditional for programming tutorials to begin by displaying "Hello World!" to the screen. This project is a useful starting point for any PlayBuffer application, but also includes a pdf manual which will take you from Hello World to your first complete shoot-'em-up game!
 
-[![](/.github/images/download.png)]()
+[![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/HelloWorld.zip)
 [![](/.github/images/video.png)]()
 
 ### First steps
