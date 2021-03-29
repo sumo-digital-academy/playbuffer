@@ -6,7 +6,7 @@
 * **ENVIRONMENT**: Visual Studio
 
 ## Why?
-Learning C++ is often seen as dry and difficult, partly because the examples used in teaching are usually text-based and uninspiring. PlayBuffer was designed to try and limit the demands of learning C++ while increasing the payoff for the learner by allowing them to make simple, 2D games!
+Learning C++ is often seen as dry and difficult, partly because the examples used in teaching are usually text-based and uninspiring. PlayBuffer was designed to try and limit the demands of learning C++ while increasing the payoff for the learner by allowing them to make simple, 2D games.
 
 ## A Learning Scaffold
 The PlayBuffer is not a "serious" game-development framework, and is intended to be used as a temporary "scaffold" to be discarded once the learner has outgrown it. The library code is simple enough that that a learner could reasonably expect to understand how most of it works for themselves before moving on to a more sophisticated framework. It uses the simplest native Windows libraries (no DirectX/OpenGl/Vulcan) and implements sprite rendering in software, making it an interesting platform for studying basic C++ code optimisation too. 
@@ -35,7 +35,7 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 [![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
 
 ## C++ Game Development Taster Workshop
-The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online tester session aimed at A-Level students. 
+The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online taster session aimed at A-Level students. 
 
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SkyHighSpy.zip)
 [![](/.github/images/video.png)]()
@@ -66,7 +66,7 @@ The other branches on the PlayBuffer repo are all different projects branched fr
  
 * **Can I modify the PlayBuffer code and sell/distribute it?** 
 
-   No. This would be prohibited by the licence as a derivative work. Obviously we're not keen on someone else selling something we're giving away for free, but we also don't want dozens of variations of PlayBuffer out there. It would be very easy to expand the PlayBuffer and make it more advanced, but that's not the point of PlayBuffer: we want it to stay simple for newcomers. If you've outgrown it then there are lots more sophisticated frameworks out there for you to move on to.  
+   No. This would be prohibited by the licence as a derivative work. Obviously we're not keen on someone else selling something we're giving away for free, but we also don't want dozens of variations of PlayBuffer out there. It would be very easy to expand the PlayBuffer and make it more advanced, but that's not the point of PlayBuffer: we want it to stay simple for newcomers. If you've outgrown it then there are lots of more sophisticated frameworks out there for you to move on to.  
  
   ##
 * **Can I modify the PlayBuffer code in my game so long as I don't release the source code?**
