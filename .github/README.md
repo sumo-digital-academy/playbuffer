@@ -11,6 +11,7 @@ Learning C++ is often seen as dry and difficult, partly because the examples use
 ## A Learning Scaffold
 The PlayBuffer is not a "serious" game-development framework, and is intended to be used as a temporary "scaffold" to be discarded once the learner has outgrown it. The library code is simple enough that that a learner could reasonably expect to understand how most of it works for themselves before moving on to a more sophisticated framework. It uses the simplest native Windows libraries (no DirectX/OpenGl/Vulcan) and implements sprite rendering in software, making it an interesting platform for studying basic C++ code optimisation too. 
 
+
 <p align="center"> 
   <img src="/.github/images/RocketRotateLoop.gif">
 </p>
