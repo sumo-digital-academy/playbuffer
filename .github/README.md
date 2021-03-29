@@ -51,6 +51,8 @@ It's traditional for programming tutorials to begin by displaying "Hello World!"
 ## Example Projects
 The other branches on the PlayBuffer repo are all different projects branched from the basic Hello World example. You can select a different branch from the dropdown in the top left corner of the main project page (where it currently says HelloWorld).
 
+<p align="center"> <img src="/.github/images/RocketRotateLoop.gif"> </p>
+
 ![](/.github/images/faq_title.png)
 
 * **Can I make a game using the PlayBuffer and sell/distribute the executable?**
