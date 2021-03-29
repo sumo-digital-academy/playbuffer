@@ -13,7 +13,7 @@ The PlayBuffer is not a "serious" game-development framework, and is intended to
 
 
 <p align="center"> 
-  <img src="/.github/images/RocketRotateLoop.gif">
+  <img src="/.github/images/rocket.png">
 </p>
 
 ## Legal
