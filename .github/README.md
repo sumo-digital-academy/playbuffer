@@ -27,7 +27,7 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 - A free copy of the "Community Edition" of Visual Studio (click Download)
 
 [![](/.github/images/download.png)](https://visualstudio.microsoft.com/vs/)
-[![](/.github/images/video.png)](https://visualstudio.microsoft.com/vs/)
+[![](/.github/images/video.png)](https://youtu.be/MBYlFTnvMAI)
 
 ## C++ Game Development Taster Workshop
 The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online taster session aimed at A-Level students. 
