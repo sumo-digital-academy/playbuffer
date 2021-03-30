@@ -33,7 +33,7 @@ The PlayBuffer tutorial assets are derived from the original Spyder™ game by S
 The Sheffield Women in Computer Science (SWiCS) Society helped to organise some of the first workshops using the PlayBuffer and students from those workshops have helped to deliver an online taster session aimed at A-Level students. 
 
 [![](/.github/images/download.png)](https://github.com/sumo-digital-academy/playbuffer/archive/refs/heads/SkyHighSpy.zip)
-[![](/.github/images/video.png)]()
+[![](/.github/images/video.png)](https://www.youtube.com/watch?v=XDCN9lRVz3A)
 
 ## From "Hello World!" to Spy Wire
 
