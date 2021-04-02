@@ -53,6 +53,9 @@ The other branches on the PlayBuffer repo are all different projects branched fr
 
 <p align="center"> <img src="/.github/images/RocketRotateLoop.gif"> </p>
 
+## Error Reporting
+If you find any problems with the PlayBuffer framework then please report them to academy@sumo-digital.com
+
 ![](/.github/images/faq_title.png)
 
 * **Can I make a game using the PlayBuffer and sell/distribute the executable?**
