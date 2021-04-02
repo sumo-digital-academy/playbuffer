@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"0.9.21.03.24"
+#define PLAY_VERSION	"1.0.21.04.02"
 
 #include <cstdint>
 #include <cstdlib>
@@ -56,7 +56,7 @@
 #include "dwmapi.h"
 #include <Shlobj.h>
 #pragma warning(push)
-#pragma warning(disable:4458) // suppress warning for declaration of 'xyz' hides class member
+#pragma warning(disable:4458) // Suppress warning for declaration of 'xyz' hides class member
 
  // Redirect the GDI to use the standard library for min and max
 namespace Gdiplus
@@ -90,38 +90,38 @@ constexpr float PLAY_PI	= 3.14159265358979323846f;   // pi
 #define PLAY_PLAYMEMORY_H
 //********************************************************************************************************************************
 // File:		PlayMemory.h
-// Created:		August 2020 - Sumo Academy
 // Platform:	Independent
 // Description:	Declaration for a simple memory tracker to prevent leaks
 //********************************************************************************************************************************
 
-// Prints out all the currently allocated memory to the debug output
-void PrintAllocations( const char* tagText );
+#ifdef _DEBUG
+	// Prints out all the currently allocated memory to the debug output
+	void PrintAllocations( const char* tagText );
 
-// Allocate some memory with a known origin
-void* operator new(size_t size, const char* file, int line);
-// Allocate some memory with a known origin
-void* operator new[](size_t size, const char* file, int line); 
-// Allocate some memory without a known origin
-void* operator new[](size_t size);
+	// Allocate some memory with a known origin
+	void* operator new(size_t size, const char* file, int line);
+	// Allocate some memory with a known origin
+	void* operator new[](size_t size, const char* file, int line); 
+	// Allocate some memory without a known origin
+	void* operator new[](size_t size);
 
-// Free some memory 
-void operator delete[](void* p);
-// Free some memory (matching allocator for exceptions )
-void operator delete(void* p, const char* file, int line);
-// Free some memory (matching allocator for exceptions )
-void operator delete[](void* p, const char* file, int line); 
+	// Free some memory 
+	void operator delete[](void* p);
+	// Free some memory (matching allocator for exceptions )
+	void operator delete(void* p, const char* file, int line);
+	// Free some memory (matching allocator for exceptions )
+	void operator delete[](void* p, const char* file, int line); 
 
-//#ifdef PLAY_IMPLEMENTATION
-#define new new( __FILE__ , __LINE__ )
-//#endif
+	#define new new( __FILE__ , __LINE__ )
+#else
+	#define PrintAllocations( x )
+#endif
 
 #endif
 #ifndef PLAY_PLAYMATHS_H
 #define PLAY_PLAYMATHS_H
 //********************************************************************************************************************************
 // File:		PlayMaths.h
-// Created:		October 2020 - Sumo Academy
 // Description:	A very simple set of 2D maths structures and operations
 // Platform:	Independent
 //********************************************************************************************************************************
@@ -815,10 +815,10 @@ public:
 	// Instance access functions 
 	//********************************************************************************************************************************
 
-	// Instantiates class and loads all the.MP3 sounds from the directory provided
-	static PlayAudio& Instance();
-	// Returns the PlaySpeaker instance
+	// Instantiates class and loads all the .MP3 sounds from the directory provided
 	static PlayAudio& Instance( const char* path );
+	// Returns the PlaySpeaker instance
+	static PlayAudio& Instance();
 	// Destroys the PlaySpeaker instance
 	static void Destroy();
 
@@ -834,9 +834,9 @@ private:
 	// Constructor and destructor
 	//********************************************************************************************************************************
 
-	// Creates manager object and loads all the.MP3 sounds in the specified directory
+	// Creates manager object and loads all the .MP3 sounds in the specified directory
 	PlayAudio( const char* path ); 
-	// Closes all loaded sounds
+	// Destroys the manager and stops any sounds playing
 	~PlayAudio(); 
 	// The assignment operator is removed to prevent copying of a singleton class
 	PlayAudio& operator=( const PlayAudio& ) = delete;
@@ -900,9 +900,10 @@ private:
 
 	// Constructor / destructor
 	//********************************************************************************************************************************
-
-	PlayInput();
 	
+	// Private constructor 
+	PlayInput();
+	// Private destructor
 	~PlayInput();
 	// The assignment operator is removed to prevent copying of a singleton class
 	PlayInput& operator=( const PlayInput& ) = delete;
@@ -926,7 +927,7 @@ private:
 // File:		PlayManager.h
 // Description:	A manager for providing simplified access to the PlayBuffer framework with managed GameObjects
 // Platform:	Independent
-// Notes:		The PlayManager is "opt in" as many will want to create their own GameObject
+// Notes:		The GameObject management is "opt in" as many will want to create their own GameObject class
 //********************************************************************************************************************************
 
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
@@ -1205,10 +1206,7 @@ namespace Play
 //*******************************************************************
 //*******************************************************************
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 //* File:			PlayMemory.cpp
-//* Created:		August 2020 - Sumo Academy
 //* Platform:		Independent
 //* Description:	Implementation of a simple memory tracker to prevent leaks. Uses #define new which looks neat and tidy
 //*                 (especially for new C++ programmers), but doesn't work for placement new, so you are likely to get compile 
@@ -1223,12 +1221,16 @@ namespace Play
 //********************************************************************************************************************************
 
 
+#ifdef _DEBUG
+
 // Undefine 'new' in this compilation unit only.
-// #TODO : Review the use of the 'new' macro it could be asking for trouble.
+#pragma push_macro("new")
 #undef new
 
 constexpr int MAX_ALLOCATIONS = 8192 * 4;
 constexpr int MAX_FILENAME = 1024;
+
+unsigned int g_allocId = 0;
 
 // A structure to store data on each memory allocation
 struct ALLOC
@@ -1237,8 +1239,9 @@ struct ALLOC
 	char file[MAX_FILENAME] = { 0 };
 	int line = 0;
 	size_t size = 0;
+	int id = 0;
 
-	ALLOC( void* a, const char* fn, int l, size_t s ) { address = a; line = l; size = s; strcpy_s( file, fn ); };
+	ALLOC( void* a, const char* fn, int l, size_t s ) { address = a; line = l; size = s; id = g_allocId++; strcpy_s( file, fn ); };
 	ALLOC( void ) {};
 };
 
@@ -1247,14 +1250,15 @@ unsigned int g_allocCount = 0;
 
 
 void CreateStaticObject( void );
+void PrintAllocation( const char* tagText, ALLOC& a );
 
 //********************************************************************************************************************************
 // Overrides for new operator (x4)
 //********************************************************************************************************************************
 
 // The file and line are passed through using the macro defined in PlayMemory.h which redefines new. This will only happen if 
-// PlayMemory.h has been parsed in advace of the use of new in the relevant code. This approach is problematic for classes 
-// the safest appproach. The two definitions of new without the file and line pick up any other memory allocations for completeness.
+// PlayMemory.h has been parsed in advance of the use of new in the relevant code. This approach is problematic for classes 
+// the safest approach. The two definitions of new without the file and line pick up any other memory allocations for completeness.
 void* operator new( size_t size, const char* file, int line )
 {
 	PLAY_ASSERT( g_allocCount < MAX_ALLOCATIONS );
@@ -1374,30 +1378,35 @@ void CreateStaticObject( void )
 	static DestroyedLast last;
 }
 
+void PrintAllocation( const char* tagText, ALLOC& a )
+{
+	char buffer[MAX_FILENAME * 2] = { 0 };
+
+	if( a.address != nullptr )
+	{
+		char* lastSlash = strrchr( a.file, '\\' );
+		if( lastSlash )
+		{
+			strcpy_s( buffer, lastSlash + 1 );
+			strcpy_s( a.file, buffer );
+		}
+		// Format in such a way that VS can double click to jump to the allocation.
+		sprintf_s( buffer, "%s %s(%d): 0x%02X %d bytes [%d]\n", tagText, a.file, a.line, static_cast<int>( reinterpret_cast<long long>( a.address ) ), static_cast<int>( a.size ), a.id );
+		DebugOutput( buffer );
+	}
+}
+
 void PrintAllocations( const char* tagText )
 {
 	int bytes = 0;
 	char buffer[MAX_FILENAME * 2] = { 0 };
-	DebugOutput( "**************************************************\n" );
+	DebugOutput( "****************************************************\n" );
 	DebugOutput( "MEMORY ALLOCATED\n" );
-	DebugOutput( "**************************************************\n" );
+	DebugOutput( "****************************************************\n" );
 	for( unsigned int n = 0; n < g_allocCount; n++ )
 	{
 		ALLOC& a = g_allocations[n];
-
-		if( a.address != nullptr )
-		{
-			char* lastSlash = strrchr( a.file, '\\' );
-			if( lastSlash )
-			{
-				strcpy_s( buffer, lastSlash + 1 );
-				strcpy_s( a.file, buffer );
-			}
-			// Format in such a way that VS can double click to jump to the allocation.
-			sprintf_s( buffer, "%s %s(%d): 0x%02X %d bytes\n", tagText, a.file, a.line, static_cast<int>( reinterpret_cast<long long>( a.address ) ), static_cast<int>( a.size ) );
-			DebugOutput( buffer );
-			bytes += static_cast<int>( a.size );
-		}
+		PrintAllocation( tagText, a );
 	}
 	sprintf_s( buffer, "%s Total = %d bytes\n", tagText, bytes );
 	DebugOutput( buffer );
@@ -1405,7 +1414,9 @@ void PrintAllocations( const char* tagText )
 
 }
 
+#pragma pop_macro("new")
 
+#endif
 
 //********************************************************************************************************************************
 // File:		PlayWindow.cpp
@@ -1425,7 +1436,7 @@ extern void MainGameEntry( int argc, char* argv[] );
 extern bool MainGameUpdate( float ); // Called every frame
 extern int MainGameExit( void ); // Called on quit
 
-unsigned long long g_pGDIToken = 0;
+ULONG_PTR g_pGDIToken = 0;
 
 int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
 {
@@ -1777,7 +1788,7 @@ void TracePrintf( const char* file, int line, const char* fmt, ... )
 
 //********************************************************************************************************************************
 // File:		PlayBlitter.cpp
-// Description:	A low-level rendering abstraction for blitting pixel data
+// Description:	A software pixel renderer for drawing 2D primitives into a PixelData buffer
 // Platform:	Independent
 //********************************************************************************************************************************
 
@@ -2144,15 +2155,15 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 
 			destPixels++;
 
-			//change the position in the sprite frame for changing X in the display
+			// Change the position in the sprite frame for changing X in the display
 			u += dUdX;
 			v += dVdX;
 		}
 
-		//work out the change in the sprite frame for changing Y in the display
+		// Work out the change in the sprite frame for changing Y in the display
 		rowU += dUdY;
 		rowV += dVdY;
-		//next row
+		// Next row
 		destPixels += nextRow;
 	}
 
@@ -2174,7 +2185,7 @@ void PlayBlitter::BlitBackground( PixelData& backgroundImage )
 
 
 //********************************************************************************************************************************
-// File:		PlayBuffer.cpp
+// File:		PlayGraphics.cpp
 // Description:	Manages 2D graphics operations on a PixelData buffer 
 // Platform:	Independent
 // Notes:		Uses PNG format. The end of the filename indicates the number of frames e.g. "bat_4.png" or "tiles_10x10.png"
@@ -2540,7 +2551,7 @@ void PlayGraphics::DrawRotated( int spriteId, Point2f pos, int frameIndex, float
 void PlayGraphics::DrawBackground( int backgroundId )
 {
 	PLAY_ASSERT_MSG( m_playBuffer.pPixels, "Trying to draw background without initialising display!" );
-	PLAY_ASSERT_MSG( vBackgroundData.size() > backgroundId, "Background image out of range!" );
+	PLAY_ASSERT_MSG( vBackgroundData.size() > static_cast<size_t>(backgroundId), "Background image out of range!" );
 	m_blitter.BlitBackground( vBackgroundData[backgroundId] );
 }
 
@@ -2805,7 +2816,7 @@ bool PlayGraphics::SpriteCollide( int id_1, Point2f pos_1, int frame_1, float an
 
 //********************************************************************************************************************************
 // Function:	PreMultiplyAlpha - calculates the (src*srcAlpha) alpha blending calculation in advance as it doesn't change
-// Parameters:	s = the sprite to precalculate data for
+// Parameters:	s = the sprite to pre-calculate data for
 // Notes:		Also inverts the alpha ready for the (dest*(1-srcAlpha)) calculation and stores information in the new
 //				buffer which provides the number of fully-transparent pixels in a row (so they can be skipped)
 //********************************************************************************************************************************
@@ -3103,7 +3114,7 @@ void PlayGraphics::DrawTimingBar( Point2f pos, Point2f size )
 
 float PlayGraphics::GetTimingSegmentDuration( int id ) const
 {
-	PLAY_ASSERT_MSG( id < m_vTimings.size(), "Invalid id for timing data." );
+	PLAY_ASSERT_MSG( static_cast<size_t>(id) < m_vTimings.size(), "Invalid id for timing data." );
 	return m_vTimings[id].millisecs;
 }
 
@@ -3111,10 +3122,10 @@ float PlayGraphics::GetTimingSegmentDuration( int id ) const
 // File:		PlaySpeaker.cpp
 // Description:	Implementation of a very simple audio manager using the MCI
 // Platform:	Windows
-// Notes:		Uses MP3 format. Playback isn't always instantaneous and can 
-//				trigger small frame glitches when StartSound is called
+// Notes:		Uses MP3 format. The Windows multimedia library is extremely basic, but very quick easy to work with. 
+//				Playback isn't always instantaneous and can trigger small frame glitches when StartSound is called. 
+//				Consider XAudio2 as a potential next step.
 //********************************************************************************************************************************
-
 
 
 // Instruct Visual Studio to link the multimedia library  
@@ -3127,7 +3138,7 @@ PlayAudio* PlayAudio::s_pInstance = nullptr;
 //********************************************************************************************************************************
 PlayAudio::PlayAudio( const char* path )
 {
-	PLAY_ASSERT_MSG( !s_pInstance, "PlaySpeaker is a singleton class: multiple instances not allowed!" );
+	PLAY_ASSERT_MSG( !s_pInstance, "PlayAudio is a singleton class: multiple instances not allowed!" );
 
 	// Iterate through the directory
 	for( auto& p : std::filesystem::directory_iterator( path ) )
@@ -3165,7 +3176,7 @@ PlayAudio::~PlayAudio( void )
 
 PlayAudio& PlayAudio::Instance()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlaySpeaker without initialising it!" );
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlayAudio without initialising it!" );
 	return *s_pInstance;
 }
 
@@ -3178,7 +3189,7 @@ PlayAudio& PlayAudio::Instance( const char* path )
 
 void PlayAudio::Destroy()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlaySpeaker which hasn't been instanced!" );
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayAudio which hasn't been instanced!" );
 	delete s_pInstance;
 	s_pInstance = nullptr;
 }
@@ -3260,9 +3271,8 @@ PlayInput& PlayInput::Instance()
 
 void PlayInput::Destroy()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayInput which hasn't been instanced!" );
-	delete s_pInstance;
-	s_pInstance = nullptr;
+	if( s_pInstance )
+		delete s_pInstance;
 }
 
 //********************************************************************************************************************************
@@ -3370,6 +3380,7 @@ namespace Play
 		PlayAudio::Destroy();
 		PlayGraphics::Destroy();
 		PlayWindow::Destroy();
+		PlayInput::Destroy();
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
 		for( std::pair<const int, GameObject&>& p : objectMap )
 			delete& p.second;
@@ -3839,7 +3850,7 @@ namespace Play
 	void DestroyGameObjectsByType( int objType )
 	{
 		std::vector<int> typeVec = CollectGameObjectIDsByType( objType );
-		for( int i = 1; i < typeVec.size(); i++ )
+		for( size_t i = 1; i < typeVec.size(); i++ )
 			DestroyGameObject( typeVec[i] );
 	}
 
