@@ -194,7 +194,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\PlayBuffer\Play.h" />
+    <ClInclude Include="..\Play.h" />
     <ClInclude Include="Editable.h" />
   </ItemGroup>
   <ItemGroup>

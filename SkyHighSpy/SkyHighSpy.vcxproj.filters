@@ -7,7 +7,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editable.h" />
-    <ClInclude Include="..\PlayBuffer\Play.h">
+    <ClInclude Include="..\Play.h">
       <Filter>Libraries</Filter>
     </ClInclude>
   </ItemGroup>
