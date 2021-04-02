@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"0.9.21.03.17"
+#define PLAY_VERSION	"1.0.21.04.02"
 
 #include <cstdint>
 #include <cstdlib>
@@ -56,7 +56,7 @@
 #include "dwmapi.h"
 #include <Shlobj.h>
 #pragma warning(push)
-#pragma warning(disable:4458) // suppress warning for declaration of 'xyz' hides class member
+#pragma warning(disable:4458) // Suppress warning for declaration of 'xyz' hides class member
 
  // Redirect the GDI to use the standard library for min and max
 namespace Gdiplus
@@ -67,13 +67,11 @@ namespace Gdiplus
 #include <GdiPlus.h>
 #pragma warning(pop)
 
-
 // Macros for Assertion and Tracing
 void TracePrintf(const char* file, int line, const char* fmt, ...);
 void AssertFailMessage(const char* message, const char* file, long line );
 void DebugOutput( const char* s );
 void DebugOutput( std::string s );
-
 
 #ifdef _DEBUG
 #define PLAY_TRACE(fmt, ...) TracePrintf(__FILE__, __LINE__, fmt, __VA_ARGS__);
@@ -88,61 +86,42 @@ void DebugOutput( std::string s );
 // Global constants such as PI
 constexpr float PLAY_PI	= 3.14159265358979323846f;   // pi
 
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayMemory.h
-//*******************************************************************
-
 #ifndef PLAY_PLAYMEMORY_H
 #define PLAY_PLAYMEMORY_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayMemory.h
-// Created:		August 2020 - Sumo Academy
 // Platform:	Independent
 // Description:	Declaration for a simple memory tracker to prevent leaks
 //********************************************************************************************************************************
 
-// Prints out all the currently allocated memory to the debug output
-void PrintAllocations( const char* tagText );
+#ifdef _DEBUG
+	// Prints out all the currently allocated memory to the debug output
+	void PrintAllocations( const char* tagText );
 
-// Allocate some memory with a known origin
-void* operator new(size_t size, const char* file, int line);
-// Allocate some memory with a known origin
-void* operator new[](size_t size, const char* file, int line); 
-// Allocate some memory without a known origin
-void* operator new[](size_t size);
+	// Allocate some memory with a known origin
+	void* operator new(size_t size, const char* file, int line);
+	// Allocate some memory with a known origin
+	void* operator new[](size_t size, const char* file, int line); 
+	// Allocate some memory without a known origin
+	void* operator new[](size_t size);
 
-// Free some memory 
-void operator delete[](void* p);
-// Free some memory (matching allocator for exceptions )
-void operator delete(void* p, const char* file, int line);
-// Free some memory (matching allocator for exceptions )
-void operator delete[](void* p, const char* file, int line); 
+	// Free some memory 
+	void operator delete[](void* p);
+	// Free some memory (matching allocator for exceptions )
+	void operator delete(void* p, const char* file, int line);
+	// Free some memory (matching allocator for exceptions )
+	void operator delete[](void* p, const char* file, int line); 
 
-//#ifdef PLAY_IMPLEMENTATION
-#define new new( __FILE__ , __LINE__ )
-//#endif
+	#define new new( __FILE__ , __LINE__ )
+#else
+	#define PrintAllocations( x )
+#endif
 
 #endif
-//*******************************************************************
-// PLAY END: PlayMemory.h
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayMaths.h
-//*******************************************************************
-
 #ifndef PLAY_PLAYMATHS_H
 #define PLAY_PLAYMATHS_H
 //********************************************************************************************************************************
-// Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayMaths.h
-// Created:		October 2020 - Sumo Academy
 // Description:	A very simple set of 2D maths structures and operations
 // Platform:	Independent
 //********************************************************************************************************************************
@@ -177,7 +156,6 @@ using Point2f = Vector2f;
 using Point2D = Vector2f;
 using Vector2D = Vector2f;
 
-//**************************************************************************************************
 // Vector component operations
 //**************************************************************************************************
 
@@ -186,9 +164,8 @@ inline Vector2f operator + ( const Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs.v[i] + rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -196,9 +173,8 @@ inline Vector2f operator + ( const Vector2f& lhs, const Vector2f& rhs )
 inline Vector2f& operator += ( Vector2f& lhs, const Vector2f& rhs )
 {
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] += rhs.v[i];
-	}
+	
 	return lhs;
 }
 
@@ -207,9 +183,8 @@ inline Vector2f operator - ( const Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs.v[i] - rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -217,9 +192,8 @@ inline Vector2f operator - ( const Vector2f& lhs, const Vector2f& rhs )
 inline Vector2f& operator -= ( Vector2f& lhs, const Vector2f& rhs )
 {
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] -= rhs.v[i];
-	}
+	
 	return lhs;
 }
 
@@ -228,9 +202,8 @@ inline Vector2f operator - ( const Vector2f& op )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = -op.v[i];
-	}
+	
 	return ret;
 }
 
@@ -239,9 +212,8 @@ inline Vector2f operator * ( const Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs.v[i] * rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -250,9 +222,8 @@ inline Vector2f operator *= ( Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] *= rhs.v[i];
-	}
+	
 	return lhs;
 }
 
@@ -261,9 +232,8 @@ inline Vector2f operator / ( const Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs.v[i] / rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -272,13 +242,11 @@ inline Vector2f operator /= ( Vector2f& lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] /= rhs.v[i];
-	}
+	
 	return lhs;
 }
 
-//**************************************************************************************************
 // Vector scalar operations
 //**************************************************************************************************
 
@@ -287,9 +255,8 @@ inline Vector2f operator * ( const Vector2f& lhs, const float rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs.v[i] * rhs;
-	}
+	
 	return ret;
 }
 
@@ -304,9 +271,8 @@ inline Vector2f operator *= ( Vector2f& lhs, const float& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] *= rhs;
-	}
+	
 	return lhs;
 }
 
@@ -321,9 +287,8 @@ inline Vector2f operator / ( const float lhs, const Vector2f& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret.v[i] = lhs / rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -332,13 +297,11 @@ inline Vector2f operator /= ( Vector2f& lhs, const float& rhs )
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
-	{
 		lhs.v[i] /= rhs;
-	}
+	
 	return lhs;
 }
 
-//**************************************************************************************************
 // Vector component comparisons
 //**************************************************************************************************
 
@@ -367,14 +330,11 @@ inline bool EqualTol( const Vector2f& lhs, const Vector2f& rhs, const float tole
 	for( int i = 0; i < 2; ++i )
 	{
 		if( std::abs( lhs.v[i] - rhs.v[i] ) > tolerance )
-		{
 			return false;
-		}
 	}
 	return true;
 }
 
-//**************************************************************************************************
 // Common maths functions
 //**************************************************************************************************
 
@@ -383,9 +343,8 @@ inline float dot( const Vector2f& lhs, const Vector2f& rhs )
 {
 	float ret = 0.f;
 	for( int i = 0; i < 2; ++i )
-	{
 		ret += lhs.v[i] * rhs.v[i];
-	}
+	
 	return ret;
 }
 
@@ -416,26 +375,13 @@ inline Vector2f normalize( const Vector2f& v )
 	return v / length( v );
 }
 
-
 #endif
 
-
-//*******************************************************************
-// PLAY END: PlayMaths.h
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayPixel.h
-//*******************************************************************
 
 #ifndef PLAY_PLAYPIXEL_H
 #define PLAY_PLAYPIXEL_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayPixel.h
-// Created:		August 2020 - Sumo Academy
 // Platform:	Independent
 // Description:	Pixel types for holding image data
 //********************************************************************************************************************************
@@ -485,22 +431,28 @@ struct PixelData
 };
 
 #endif
-//*******************************************************************
-// PLAY END: PlayPixel.h
-//*******************************************************************
+#ifndef PLAY_PLAYMOUSE_H
+#define PLAY_PLAYMOUSE_H
+//********************************************************************************************************************************
+// File:		PlayMouse.h
+// Platform:	Independent
+// Description:	A mouse input data type 
+//********************************************************************************************************************************
 
+// A mouse structure to hold pointer co-ordinates and button states
+struct MouseData
+{
+	Vector2f pos{ 0, 0 };
+	bool left{ false };
+	bool right{ false };
+};
 
-//*******************************************************************
-// PLAY BEGIN: PlayWindow.h
-//*******************************************************************
+#endif
 
 #ifndef PLAY_PLAYWINDOW_H
 #define PLAY_PLAYWINDOW_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayWindow.h
-// Created:		March 2020 - Sumo Academy
 // Description:	Platform specific code to provide a window to draw into
 // Platform:	Windows
 // Notes:		Uses a 32-bit ARGB display buffer
@@ -521,18 +473,16 @@ class PlayWindow
 {
 public:
 
-	//********************************************************************************************************************************
 	// Instance functions
 	//********************************************************************************************************************************
 
-	// Creates the PlayWindow instance and initialis ethe window
+	// Creates the PlayWindow instance and initialises the window
 	static PlayWindow& Instance( PixelData* pDisplayBuffer, int nScale );
 	// Returns the PlayWindow instance
 	static PlayWindow& Instance();
 	// Destroys the PlayWindow instance
 	static void Destroy();
-	
-	//********************************************************************************************************************************
+
 	// Windows functions
 	//********************************************************************************************************************************
 
@@ -542,8 +492,9 @@ public:
 	static LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 	// Copies the display buffer pixels to the window
 	int Present();
+	// Sets the pointer to write mouse input data to
+	void RegisterMouse( MouseData* pMouseData ) { m_pMouseData = pMouseData; }
 
-	//********************************************************************************************************************************
 	// Getter functions
 	//********************************************************************************************************************************
 
@@ -554,22 +505,6 @@ public:
 	// Gets the scale of the display buffer in pixels
 	int GetScale() const { return m_scale; }
 
-	//********************************************************************************************************************************
-	// Mouse and keyboard functions
-	//********************************************************************************************************************************
-
-	// Returns the status of the supplied mouse button (0=left, 1=right)
-	bool GetMouseDown( int button ) const;
-	// Get the screen position of the mouse cursor
-	Point2f GetMousePos() const { return m_mousePos; }
-	// Returns true if the key has been pressed since it was last released
-	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	bool KeyPressed( int vKey );
-	// Returns true if the key is currently being held down
-	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	bool KeyDown( int vKey );
-
-	//********************************************************************************************************************************
 	// Loading functions
 	//********************************************************************************************************************************
 
@@ -580,7 +515,6 @@ public:
 
 private:
 
-	//********************************************************************************************************************************
 	// Constructor / destructor
 	//********************************************************************************************************************************
 
@@ -593,7 +527,6 @@ private:
 	// The copy constructor is removed to prevent copying of a singleton class
 	PlayWindow( const PlayWindow& ) = delete;
 
-	//********************************************************************************************************************************
 	// Miscellaneous internal functions
 	//********************************************************************************************************************************
 
@@ -602,11 +535,8 @@ private:
 
 	// Buffer pointers
 	PixelData* m_pPlayBuffer{ nullptr };
-
-	//Position of the mouse in the display buffer
-	Point2f m_mousePos{ 0, 0 };
-	//left right.
-	bool m_bMouseDown[2]{ false, false };
+	//Pointer to external mouse data
+	MouseData* m_pMouseData{ nullptr };
 	// Pointer to the instance.
 	static PlayWindow* s_pInstance;
 	// The handle to the Window 
@@ -615,31 +545,16 @@ private:
 	static unsigned long long s_pGDIToken;
 };
 
-
-
 #endif
 
 
 
-//*******************************************************************
-// PLAY END: PlayWindow.h
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayBlitter.h
-//*******************************************************************
-
 #ifndef PLAY_PLAYBLITTER_H
 #define PLAY_PLAYBLITTER_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayBlitter.h
-// Created:		March 2020 - Sumo Academy
 // Description:	A software pixel renderer for drawing 2D primitives into a PixelData buffer
 // Platform:	Independent
-// Notes:		Named in honour of the Amiga Blitter chip!
 //********************************************************************************************************************************
 
 // A software pixel renderer for drawing 2D primitives into a PixelData buffer
@@ -648,8 +563,7 @@ class PlayBlitter
 {
 public:
 
-	//********************************************************************************************************************************
-	// Instance functions
+	// Constructor and initialisation
 	//********************************************************************************************************************************
 
 	// Constructor
@@ -658,7 +572,6 @@ public:
 	// Returns a pointer to any previous render target
 	PixelData* SetRenderTarget( PixelData* pRenderTarget ) { PixelData* old = m_pRenderTarget; m_pRenderTarget = pRenderTarget; return old; }
 
-	//********************************************************************************************************************************
 	// Primitive drawing functions
 	//********************************************************************************************************************************
 
@@ -683,24 +596,11 @@ private:
 
 };
 
-
 #endif
-//*******************************************************************
-// PLAY END: PlayBlitter.h
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayGraphics.h
-//*******************************************************************
-
 #ifndef PLAY_PLAYGRAPHICS_H
 #define PLAY_PLAYGRAPHICS_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayGraphics.h
-// Created:		March 2020 - Sumo Academy
 // Description:	Manages 2D graphics operations on a PixelData buffer 
 // Platform:	Independent
 // Notes:		Uses PNG format. The end of the filename indicates the number of frames e.g. "bat_4.png" or "tiles_10x10.png"
@@ -711,7 +611,6 @@ private:
 class PlayGraphics
 {
 public:
-	//********************************************************************************************************************************
 	// Instance functions
 	//********************************************************************************************************************************
 
@@ -722,7 +621,6 @@ public:
 	// Destroys the PlayGraphics instance
 	static void Destroy();
 
-	//********************************************************************************************************************************
 	// Basic drawing functions
 	//********************************************************************************************************************************
 
@@ -735,7 +633,6 @@ public:
 	// Draws a circle into the display buffer
 	void DrawCircle( Point2f centrePos, int radius, Pixel pix );
 
-	//********************************************************************************************************************************
 	// Debug font functions
 	//********************************************************************************************************************************
 
@@ -746,8 +643,6 @@ public:
 	// > Returns the x position at the end of the text
 	int DrawDebugString( Point2f pos, const std::string& s, Pixel pix, bool centred = true );
 
-
-	//********************************************************************************************************************************
 	// Sprite Loading functions
 	//********************************************************************************************************************************
 
@@ -758,7 +653,6 @@ public:
 	// > Returns the index of the loaded background
 	int LoadBackground( const char* fileAndPath );
 
-	//********************************************************************************************************************************
 	// Sprite Getters and Setters
 	//********************************************************************************************************************************
 
@@ -784,7 +678,6 @@ public:
 	// Gets the number of sprites which have been loaded and created by PlayGraphics
 	int GetTotalLoadedSprites() const { return m_nTotalSprites; }
 
-	//********************************************************************************************************************************
 	// Sprite Drawing functions
 	//********************************************************************************************************************************
 
@@ -828,7 +721,6 @@ public:
 		Sprite() = default;
 	};
 
-	//********************************************************************************************************************************
 	// Miscellaneous functions
 	//********************************************************************************************************************************
 
@@ -846,7 +738,6 @@ public:
 
 private:
 
-	//********************************************************************************************************************************
 	// Constructors / destructors
 	//********************************************************************************************************************************
 
@@ -859,7 +750,6 @@ private:
 	// The copy constructor is removed to prevent copying of a singleton class
 	PlayGraphics( const PlayGraphics& ) = delete; 
 
-	//********************************************************************************************************************************
 	// Internal functions relating to drawing
 	//********************************************************************************************************************************
 
@@ -910,44 +800,29 @@ private:
 };
 
 #endif
-//*******************************************************************
-// PLAY END: PlayGraphics.h
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayAudio.h
-//*******************************************************************
-
 #ifndef PLAY_PLAYAUDIO_H
 #define PLAY_PLAYAUDIO_H
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 //* File:			PlayAudio.h
-//* Created:		July 2020 - Sumo Academy
-//* Description:	Declaration for a simple audio manager 
-//*					
+//* Description:	Declaration for a simple audio manager class
 //********************************************************************************************************************************
 
-// Encapsulates the functionality of a basic audio manager 
+// Encapsulates the functionality of a simple audio manager 
 // > A singleton class accessed using PlayAudio::Instance()
 class PlayAudio
 {
 public:
-	//********************************************************************************************************************************
-	// Instance access functions
+	// Instance access functions 
 	//********************************************************************************************************************************
 
-	// Instantiates class and loads all the.MP3 sounds from the directory provided
-	static PlayAudio& Instance();
-	// Returns the PlaySpeaker instance
+	// Instantiates class and loads all the .MP3 sounds from the directory provided
 	static PlayAudio& Instance( const char* path );
+	// Returns the PlaySpeaker instance
+	static PlayAudio& Instance();
 	// Destroys the PlaySpeaker instance
 	static void Destroy();
 
-	//********************************************************************************************************************************
-	// Sound playing and stopping
+	// Playing and stopping audio
 	//********************************************************************************************************************************
 
 	// Play a sound using part of all of its name
@@ -956,13 +831,12 @@ public:
 	void StopAudio( const char* name ); 
 
 private:
-	//********************************************************************************************************************************
 	// Constructor and destructor
 	//********************************************************************************************************************************
 
-	// Creates manager object and loads all the.MP3 sounds in the specified directory
+	// Creates manager object and loads all the .MP3 sounds in the specified directory
 	PlayAudio( const char* path ); 
-	// Closes all loaded sounds
+	// Destroys the manager and stops any sounds playing
 	~PlayAudio(); 
 	// The assignment operator is removed to prevent copying of a singleton class
 	PlayAudio& operator=( const PlayAudio& ) = delete;
@@ -977,25 +851,83 @@ private:
 
 #endif
 
-//*******************************************************************
-// PLAY END: PlayAudio.h
-//*******************************************************************
+#ifndef PLAY_PLAYINPUT_H
+#define PLAY_PLAYINPUT_H
+//********************************************************************************************************************************
+// File:		PlayInput.h
+// Description:	Manages keyboard and mouse input 
+// Platform:	Windows
+// Notes:		Obtains mouse data from PlayWindow via MouseData structure
+//********************************************************************************************************************************
+
+// Manages keyboard and mouse input 
+// > Singleton class accessed using PlayInput::Instance()
+class PlayInput
+{
+public:
+
+	enum
+	{
+		BUTTON_LEFT	= 0,
+		BUTTON_RIGHT
+	};
+
+	// Instance functions
+	//********************************************************************************************************************************
+
+	// Creates / Returns the PlayInput instance
+	static PlayInput& Instance();
+	// Destroys the PlayInput instance
+	static void Destroy();
+
+	// Mouse and keyboard functions
+	//********************************************************************************************************************************
+
+	// Returns the status of the supplied mouse button (0=left, 1=right)
+	bool GetMouseDown( int button ) const;
+	// Get the screen position of the mouse cursor
+	Point2f GetMousePos() const { return m_mouseData.pos; }
+	// Returns true if the key has been pressed since it was last released
+	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+	bool KeyPressed( int vKey );
+	// Returns true if the key is currently being held down
+	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+	bool KeyDown( int vKey );
+
+	MouseData* GetMouseData( void ) { return &m_mouseData; }
+
+private:
+
+	// Constructor / destructor
+	//********************************************************************************************************************************
+	
+	// Private constructor 
+	PlayInput();
+	// Private destructor
+	~PlayInput();
+	// The assignment operator is removed to prevent copying of a singleton class
+	PlayInput& operator=( const PlayInput& ) = delete;
+	// The copy constructor is removed to prevent copying of a singleton class
+	PlayInput( const PlayInput& ) = delete;
 
 
-//*******************************************************************
-// PLAY BEGIN: PlayManager.h
-//*******************************************************************
+	MouseData m_mouseData;
+	// Pointer to the singleton
+	static PlayInput* s_pInstance;
+
+};
+
+
+#endif
+
 
 #ifndef PLAY_PLAYMANAGER_H
 #define PLAY_PLAYMANAGER_H
 //********************************************************************************************************************************
-// Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
 // File:		PlayManager.h
-// Created:		October 2020 - Sumo Academy
 // Description:	A manager for providing simplified access to the PlayBuffer framework with managed GameObjects
 // Platform:	Independent
-// Notes:		The PlayManager is "opt in" as many will want to create their own GameObject
+// Notes:		The GameObject management is "opt in" as many will want to create their own GameObject class
 //********************************************************************************************************************************
 
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
@@ -1073,7 +1005,6 @@ namespace Play
 
 	extern Colour cBlack, cRed, cGreen, cBlue, cMagenta, cCyan, cYellow, cOrange, cWhite, cGrey;
 
-	//**************************************************************************************************
 	// Manager creation and deletion
 	//**************************************************************************************************
 
@@ -1082,13 +1013,11 @@ namespace Play
 	// Shuts down the managers and closes the window
 	void DestroyManager();
 
-
-	//**************************************************************************************************
 	// PlayWindow functions
 	//**************************************************************************************************
 
 	// Copies the contents of the drawing buffer to the window
-	void PresentPlayBuffer();
+	void PresentDrawingBuffer();
 	// Gets the co-ordinates of the mouse cursor within the display buffer
 	Point2D GetMousePos();
 	// Gets the width of the display buffer
@@ -1096,7 +1025,6 @@ namespace Play
 	// Gets the height of the display buffer
 	int GetBufferHeight();
 
-	//**************************************************************************************************
 	// PlayAudio functions
 	//**************************************************************************************************
 
@@ -1107,7 +1035,6 @@ namespace Play
 	// Stops a looping mp3 audio file started with Play::StartSoundLoop()
 	void StopAudioLoop( const char* mp3Filename );
 
-	//**************************************************************************************************
 	// PlayGraphics functions
 	//**************************************************************************************************
 
@@ -1182,8 +1109,6 @@ namespace Play
 	// Draws text using a sprite-based font exported from PlayFontTool
 	void DrawFontText( const char* fontId, std::string text, Point2D pos, Align justify = LEFT );
 
-
-	//**************************************************************************************************
 	// GameObject functions
 	//**************************************************************************************************
 
@@ -1235,7 +1160,6 @@ namespace Play
 
 #endif
 
-	//**************************************************************************************************
 	// Miscellaneous functions
 	//**************************************************************************************************
 
@@ -1264,13 +1188,10 @@ namespace Play
 	}
 
 }
+
 #endif
 
 
-
-//*******************************************************************
-// PLAY END: PlayManager.h
-//*******************************************************************
 
 
 #endif // PLAYPCH_H
@@ -1281,21 +1202,11 @@ namespace Play
 
 //*******************************************************************
 //*******************************************************************
-//*******************************************************************
 #ifdef PLAY_IMPLEMENTATION
 //*******************************************************************
 //*******************************************************************
-//*******************************************************************
-
-//*******************************************************************
-// PLAY BEGIN: PlayMemory.cpp
-//*******************************************************************
-
-//********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
 //********************************************************************************************************************************
 //* File:			PlayMemory.cpp
-//* Created:		August 2020 - Sumo Academy
 //* Platform:		Independent
 //* Description:	Implementation of a simple memory tracker to prevent leaks. Uses #define new which looks neat and tidy
 //*                 (especially for new C++ programmers), but doesn't work for placement new, so you are likely to get compile 
@@ -1310,12 +1221,16 @@ namespace Play
 //********************************************************************************************************************************
 
 
+#ifdef _DEBUG
+
 // Undefine 'new' in this compilation unit only.
-// #TODO : Review the use of the 'new' macro it could be asking for trouble.
+#pragma push_macro("new")
 #undef new
 
 constexpr int MAX_ALLOCATIONS = 8192 * 4;
 constexpr int MAX_FILENAME = 1024;
+
+unsigned int g_allocId = 0;
 
 // A structure to store data on each memory allocation
 struct ALLOC
@@ -1324,8 +1239,9 @@ struct ALLOC
 	char file[MAX_FILENAME] = { 0 };
 	int line = 0;
 	size_t size = 0;
+	int id = 0;
 
-	ALLOC( void* a, const char* fn, int l, size_t s ) { address = a; line = l; size = s; strcpy_s( file, fn ); };
+	ALLOC( void* a, const char* fn, int l, size_t s ) { address = a; line = l; size = s; id = g_allocId++; strcpy_s( file, fn ); };
 	ALLOC( void ) {};
 };
 
@@ -1334,14 +1250,15 @@ unsigned int g_allocCount = 0;
 
 
 void CreateStaticObject( void );
+void PrintAllocation( const char* tagText, ALLOC& a );
 
 //********************************************************************************************************************************
 // Overrides for new operator (x4)
 //********************************************************************************************************************************
 
 // The file and line are passed through using the macro defined in PlayMemory.h which redefines new. This will only happen if 
-// PlayMemory.h has been parsed in advace of the use of new in the relevant code. This approach is problematic for classes 
-// the safest appproach. The two definitions of new without the file and line pick up any other memory allocations for completeness.
+// PlayMemory.h has been parsed in advance of the use of new in the relevant code. This approach is problematic for classes 
+// the safest approach. The two definitions of new without the file and line pick up any other memory allocations for completeness.
 void* operator new( size_t size, const char* file, int line )
 {
 	PLAY_ASSERT( g_allocCount < MAX_ALLOCATIONS );
@@ -1426,7 +1343,6 @@ void operator delete[]( void* p )
 	free( p );
 }
 
-
 //********************************************************************************************************************************
 // Printing allocations
 //********************************************************************************************************************************
@@ -1462,30 +1378,35 @@ void CreateStaticObject( void )
 	static DestroyedLast last;
 }
 
+void PrintAllocation( const char* tagText, ALLOC& a )
+{
+	char buffer[MAX_FILENAME * 2] = { 0 };
+
+	if( a.address != nullptr )
+	{
+		char* lastSlash = strrchr( a.file, '\\' );
+		if( lastSlash )
+		{
+			strcpy_s( buffer, lastSlash + 1 );
+			strcpy_s( a.file, buffer );
+		}
+		// Format in such a way that VS can double click to jump to the allocation.
+		sprintf_s( buffer, "%s %s(%d): 0x%02X %d bytes [%d]\n", tagText, a.file, a.line, static_cast<int>( reinterpret_cast<long long>( a.address ) ), static_cast<int>( a.size ), a.id );
+		DebugOutput( buffer );
+	}
+}
+
 void PrintAllocations( const char* tagText )
 {
 	int bytes = 0;
 	char buffer[MAX_FILENAME * 2] = { 0 };
-	DebugOutput( "**************************************************\n" );
+	DebugOutput( "****************************************************\n" );
 	DebugOutput( "MEMORY ALLOCATED\n" );
-	DebugOutput( "**************************************************\n" );
+	DebugOutput( "****************************************************\n" );
 	for( unsigned int n = 0; n < g_allocCount; n++ )
 	{
 		ALLOC& a = g_allocations[n];
-
-		if( a.address != nullptr )
-		{
-			char* lastSlash = strrchr( a.file, '\\' );
-			if( lastSlash )
-			{
-				strcpy_s( buffer, lastSlash + 1 );
-				strcpy_s( a.file, buffer );
-			}
-			// Format in such a way that VS can double click to jump to the allocation.
-			sprintf_s( buffer, "%s %s(%d): 0x%02X %d bytes\n", tagText, a.file, a.line, static_cast<int>( reinterpret_cast<long long>( a.address ) ), static_cast<int>( a.size ) );
-			DebugOutput( buffer );
-			bytes += static_cast<int>( a.size );
-		}
+		PrintAllocation( tagText, a );
 	}
 	sprintf_s( buffer, "%s Total = %d bytes\n", tagText, bytes );
 	DebugOutput( buffer );
@@ -1493,41 +1414,20 @@ void PrintAllocations( const char* tagText )
 
 }
 
+#pragma pop_macro("new")
 
-
-//*******************************************************************
-// PLAY END: PlayMemory.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayPixel.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY END: PlayPixel.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayWindow.cpp
-//*******************************************************************
+#endif
 
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
-// File:		PlayBuffer.cpp
-// Created:		March 2020 - Sumo Academy
-// Description:	A software drawing buffer which provides the basis for creating 2D games  
+// File:		PlayWindow.cpp
+// Description:	Platform specific code to provide a window to draw into
 // Platform:	Windows
-// Notes:		Provides a 32-bit ARGB display buffer
+// Notes:		Uses a 32-bit ARGB display buffer
 //********************************************************************************************************************************
 
 // Instruct Visual Studio to add these to the list of libraries to link
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "dwmapi.lib")
-
 
 PlayWindow* PlayWindow::s_pInstance = nullptr;
 
@@ -1536,7 +1436,7 @@ extern void MainGameEntry( int argc, char* argv[] );
 extern bool MainGameUpdate( float ); // Called every frame
 extern int MainGameExit( void ); // Called on quit
 
-unsigned long long g_pGDIToken = 0;
+ULONG_PTR g_pGDIToken = 0;
 
 int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
 {
@@ -1562,8 +1462,6 @@ PlayWindow::PlayWindow( PixelData* pDisplayBuffer, int nScale )
 	PLAY_ASSERT( nScale > 0 );
 	m_pPlayBuffer = pDisplayBuffer;
 	m_scale = nScale;
-
-
 }
 
 PlayWindow::~PlayWindow( void )
@@ -1586,18 +1484,14 @@ PlayWindow& PlayWindow::Instance()
 PlayWindow& PlayWindow::Instance( PixelData* pDisplayBuffer, int nScale )
 {
 	PLAY_ASSERT_MSG( !s_pInstance, "Trying to create multiple instances of singleton class!" );
-
 	s_pInstance = new PlayWindow( pDisplayBuffer, nScale );
-
 	return *s_pInstance;
 }
 
 void PlayWindow::Destroy()
 {
 	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayBuffer which hasn't been instanced!" );
-
 	delete s_pInstance;
-
 	s_pInstance = nullptr;
 }
 
@@ -1697,7 +1591,6 @@ int PlayWindow::HandleWindows( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPS
 	return static_cast<int>( msg.wParam );
 }
 
-
 LRESULT CALLBACK PlayWindow::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
 	switch( message )
@@ -1712,31 +1605,37 @@ LRESULT CALLBACK PlayWindow::WndProc( HWND hWnd, UINT message, WPARAM wParam, LP
 			PostQuitMessage( 0 );
 			break;
 		case WM_LBUTTONDOWN:
-			s_pInstance->m_bMouseDown[0] = true;
+			if( s_pInstance->m_pMouseData )
+				s_pInstance->m_pMouseData->left = true;
 			break;
 		case WM_LBUTTONUP:
-			s_pInstance->m_bMouseDown[0] = false;
+			if( s_pInstance->m_pMouseData )
+				s_pInstance->m_pMouseData->left = false;
 			break;
 		case WM_RBUTTONDOWN:
-			s_pInstance->m_bMouseDown[1] = true;
+			if( s_pInstance->m_pMouseData )
+				s_pInstance->m_pMouseData->right = true;
 			break;
 		case WM_RBUTTONUP:
-			s_pInstance->m_bMouseDown[1] = false;
+			if( s_pInstance->m_pMouseData )
+				s_pInstance->m_pMouseData->right = false;
 			break;
 		case WM_MOUSEMOVE:
-			s_pInstance->m_mousePos.x = static_cast<float>( GET_X_LPARAM( lParam ) / s_pInstance->m_scale );
-			s_pInstance->m_mousePos.y = static_cast<float>( GET_Y_LPARAM( lParam ) / s_pInstance->m_scale );
+			if( s_pInstance->m_pMouseData )
+			{
+				s_pInstance->m_pMouseData->pos.x = static_cast<float>( GET_X_LPARAM( lParam ) / s_pInstance->m_scale );
+				s_pInstance->m_pMouseData->pos.y = static_cast<float>( GET_Y_LPARAM( lParam ) / s_pInstance->m_scale );
+			}
 			break;
 		case WM_MOUSELEAVE:
-			s_pInstance->m_mousePos.x = -1;
-			s_pInstance->m_mousePos.y = -1;
+			s_pInstance->m_pMouseData->pos.x = -1;
+			s_pInstance->m_pMouseData->pos.y = -1;
 			break;
 		default:
 			return DefWindowProc( hWnd, message, wParam, lParam );
 	}
 	return 0;
 }
-
 
 int PlayWindow::Present( void )
 {
@@ -1760,39 +1659,6 @@ int PlayWindow::Present( void )
 	ReleaseDC( m_hWindow, hDC );
 
 	return 1;
-}
-
-//********************************************************************************************************************************
-// Mouse functions
-//********************************************************************************************************************************
-
-bool PlayWindow::GetMouseDown( int button ) const
-{
-	PLAY_ASSERT_MSG( button == 1 || button == 0, "Invalid mouse button selected." );
-	return m_bMouseDown[button];
-};
-
-bool PlayWindow::KeyPressed( int vKey )
-{
-	static std::map< int, bool > keyMap;
-
-	bool& held = keyMap[vKey];
-
-	if( KeyDown( vKey ) && !held )
-	{
-		held = true;
-		return true;
-	}
-
-	if( !KeyDown( vKey ) )
-		held = false;
-
-	return false;
-}
-
-bool PlayWindow::KeyDown( int vKey )
-{
-	return GetAsyncKeyState( vKey ) & 0x8000;
 }
 
 //********************************************************************************************************************************
@@ -1826,7 +1692,6 @@ int PlayWindow::ReadPNGImage( std::string& fileAndPath, int& width, int& height 
 
 	return 1;
 }
-
 
 int PlayWindow::LoadPNGImage( std::string& fileAndPath, PixelData& destImage )
 {
@@ -1883,7 +1748,6 @@ int PlayWindow::LoadPNGImage( std::string& fileAndPath, PixelData& destImage )
 // Miscellaneous functions
 //********************************************************************************************************************************
 
-
 void AssertFailMessage( const char* message, const char* file, long line )
 {
 	// file - the file in which the assertion failed ( __FILE__ )
@@ -1922,27 +1786,10 @@ void TracePrintf( const char* file, int line, const char* fmt, ... )
 	va_end( args );
 }
 
-
-
-
-
-//*******************************************************************
-// PLAY END: PlayWindow.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayBlitter.cpp
-//*******************************************************************
-
-//********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
 //********************************************************************************************************************************
 // File:		PlayBlitter.cpp
-// Created:		March 2020 - Sumo Academy
-// Description:	A low-level rendering abstraction for blitting pixel data
+// Description:	A software pixel renderer for drawing 2D primitives into a PixelData buffer
 // Platform:	Independent
-// Notes:		
 //********************************************************************************************************************************
 
 
@@ -2179,7 +2026,6 @@ void PlayBlitter::BlitPixels( const PixelData& srcPixelData, int srcOffset, int 
 	return;
 }
 
-
 //********************************************************************************************************************************
 // Function:	RotateScaleSprite - draws a rotated and scaled sprite with global alpha multiply
 // Parameters:	s = the sprite to draw
@@ -2309,15 +2155,15 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 
 			destPixels++;
 
-			//change the position in the sprite frame for changing X in the display
+			// Change the position in the sprite frame for changing X in the display
 			u += dUdX;
 			v += dVdX;
 		}
 
-		//work out the change in the sprite frame for changing Y in the display
+		// Work out the change in the sprite frame for changing Y in the display
 		rowU += dUdY;
 		rowV += dVdY;
-		//next row
+		// Next row
 		destPixels += nextRow;
 	}
 
@@ -2338,26 +2184,12 @@ void PlayBlitter::BlitBackground( PixelData& backgroundImage )
 }
 
 
-//*******************************************************************
-// PLAY END: PlayBlitter.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayGraphics.cpp
-//*******************************************************************
-
 //********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
-//********************************************************************************************************************************
-// File:		PlayBuffer.cpp
-// Created:		March 2020 - Sumo Academy
+// File:		PlayGraphics.cpp
 // Description:	Manages 2D graphics operations on a PixelData buffer 
 // Platform:	Independent
 // Notes:		Uses PNG format. The end of the filename indicates the number of frames e.g. "bat_4.png" or "tiles_10x10.png"
 //********************************************************************************************************************************
-
-
 
 
 PlayGraphics* PlayGraphics::s_pInstance = nullptr;
@@ -2441,17 +2273,13 @@ PlayGraphics::~PlayGraphics()
 	}
 
 	for( PixelData& pBgBuffer : vBackgroundData )
-	{
 		delete[] pBgBuffer.pPixels;
-	}
 
 	if( m_pDebugFontBuffer )
 		delete[] m_pDebugFontBuffer;
 
 	delete[] m_playBuffer.pPixels;
 }
-
-
 
 //********************************************************************************************************************************
 // Instance functions
@@ -2579,9 +2407,7 @@ int PlayGraphics::LoadBackground( const char* fileAndPath )
 	for( int h = 0; h < std::min( backgroundImage.height, m_playBuffer.height ); h++ )
 	{
 		for( int w = 0; w < std::min( backgroundImage.width, m_playBuffer.width ); w++ )
-		{
 			*pDest++ = *pSrc++;
-		}
 
 		// Skip pixels if we're clipping
 		pDest += std::max( m_playBuffer.width - backgroundImage.width, 0 );
@@ -2725,7 +2551,7 @@ void PlayGraphics::DrawRotated( int spriteId, Point2f pos, int frameIndex, float
 void PlayGraphics::DrawBackground( int backgroundId )
 {
 	PLAY_ASSERT_MSG( m_playBuffer.pPixels, "Trying to draw background without initialising display!" );
-	PLAY_ASSERT_MSG( vBackgroundData.size() > backgroundId, "Background image out of range!" );
+	PLAY_ASSERT_MSG( vBackgroundData.size() > static_cast<size_t>(backgroundId), "Background image out of range!" );
 	m_blitter.BlitBackground( vBackgroundData[backgroundId] );
 }
 
@@ -2990,7 +2816,7 @@ bool PlayGraphics::SpriteCollide( int id_1, Point2f pos_1, int frame_1, float an
 
 //********************************************************************************************************************************
 // Function:	PreMultiplyAlpha - calculates the (src*srcAlpha) alpha blending calculation in advance as it doesn't change
-// Parameters:	s = the sprite to precalculate data for
+// Parameters:	s = the sprite to pre-calculate data for
 // Notes:		Also inverts the alpha ready for the (dest*(1-srcAlpha)) calculation and stores information in the new
 //				buffer which provides the number of fully-transparent pixels in a row (so they can be skipped)
 //********************************************************************************************************************************
@@ -3288,38 +3114,18 @@ void PlayGraphics::DrawTimingBar( Point2f pos, Point2f size )
 
 float PlayGraphics::GetTimingSegmentDuration( int id ) const
 {
-	PLAY_ASSERT_MSG( id < m_vTimings.size(), "Invalid id for timing data." );
+	PLAY_ASSERT_MSG( static_cast<size_t>(id) < m_vTimings.size(), "Invalid id for timing data." );
 	return m_vTimings[id].millisecs;
 }
 
-
-
-
-
-
-
-
-
-//*******************************************************************
-// PLAY END: PlayGraphics.cpp
-//*******************************************************************
-
-
-//*******************************************************************
-// PLAY BEGIN: PlayAudio.cpp
-//*******************************************************************
-
-//********************************************************************************************************************************
-//* Copyright 2020 Sumo-Digital Limited
 //********************************************************************************************************************************
 // File:		PlaySpeaker.cpp
-// Created:		March 2020 - Sumo Academy
 // Description:	Implementation of a very simple audio manager using the MCI
 // Platform:	Windows
-// Notes:		Uses MP3 format. Playback isn't always instentaneous and can 
-//				trigger small frame glitches when StartSound is called
+// Notes:		Uses MP3 format. The Windows multimedia library is extremely basic, but very quick easy to work with. 
+//				Playback isn't always instantaneous and can trigger small frame glitches when StartSound is called. 
+//				Consider XAudio2 as a potential next step.
 //********************************************************************************************************************************
-
 
 
 // Instruct Visual Studio to link the multimedia library  
@@ -3328,11 +3134,11 @@ float PlayGraphics::GetTimingSegmentDuration( int id ) const
 PlayAudio* PlayAudio::s_pInstance = nullptr;
 
 //********************************************************************************************************************************
-// Constructor and destrutor (private)
+// Constructor and destructor (private)
 //********************************************************************************************************************************
 PlayAudio::PlayAudio( const char* path )
 {
-	PLAY_ASSERT_MSG( !s_pInstance, "PlaySpeaker is a singleton class: multiple instances not allowed!" );
+	PLAY_ASSERT_MSG( !s_pInstance, "PlayAudio is a singleton class: multiple instances not allowed!" );
 
 	// Iterate through the directory
 	for( auto& p : std::filesystem::directory_iterator( path ) )
@@ -3360,6 +3166,8 @@ PlayAudio::~PlayAudio( void )
 		std::string command = "close " + s;
 		mciSendStringA( command.c_str(), NULL, 0, 0 );
 	}
+
+	s_pInstance = nullptr;
 }
 
 //********************************************************************************************************************************
@@ -3368,26 +3176,21 @@ PlayAudio::~PlayAudio( void )
 
 PlayAudio& PlayAudio::Instance()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlaySpeaker without initialising it!" );
-
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlayAudio without initialising it!" );
 	return *s_pInstance;
 }
 
 PlayAudio& PlayAudio::Instance( const char* path )
 {
 	PLAY_ASSERT_MSG( !s_pInstance, "Trying to create multiple instances of singleton class!" );
-
 	s_pInstance = new PlayAudio( path );
-
 	return *s_pInstance;
 }
 
 void PlayAudio::Destroy()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlaySpeaker which hasn't been instanced!" );
-
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayAudio which hasn't been instanced!" );
 	delete s_pInstance;
-
 	s_pInstance = nullptr;
 }
 
@@ -3430,23 +3233,89 @@ void PlayAudio::StopAudio( const char* name )
 	}
 	PLAY_ASSERT_MSG( false, std::string( "Trying to stop unknown sound effect: " + std::string( name ) ).c_str() );
 }
-//*******************************************************************
-// PLAY END: PlayAudio.cpp
-//*******************************************************************
+//********************************************************************************************************************************
+// File:		PlayInput.cpp
+// Description:	Manages keyboard and mouse input 
+// Platform:	Windows
+// Notes:		Obtains mouse data from PlayWindow via MouseData structure
+//********************************************************************************************************************************
 
 
-//*******************************************************************
-// PLAY BEGIN: PlayManager.cpp
-//*******************************************************************
+PlayInput* PlayInput::s_pInstance = nullptr;
 
 //********************************************************************************************************************************
-// Copyright 2020 Sumo-Digital Limited
+// Constructor and destructor (private)
+//********************************************************************************************************************************
+PlayInput::PlayInput( void )
+{
+	PLAY_ASSERT_MSG( !s_pInstance, "PlayInput is a singleton class: multiple instances not allowed!" );
+	s_pInstance = this;
+}
+
+PlayInput::~PlayInput( void )
+{
+	s_pInstance = nullptr;
+}
+
+//********************************************************************************************************************************
+// Instance access functions
+//********************************************************************************************************************************
+
+PlayInput& PlayInput::Instance()
+{
+	if( !s_pInstance )
+		s_pInstance = new PlayInput();
+
+	return *s_pInstance;
+}
+
+void PlayInput::Destroy()
+{
+	if( s_pInstance )
+		delete s_pInstance;
+}
+
+//********************************************************************************************************************************
+// Mouse functions
+//********************************************************************************************************************************
+
+bool PlayInput::GetMouseDown( int button ) const
+{
+	PLAY_ASSERT_MSG( button == BUTTON_LEFT || button == BUTTON_RIGHT, "Invalid mouse button selected." );
+
+	if( button == BUTTON_LEFT )
+		return m_mouseData.left;
+	else
+		return m_mouseData.right;
+};
+
+bool PlayInput::KeyPressed( int vKey )
+{
+	static std::map< int, bool > keyMap;
+
+	bool& held = keyMap[vKey];
+
+	if( KeyDown( vKey ) && !held )
+	{
+		held = true;
+		return true;
+	}
+
+	if( !KeyDown( vKey ) )
+		held = false;
+
+	return false;
+}
+
+bool PlayInput::KeyDown( int vKey )
+{
+	return GetAsyncKeyState( vKey ) & 0x8000; // Don't want multiple calls to KeyState
+}
 //********************************************************************************************************************************
 // File:		PlayManager.cpp
-// Created:		October 2020 - Sumo Academy
 // Description:	A manager for providing simplified access to the PlayBuffer framework
 // Platform:	Independent
-// Notes:		The PlayManager is "opt in" as many will want to create their own GameObject class
+// Notes:		The GameObject management is "opt in" as many will want to create their own GameObject class
 //********************************************************************************************************************************
 
 //**************************************************************************************************
@@ -3500,6 +3369,7 @@ namespace Play
 	{
 		PlayGraphics::Instance( displayWidth, displayHeight, "Data\\Sprites\\" );
 		PlayWindow::Instance( PlayGraphics::Instance().GetPlayBuffer(), displayScale );
+		PlayWindow::Instance().RegisterMouse( PlayInput::Instance().GetMouseData() );
 		PlayAudio::Instance( "Data\\Audio\\" );
 		// Seed the game's random number generator based on the time
 		srand( (int)time( NULL ) );
@@ -3510,6 +3380,7 @@ namespace Play
 		PlayAudio::Destroy();
 		PlayGraphics::Destroy();
 		PlayWindow::Destroy();
+		PlayInput::Destroy();
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
 		for( std::pair<const int, GameObject&>& p : objectMap )
 			delete& p.second;
@@ -3526,7 +3397,6 @@ namespace Play
 	{
 		return PlayWindow::Instance().GetHeight();
 	}
-
 
 	//**************************************************************************************************
 	// PlayGraphics functions
@@ -3555,7 +3425,7 @@ namespace Play
 		PlayGraphics::Instance().DrawDebugString( pos, text, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, centred );
 	}
 
-	void PresentPlayBuffer()
+	void PresentDrawingBuffer()
 	{
 		PlayGraphics& pblt = PlayGraphics::Instance();
 		static bool debugInfo = false;
@@ -3610,8 +3480,8 @@ namespace Play
 
 	Point2D GetMousePos()
 	{
-		PlayWindow& pbuf = PlayWindow::Instance();
-		return pbuf.GetMousePos();
+		PlayInput& input = PlayInput::Instance();
+		return input.GetMousePos();
 	}
 
 	//**************************************************************************************************
@@ -3636,7 +3506,6 @@ namespace Play
 	//**************************************************************************************************
 	// PlayBuffer functions
 	//**************************************************************************************************
-
 
 	int GetSpriteId( const char* spriteName )
 	{
@@ -3981,7 +3850,7 @@ namespace Play
 	void DestroyGameObjectsByType( int objType )
 	{
 		std::vector<int> typeVec = CollectGameObjectIDsByType( objType );
-		for( int i = 1; i < typeVec.size(); i++ )
+		for( size_t i = 1; i < typeVec.size(); i++ )
 			DestroyGameObject( typeVec[i] );
 	}
 
@@ -4109,25 +3978,12 @@ namespace Play
 
 	bool KeyPressed( int vKey )
 	{
-		static std::map< int, bool > keyMap;
-
-		bool& held = keyMap[vKey];
-
-		if( KeyDown( vKey ) && !held )
-		{
-			held = true;
-			return true;
-		}
-
-		if( !KeyDown( vKey ) )
-			held = false;
-
-		return false;
+		return PlayInput::Instance().KeyPressed( vKey );
 	}
 
 	bool KeyDown( int vKey )
 	{
-		return GetAsyncKeyState( vKey ) & 0x8000;
+		return PlayInput::Instance().KeyDown( vKey );
 	}
 
 	int RandomRoll( int sides )
@@ -4145,12 +4001,6 @@ namespace Play
 			return end + rnd;
 	}
 }
-
-
-//*******************************************************************
-// PLAY END: PlayManager.cpp
-//*******************************************************************
-
 #endif // PLAY_IMPLEMENTATION
 
 #ifdef PLAY_IMPLEMENTATION
