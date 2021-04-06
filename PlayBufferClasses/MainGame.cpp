@@ -69,7 +69,7 @@ bool MainGameUpdate( float elapsedTime )
 	graphics.SetTimingBarColour( PIX_BLACK );
 	
 	// Return true to quit when escape key is pressed
-	return PlayInput::Instance().KeyPressed (VK_SPACE );
+	return PlayInput::Instance().KeyPressed( VK_ESCAPE );
 }
 
 // Gets called once when the player quits the game 
