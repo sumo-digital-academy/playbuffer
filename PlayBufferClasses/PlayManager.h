@@ -13,8 +13,6 @@
 #define PLAY_ADD_GAMEOBJECT_MEMBERS 
 #endif
 
-#ifdef PLAY_IMPLEMENTATION
-
 // PlayManager manges a map of GameObject structures
 // > Additional member variables can be added with PLAY_ADD_GAMEOBJECT_MEMBERS 
 struct GameObject
@@ -48,11 +46,7 @@ private:
 	GameObject& operator=( const GameObject& ) = delete;
 	GameObject( const GameObject& ) = delete;
 };
-#else
 
-struct GameObject;
-
-#endif
 #endif
 
 namespace Play
@@ -97,6 +91,8 @@ namespace Play
 	void PresentDrawingBuffer();
 	// Gets the co-ordinates of the mouse cursor within the display buffer
 	Point2D GetMousePos();
+	// Gets the status of the left or right mouse buttons
+	bool GetMouseButton( Align button );
 	// Gets the width of the display buffer
 	int GetBufferWidth();
 	// Gets the height of the display buffer
@@ -136,6 +132,8 @@ namespace Play
 	int GetSpriteWidth( int spriteId );
 	// Gets the stem filename for the sprite (without path or extension)
 	const char* GetSpriteName( int spriteId );
+	// Gets the total number of frames in the sprite
+	int GetSpriteFrames( int spriteId );
 	// Blends the sprite with the given colour (works best on white sprites)
 	// > Note that colouring affects subsequent DrawSprite calls using the same sprite!!
 	void ColourSprite( const char* spriteName, Colour col );
@@ -177,6 +175,8 @@ namespace Play
 	void DrawLine( Point2D start, Point2D end, Colour col );
 	// Draws a single-pixel wide circle in the given colour
 	void DrawCircle( Point2D pos, int radius, Colour col );
+	// Draws a rectangle in the given colour
+	void DrawRect( Point2D topLeft, Point2D bottomRight, Colour col, bool fill = false );
 	// Draws a line between two points using a sprite
 	// > Note that colouring affects subsequent DrawSprite calls using the same sprite!!
 	void DrawSpriteLine( Point2D startPos, Point2D endPos, const char* penSprite, Colour c = cWhite );
@@ -185,6 +185,15 @@ namespace Play
 	void DrawSpriteCircle( int x, int y, int radius, const char* penSprite, Colour c = cWhite );
 	// Draws text using a sprite-based font exported from PlayFontTool
 	void DrawFontText( const char* fontId, std::string text, Point2D pos, Align justify = LEFT );
+	// Adds a sprite dynamically from memory (custom asset pipelines)
+
+	// Resets the timing bar data and sets the current timing bar segment to a specific colour
+	void BeginTimingBar( Pixel pix );
+	// Sets the current timing bar segment to a specific colour
+	// > Returns the number of timing segments
+	int ColourTimingBar( Pixel pix );
+	// Draws the timing bar for the previous frame at the given position and size
+	void DrawTimingBar( Point2f pos, Point2f size );
 
 	// GameObject functions
 	//**************************************************************************************************

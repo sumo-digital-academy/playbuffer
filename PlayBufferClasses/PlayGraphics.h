@@ -34,7 +34,8 @@ public:
 	// Draws a circle into the display buffer
 	void DrawCircle( Point2f centrePos, int radius, Pixel pix );
 	// Draws raw pixel data to the display buffer
-	void DrawPixelData( PixelData* pixelData, Point2f pos, float alphaMultiply = 1.0f );
+	// > Pre-multiplies the alpha on the image data if this hasn't been done before
+	void DrawPixelData( PixelData* pixelData, Point2f pos, float alpha = 1.0f );
 
 	// Debug font functions
 	//********************************************************************************************************************************
@@ -52,6 +53,13 @@ public:
 	// Loads a sprite sheet and creates a sprite from it (custom asset pipelines)
 	// > All sprites are normally created by the PlayGraphics constructor
 	int LoadSpriteSheet( const std::string& path, const std::string& filename );
+	// Adds a sprite sheet dynamically from memory (custom asset pipelines)
+	// > All sprites are normally created by the PlayGraphics constructor
+	int AddSprite( const std::string& name, PixelData& pixelData, int hCount = 1, int vCount = 1 );
+	// Updates a sprite sheet dynamically from memory (custom asset pipelines)
+	// > Left to caller to release old PixelData
+	int UpdateSprite( const std::string& name, PixelData& pixelData, int hCount = 1, int vCount = 1 );
+	
 	// Loads a background image which is assumed to be the same size as the display buffer
 	// > Returns the index of the loaded background
 	int LoadBackground( const char* fileAndPath );
@@ -197,7 +205,6 @@ private:
 
 	// Buffer pointers
 	PixelData m_playBuffer;
-	PixelData m_tempPreMultAlpha;
 	uint8_t* m_pDebugFontBuffer{ nullptr };
 
 	// A vector of all the loaded sprites

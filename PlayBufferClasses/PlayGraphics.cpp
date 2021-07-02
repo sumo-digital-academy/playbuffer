@@ -19,6 +19,7 @@ PlayGraphics::PlayGraphics( int bufferWidth, int bufferHeight, const char* path 
 	m_playBuffer.width = bufferWidth;
 	m_playBuffer.height = bufferHeight;
 	m_playBuffer.pPixels = new Pixel[static_cast<size_t>( bufferWidth ) * bufferHeight];
+	m_playBuffer.preMultiplied = false;
 	PLAY_ASSERT( m_playBuffer.pPixels );
 
 	memset( m_playBuffer.pPixels, 0, sizeof( uint32_t ) * bufferWidth * bufferHeight );
@@ -102,7 +103,7 @@ PlayGraphics::~PlayGraphics()
 
 PlayGraphics& PlayGraphics::Instance()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlayCollider without initialising it!" );
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use PlayGraphics without initialising it!" );
 	return *s_pInstance;
 }
 
@@ -115,7 +116,7 @@ PlayGraphics& PlayGraphics::Instance( int bufferWidth, int bufferHeight, const c
 
 void PlayGraphics::Destroy()
 {
-	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayBuffer which hasn't been instanced!" );
+	PLAY_ASSERT_MSG( s_pInstance, "Trying to use destroy PlayGraphics when it hasn't been instanced!" );
 	delete s_pInstance;
 	s_pInstance = nullptr;
 }
@@ -126,37 +127,36 @@ void PlayGraphics::Destroy()
 
 int PlayGraphics::LoadSpriteSheet( const std::string& path, const std::string& filename )
 {
-	Sprite s;
-	s.id = m_nTotalSprites++;
-	s.name = filename;
-	s.originX = s.originY = 0;
-	s.hCount = s.vCount = 1; // default to a single-framed sprite
+	PixelData canvasBuffer;
+	std::string spriteName = filename;
+	int hCount = 1;
+	int vCount = 1;
 
 	// Switch everything to uppercase to avoid need to check case each time
-	for( char& c : s.name ) c = static_cast<char>( toupper( c ) );
+	for( char& c : spriteName ) c = static_cast<char>( toupper( c ) );
 
 	// Look for the final number in the filename to pull out the number of frames across the width
-	size_t frameWidthEnd = s.name.find_last_of( "0123456789" );
-	size_t frameWidthStart = s.name.find_last_not_of( "0123456789" );
+	size_t frameWidthEnd = spriteName.find_last_of( "0123456789" );
+	size_t frameWidthStart = spriteName.find_last_not_of( "0123456789" );
 
-	if( frameWidthEnd == s.name.length() - 1 )
+	if( frameWidthEnd == spriteName.length() - 1 )
 	{
 		// Grab the number of frames
-		std::string widthString = s.name.substr( frameWidthStart + 1, frameWidthEnd - frameWidthStart );
+		std::string widthString = spriteName.substr( frameWidthStart + 1, frameWidthEnd - frameWidthStart );
 
 		// Make sure the number is valid 
 		size_t num = widthString.find_first_of( "0123456789" );
 		PLAY_ASSERT_MSG( num == 0, std::string( "Incorrectly named sprite: " + filename ).c_str() );
 
-		s.hCount = stoi( widthString );
+		hCount = stoi( widthString );
 
-		if( s.name[frameWidthStart] == 'X' )
+		if( spriteName[frameWidthStart] == 'X' )
 		{
 			//Two dimensional sprite sheet so the width was actually the height: copy it over and work out the real width
-			s.vCount = s.hCount;
+			vCount = hCount;
 
 			// Cut off the last number we just found plus an "x", then check for another number indicating a frame height (optional)
-			std::string truncated = s.name.substr( 0, frameWidthStart );
+			std::string truncated = spriteName.substr( 0, frameWidthStart );
 			frameWidthEnd = truncated.find_last_of( "0123456789" );
 			frameWidthStart = truncated.find_last_not_of( "0123456789" );
 
@@ -169,7 +169,7 @@ int PlayGraphics::LoadSpriteSheet( const std::string& path, const std::string& f
 				num = widthString.find_first_of( "0123456789" );
 				PLAY_ASSERT_MSG( num == 0, std::string( "Incorrectly named sprite: " + filename ).c_str() );
 
-				s.hCount = stoi( widthString );
+				hCount = stoi( widthString );
 			}
 			else
 			{
@@ -178,14 +178,31 @@ int PlayGraphics::LoadSpriteSheet( const std::string& path, const std::string& f
 		}
 		else
 		{
-			s.vCount = 1;
+			vCount = 1;
 		}
 	}
 
-	s.totalCount = s.hCount * s.vCount;
+	std::string fileAndPath( path + spriteName + ".PNG" );
+	PlayWindow::LoadPNGImage( fileAndPath, canvasBuffer ); // Allocates memory as we don't know the size
+	
+	return AddSprite( filename, canvasBuffer, hCount, vCount );
+}
 
-	std::string fileAndPath( path + s.name + ".PNG" );
-	PlayWindow::LoadPNGImage( fileAndPath, s.canvasBuffer ); // Allocates memory as we don't know the size
+int PlayGraphics::AddSprite( const std::string& name, PixelData& pixelData, int hCount, int vCount )
+{
+	// Switch everything to uppercase to avoid need to check case each time
+	std::string spriteName = name;
+	for( char& c : spriteName ) c = static_cast<char>( toupper( c ) );
+
+	Sprite s;
+	s.id = m_nTotalSprites++;
+	s.name = spriteName;
+	s.originX = s.originY = 0;
+	s.hCount = hCount;
+	s.vCount = vCount;
+	s.canvasBuffer = pixelData; // copy including pointer to pixel data
+
+	s.totalCount = s.hCount * s.vCount;
 	s.width = s.canvasBuffer.width / s.hCount;
 	s.height = s.canvasBuffer.height / s.vCount;
 
@@ -195,12 +212,50 @@ int PlayGraphics::LoadSpriteSheet( const std::string& path, const std::string& f
 	s.preMultAlpha.height = s.canvasBuffer.height;
 	memset( s.preMultAlpha.pPixels, 0, sizeof( uint32_t ) * s.canvasBuffer.width * s.canvasBuffer.height );
 	PreMultiplyAlpha( s.canvasBuffer.pPixels, s.preMultAlpha.pPixels, s.canvasBuffer.width, s.canvasBuffer.height, s.width, 1.0f, 0x00FFFFFF );
+	s.canvasBuffer.preMultiplied = true;
 
 	// Add the sprite to our vector
 	vSpriteData.push_back( s );
 
 	return s.id;
 }
+
+int PlayGraphics::UpdateSprite( const std::string& name, PixelData& pixelData, int hCount, int vCount )
+{
+	// Switch everything to uppercase to avoid need to check case each time
+	std::string spriteName = name;
+	for( char& c : spriteName ) c = static_cast<char>( toupper( c ) );
+
+	for( Sprite& s : vSpriteData )
+	{
+		if( s.name.find( spriteName ) != std::string::npos )
+		{
+			// delete the old premultiplied buffer
+			delete s.preMultAlpha.pPixels;
+
+			s.hCount = hCount;
+			s.vCount = vCount;
+			s.canvasBuffer = pixelData; // copy including pointer to pixel data
+
+			s.totalCount = s.hCount * s.vCount;
+			s.width = s.canvasBuffer.width / s.hCount;
+			s.height = s.canvasBuffer.height / s.vCount;
+
+			// Create a new buffer with the pre-multiplyied alpha
+			s.preMultAlpha.pPixels = new Pixel[static_cast<size_t>( s.canvasBuffer.width ) * s.canvasBuffer.height];
+			s.preMultAlpha.width = s.canvasBuffer.width;
+			s.preMultAlpha.height = s.canvasBuffer.height;
+			memset( s.preMultAlpha.pPixels, 0, sizeof( uint32_t ) * s.canvasBuffer.width * s.canvasBuffer.height );
+			PreMultiplyAlpha( s.canvasBuffer.pPixels, s.preMultAlpha.pPixels, s.canvasBuffer.width, s.canvasBuffer.height, s.width, 1.0f, 0x00FFFFFF );
+			s.canvasBuffer.preMultiplied = true;
+
+			return s.id;
+		}
+	}
+
+	return -1;
+}
+
 
 int PlayGraphics::LoadBackground( const char* fileAndPath )
 {
@@ -378,6 +433,7 @@ void PlayGraphics::ColourSprite( int spriteId, int r, int g, int b )
 	uint32_t col = ( ( r & 0xFF ) << 16 ) | ( ( g & 0xFF ) << 8 ) | ( b & 0xFF );
 
 	PreMultiplyAlpha( s.canvasBuffer.pPixels, s.preMultAlpha.pPixels, s.canvasBuffer.width, s.canvasBuffer.height, s.width, 1.0f, col );
+	s.canvasBuffer.preMultiplied = true;
 }
 
 int PlayGraphics::DrawString( int fontId, Point2f pos, std::string text ) const
@@ -780,10 +836,14 @@ void PlayGraphics::DrawCircle( Point2f pos, int radius, Pixel pix )
 	}
 };
 
-void PlayGraphics::DrawPixelData( PixelData* pixelData, Point2f pos, float alphaMultiply )
+void PlayGraphics::DrawPixelData( PixelData* pixelData, Point2f pos, float alpha )
 {
-	PreMultiplyAlpha( pixelData->pPixels, pixelData->pPixels, pixelData->width, pixelData->height, pixelData->width );
-	m_blitter.BlitPixels( *pixelData, 0, static_cast<int>(pos.x), static_cast<int>(pos.y), pixelData->width, pixelData->height, alphaMultiply );
+	if( !pixelData->preMultiplied )
+	{
+		PreMultiplyAlpha( pixelData->pPixels, pixelData->pPixels, pixelData->width, pixelData->height, pixelData->width );
+		pixelData->preMultiplied = true;
+	}
+	m_blitter.BlitPixels( *pixelData, 0, static_cast<int>(pos.x), static_cast<int>(pos.y), pixelData->width, pixelData->height, alpha );
 }
 
 

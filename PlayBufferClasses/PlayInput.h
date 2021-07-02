@@ -14,7 +14,7 @@ class PlayInput
 {
 public:
 
-	enum
+	enum MouseButton
 	{
 		BUTTON_LEFT	= 0,
 		BUTTON_RIGHT
@@ -32,7 +32,7 @@ public:
 	//********************************************************************************************************************************
 
 	// Returns the status of the supplied mouse button (0=left, 1=right)
-	bool GetMouseDown( int button ) const;
+	bool GetMouseDown( MouseButton button ) const;
 	// Get the screen position of the mouse cursor
 	Point2f GetMousePos() const { return m_mouseData.pos; }
 	// Returns true if the key has been pressed since it was last released

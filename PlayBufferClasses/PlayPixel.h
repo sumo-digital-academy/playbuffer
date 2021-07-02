@@ -49,6 +49,7 @@ struct PixelData
 	int width{ 0 };
 	int height{ 0 };
 	Pixel* pPixels{ nullptr };
+	bool preMultiplied = false;
 };
 
 #endif

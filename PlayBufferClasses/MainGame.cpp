@@ -32,6 +32,8 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 
 	// We allocate our own memory for a separate mini drawing buffer
 	g_miniScreen = { MINI_WIDTH, MINI_HEIGHT, new Pixel[MINI_WIDTH * MINI_HEIGHT] };
+	// Once we've added this as a sprite its buffer will be freed up automatically by PlayGraphics
+	graphics.AddSprite( "MINI SCREEN", g_miniScreen );
 }
 
 // Called by the PlayBuffer every frame (60 times a second!)
@@ -75,9 +77,6 @@ bool MainGameUpdate( float elapsedTime )
 // Gets called once when the player quits the game 
 int MainGameExit( void )
 {
-	// It's important to free up any memory we allocated
-	delete g_miniScreen.pPixels;
-
 	PlayGraphics::Destroy();
 	PlayAudio::Destroy();
 	PlayWindow::Destroy();
@@ -231,8 +230,9 @@ void DrawMiniScreen( Point2f pos, float elapsedTime )
 			graphics.Draw( spr_star, starPos, frameIndex );
 		}
 		graphics.DrawRotated( spr_dead, { MINI_WIDTH / 2, MINI_HEIGHT / 2 }, frameIndex, rot_angle );
+		graphics.UpdateSprite( "MINI SCREEN", g_miniScreen ); // Regenerates the pre-multiplied alpha buffer
 		graphics.SetRenderTarget( graphics.GetDrawingBuffer() ); // Subsequent graphics operations revert to the main drawing buffer
-		graphics.DrawPixelData( &g_miniScreen, pos, 0.8f ); // Draw the mini screen to the main drawing buffer
+		graphics.DrawTransparent( graphics.GetSpriteId( "MINI SCREEN" ), pos, 0, 0.8f ); // Draw the mini screen to the main drawing buffer
 		graphics.DrawRect( pos, { pos.x + MINI_WIDTH, pos.y + MINI_HEIGHT }, PIX_WHITE );
 	}
 

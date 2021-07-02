@@ -172,6 +172,12 @@ namespace Play
 		return input.GetMousePos();
 	}
 
+	bool GetMouseButton( Align button )
+	{
+		PlayInput& input = PlayInput::Instance();
+		return input.GetMouseDown( static_cast<PlayInput::MouseButton>(button));
+	}
+
 	//**************************************************************************************************
 	// PlaySpeaker functions
 	//**************************************************************************************************
@@ -233,6 +239,11 @@ namespace Play
 	const char* GetSpriteName( int spriteId )
 	{
 		return PlayGraphics::Instance().GetSpriteName( spriteId ).c_str();
+	}
+
+	int GetSpriteFrames( int spriteId )
+	{
+		return static_cast<int>( PlayGraphics::Instance().GetSpriteFrames( spriteId ) );
 	}
 
 	void ColourSprite( const char* spriteName, Colour c )
@@ -335,6 +346,11 @@ namespace Play
 	void DrawCircle( Point2D pos, int radius, Colour c )
 	{
 		PlayGraphics::Instance().DrawCircle( pos, radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
+	}
+
+	void DrawRect( Point2D topLeft, Point2D bottomRight, Colour c, bool fill )
+	{
+		PlayGraphics::Instance().DrawRect( topLeft, bottomRight, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
 	}
 
 	void DrawSpriteLine( Point2f startPos, Point2f endPos, const char* penSprite, Colour c )
@@ -442,6 +458,22 @@ namespace Play
 
 		PlayGraphics::Instance().DrawString( font, pos, text );
 	}
+
+	void BeginTimingBar( Colour c )
+	{
+		PlayGraphics::Instance().TimingBarBegin( Pixel( c.red*2.55f, c.green*2.55f, c.blue*2.55f ) );
+	}
+
+	int ColourTimingBar( Colour c )
+	{
+		return PlayGraphics::Instance().SetTimingBarColour( Pixel( c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f ) );
+	}
+
+	void DrawTimingBar( Point2f pos, Point2f size )
+	{
+		PlayGraphics::Instance().DrawTimingBar( pos, size );
+	}
+
 
 	//**************************************************************************************************
 	// GameObject functions

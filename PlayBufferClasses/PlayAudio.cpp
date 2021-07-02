@@ -20,6 +20,7 @@ PlayAudio* PlayAudio::s_pInstance = nullptr;
 PlayAudio::PlayAudio( const char* path )
 {
 	PLAY_ASSERT_MSG( !s_pInstance, "PlayAudio is a singleton class: multiple instances not allowed!" );
+	PLAY_ASSERT_MSG( std::filesystem::is_directory( path ), "Audio directory does not exist!" );
 
 	// Iterate through the directory
 	for( auto& p : std::filesystem::directory_iterator( path ) )

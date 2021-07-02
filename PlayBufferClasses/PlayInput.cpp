@@ -45,7 +45,7 @@ void PlayInput::Destroy()
 // Mouse functions
 //********************************************************************************************************************************
 
-bool PlayInput::GetMouseDown( int button ) const
+bool PlayInput::GetMouseDown( MouseButton button ) const
 {
 	PLAY_ASSERT_MSG( button == BUTTON_LEFT || button == BUTTON_RIGHT, "Invalid mouse button selected." );
 

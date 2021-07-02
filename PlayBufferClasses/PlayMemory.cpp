@@ -103,12 +103,17 @@ void operator delete( void* p, const char* file, int line )
 	operator delete( p );
 }
 
+int g_id = -1;
+
 void operator delete( void* p )
 {
 	for( unsigned int a = 0; a < g_allocCount; a++ )
 	{
 		if( g_allocations[a].address == p )
 		{
+			if( g_allocations[a].id == g_id )
+				g_allocations[a].id = g_id;
+
 			g_allocations[a] = g_allocations[g_allocCount - 1];
 			g_allocations[g_allocCount - 1].address = nullptr;
 			g_allocCount--;
@@ -130,6 +135,9 @@ void operator delete[]( void* p )
 	{
 		if( g_allocations[a].address == p )
 		{
+			if( g_allocations[a].id == g_id )
+				g_allocations[a].id = g_id;
+
 			g_allocations[a] = g_allocations[g_allocCount - 1];
 			g_allocations[g_allocCount - 1].address = nullptr;
 			g_allocCount--;
@@ -202,6 +210,7 @@ void PrintAllocations( const char* tagText )
 	{
 		ALLOC& a = g_allocations[n];
 		PrintAllocation( tagText, a );
+		bytes += a.size;
 	}
 	sprintf_s( buffer, "%s Total = %d bytes\n", tagText, bytes );
 	DebugOutput( buffer );

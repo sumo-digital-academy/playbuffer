@@ -387,6 +387,7 @@ void PlayBlitter::ClearRenderTarget( Pixel colour )
 {
 	Pixel* pBuffEnd = m_pRenderTarget->pPixels + ( m_pRenderTarget->width * m_pRenderTarget->height );
 	for( Pixel* pBuff = m_pRenderTarget->pPixels; pBuff < pBuffEnd; *pBuff++ = colour.bits );
+	m_pRenderTarget->preMultiplied = false;
 }
 
 void PlayBlitter::BlitBackground( PixelData& backgroundImage )
