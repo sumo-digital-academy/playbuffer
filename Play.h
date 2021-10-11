@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"1.1.21.07.02"
+#define PLAY_VERSION	"1.1.21.10.11"
 
 #include <cstdint>
 #include <cstdlib>
@@ -1157,7 +1157,7 @@ namespace Play
 	// Collects the IDs of all of the GameObjects
 	std::vector<int> CollectAllGameObjectIDs();
 	// Performs a typical update of the object's position and animation
-	void UpdateGameObject( GameObject& object );
+	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0 );
 	// Deletes the GameObject with the corresponding id
 	//> Use GameObject.GetId() to find out its unique id
 	void DestroyGameObject( int id );
@@ -1175,7 +1175,7 @@ namespace Play
 
 	// Sets the velocity of the object based on a target rotation angle
 	void SetGameObjectDirection( GameObject& obj, int speed, float rotation );
-	// Set the velocity of the object based on a target point
+	// Set the velocity and rotation of the object based on a target point
 	void PointGameObject( GameObject& obj, int speed, int targetX, int targetY );
 
 	// Changes the object's current spite and resets its animation frame to the start
@@ -2541,6 +2541,7 @@ int PlayGraphics::GetSpriteId( const char* name ) const
 		if( s.name.find( tofind ) != std::string::npos )
 			return s.id;
 	}
+	PLAY_ASSERT_MSG( false, "The sprite name is invalid!" );
 	return -1;
 }
 
@@ -3928,10 +3929,12 @@ namespace Play
 
 	GameObject& GetGameObject( int ID )
 	{
-		if( objectMap.find( ID ) == objectMap.end() )
+		std::map<int, GameObject&>::iterator i = objectMap.find( ID );
+
+		if( i == objectMap.end() )
 			return noObject;
 
-		return objectMap.find( ID )->second;
+		return i->second;
 	}
 
 	GameObject& GetGameObjectByType( int type )
@@ -3966,7 +3969,7 @@ namespace Play
 		return vec; // Returning a copy of the vector
 	}
 
-	void UpdateGameObject( GameObject& obj )
+	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize )
 	{
 		if( obj.type == -1 ) return; // Don't update noObject
 
@@ -3986,6 +3989,25 @@ namespace Play
 			obj.frame++;
 			obj.framePos -= 1.0f;
 		}
+
+		// Wrap objects around the screen
+		if( bWrap )
+		{
+			int dWidth = PlayWindow::Instance().GetWidth();
+			int dHeight = PlayWindow::Instance().GetHeight();
+			Vector2f origin = PlayGraphics::Instance().GetSpriteOrigin( obj.spriteId );
+
+			if( obj.pos.x - origin.x - wrapBorderSize > dWidth )
+				obj.pos.x = 0.0f - wrapBorderSize + origin.x;
+			else if( obj.pos.x + origin.x + wrapBorderSize < 0 )
+				obj.pos.x = dWidth + wrapBorderSize - origin.x;
+
+			if( obj.pos.y - origin.y - wrapBorderSize > dHeight )
+				obj.pos.y = 0.0f - wrapBorderSize + origin.y;
+			else if( obj.pos.y + origin.y + wrapBorderSize < 0 )
+				obj.pos.y = dHeight + wrapBorderSize - origin.y;
+		}
+
 	}
 
 	void DestroyGameObject( int ID )
@@ -4080,8 +4102,8 @@ namespace Play
 	{
 		if( obj.type == -1 ) return; // Not for noObject
 
-		obj.velocity.x = speed * cos( angle );
-		obj.velocity.y = speed * sin( angle );
+		obj.velocity.x = speed * sin( angle );
+		obj.velocity.y = speed * -cos( angle );
 	}
 
 	void PointGameObject( GameObject& obj, int speed, int targetX, int targetY )
@@ -4091,10 +4113,10 @@ namespace Play
 		float xdiff = obj.pos.x - targetX;
 		float ydiff = obj.pos.y - targetY;
 
-		float angle = atan2( ydiff, xdiff ) + 3.14f;
+		obj.rotation = atan2( ydiff, xdiff ) - (PLAY_PI/2);
 
-		obj.velocity.x = speed * cos( angle );
-		obj.velocity.y = speed * sin( angle );
+		obj.velocity.x = speed * sin( obj.rotation );
+		obj.velocity.y = speed * -cos( obj.rotation );
 	}
 
 	void SetSprite( GameObject& obj, const char* spriteName, float animSpeed )
