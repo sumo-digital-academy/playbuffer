@@ -493,10 +493,12 @@ namespace Play
 
 	GameObject& GetGameObject( int ID )
 	{
-		if( objectMap.find( ID ) == objectMap.end() )
+		std::map<int, GameObject&>::iterator i = objectMap.find( ID );
+
+		if( i == objectMap.end() )
 			return noObject;
 
-		return objectMap.find( ID )->second;
+		return i->second;
 	}
 
 	GameObject& GetGameObjectByType( int type )
@@ -531,7 +533,7 @@ namespace Play
 		return vec; // Returning a copy of the vector
 	}
 
-	void UpdateGameObject( GameObject& obj )
+	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize )
 	{
 		if( obj.type == -1 ) return; // Don't update noObject
 
@@ -551,6 +553,25 @@ namespace Play
 			obj.frame++;
 			obj.framePos -= 1.0f;
 		}
+
+		// Wrap objects around the screen
+		if( bWrap )
+		{
+			int dWidth = PlayWindow::Instance().GetWidth();
+			int dHeight = PlayWindow::Instance().GetHeight();
+			Vector2f origin = PlayGraphics::Instance().GetSpriteOrigin( obj.spriteId );
+
+			if( obj.pos.x - origin.x - wrapBorderSize > dWidth )
+				obj.pos.x = 0.0f - wrapBorderSize + origin.x;
+			else if( obj.pos.x + origin.x + wrapBorderSize < 0 )
+				obj.pos.x = dWidth + wrapBorderSize - origin.x;
+
+			if( obj.pos.y - origin.y - wrapBorderSize > dHeight )
+				obj.pos.y = 0.0f - wrapBorderSize + origin.y;
+			else if( obj.pos.y + origin.y + wrapBorderSize < 0 )
+				obj.pos.y = dHeight + wrapBorderSize - origin.y;
+		}
+
 	}
 
 	void DestroyGameObject( int ID )
@@ -645,8 +666,8 @@ namespace Play
 	{
 		if( obj.type == -1 ) return; // Not for noObject
 
-		obj.velocity.x = speed * cos( angle );
-		obj.velocity.y = speed * sin( angle );
+		obj.velocity.x = speed * sin( angle );
+		obj.velocity.y = speed * -cos( angle );
 	}
 
 	void PointGameObject( GameObject& obj, int speed, int targetX, int targetY )
@@ -656,10 +677,10 @@ namespace Play
 		float xdiff = obj.pos.x - targetX;
 		float ydiff = obj.pos.y - targetY;
 
-		float angle = atan2( ydiff, xdiff ) + 3.14f;
+		obj.rotation = atan2( ydiff, xdiff ) - (PLAY_PI/2);
 
-		obj.velocity.x = speed * cos( angle );
-		obj.velocity.y = speed * sin( angle );
+		obj.velocity.x = speed * sin( obj.rotation );
+		obj.velocity.y = speed * -cos( obj.rotation );
 	}
 
 	void SetSprite( GameObject& obj, const char* spriteName, float animSpeed )

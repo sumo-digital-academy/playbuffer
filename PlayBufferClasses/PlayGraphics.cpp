@@ -307,6 +307,7 @@ int PlayGraphics::GetSpriteId( const char* name ) const
 		if( s.name.find( tofind ) != std::string::npos )
 			return s.id;
 	}
+	PLAY_ASSERT_MSG( false, "The sprite name is invalid!" );
 	return -1;
 }
 

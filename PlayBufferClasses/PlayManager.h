@@ -214,7 +214,7 @@ namespace Play
 	// Collects the IDs of all of the GameObjects
 	std::vector<int> CollectAllGameObjectIDs();
 	// Performs a typical update of the object's position and animation
-	void UpdateGameObject( GameObject& object );
+	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0 );
 	// Deletes the GameObject with the corresponding id
 	//> Use GameObject.GetId() to find out its unique id
 	void DestroyGameObject( int id );
@@ -232,7 +232,7 @@ namespace Play
 
 	// Sets the velocity of the object based on a target rotation angle
 	void SetGameObjectDirection( GameObject& obj, int speed, float rotation );
-	// Set the velocity of the object based on a target point
+	// Set the velocity and rotation of the object based on a target point
 	void PointGameObject( GameObject& obj, int speed, int targetX, int targetY );
 
 	// Changes the object's current spite and resets its animation frame to the start

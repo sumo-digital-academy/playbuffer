@@ -351,3 +351,5 @@ MigrationBackup/
 GetLatest.bat
 GetPlay.bat
 GetPlayBufferClasses.bat
+Play.h
+SpyWire/MainGame.cpp
