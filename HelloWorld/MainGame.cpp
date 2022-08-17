@@ -26,7 +26,14 @@ bool MainGameUpdate( float elapsedTime )
 {
 	gameState.timer += elapsedTime;
 	Play::ClearDrawingBuffer( Play::cOrange );
-	Play::DrawDebugText( { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 }, "Hello World!" );
+	Play::DrawDebugText({ DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 },
+						Play::GetSpriteName(gameState.spriteId),
+						Play::cWhite);
+	Play::DrawSprite(gameState.spriteId, Play::GetMousePos(), gameState.timer);
+	
+	if (Play::KeyPressed(VK_SPACE))
+		gameState.spriteId++;
+	
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( VK_ESCAPE );
 }
