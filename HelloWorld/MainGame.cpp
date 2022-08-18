@@ -26,8 +26,8 @@ enum GameObjectType
 };
 
 void HandlePlayerControls();
-void updateFan();
-void updateTools();
+void UpdateFan();
+void UpdateTools();
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
