@@ -29,6 +29,8 @@ void HandlePlayerControls();
 void UpdateFan();
 void UpdateTools();
 void UpdateCoinsAndStars();
+void UpdateLasers();
+void UpdateDestroyed();
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -55,6 +57,8 @@ bool MainGameUpdate( float elapsedTime )
 	UpdateFan();
 	UpdateTools();
 	UpdateCoinsAndStars();
+	UpdateLasers();
+	UpdateDestroyed();
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( VK_ESCAPE );
 }
@@ -85,6 +89,15 @@ void HandlePlayerControls()
 		obj_agent8.velocity *= 0.5f;
 		obj_agent8.acceleration = { 0, 0 };
 	}
+
+	if (Play::KeyPressed(VK_SPACE))
+	{
+		Vector2D firePos = obj_agent8.pos + Vector2D(155, -75);
+		int id = Play::CreateGameObject(TYPE_LASER, firePos, 30, "laser");
+		Play::GetGameObject(id).velocity = { 32,0 };
+		Play::PlayAudio("shoot");
+	}
+
 	Play::UpdateGameObject(obj_agent8);
 	
 	if (Play::IsLeavingDisplayArea(obj_agent8))
@@ -197,6 +210,75 @@ void UpdateCoinsAndStars()
 		Play::DrawObjectRotated(obj_star);
 
 		if (!Play::IsVisible(obj_star))
+		{
 			Play::DestroyGameObject(id_star);
+		}
+	}
+}
+
+void UpdateLasers()
+{
+	std::vector<int> vLasers = Play::CollectGameObjectIDsByType(TYPE_LASER);
+	std::vector<int> vTools = Play::CollectGameObjectIDsByType(TYPE_TOOL);
+	std::vector<int> vCoins = Play::CollectGameObjectIDsByType(TYPE_COIN);
+
+	for (int id_laser : vLasers)
+	{
+		GameObject& obj_laser = Play::GetGameObject(id_laser);
+		bool hasCollided = false;
+		for (int id_tool : vTools)
+		{
+			GameObject& obj_tool = Play::GetGameObject(id_tool);
+			if (Play::IsColliding(obj_laser, obj_tool))
+			{
+				hasCollided = true;
+				obj_tool.type = TYPE_DESTROYED;
+				gameState.score += 100;
+			}
+		}
+		for (int id_coin : vCoins)
+		{
+			GameObject& obj_coin = Play::GetGameObject(id_coin);
+			if (Play::IsColliding(obj_laser, obj_coin))
+			{
+				hasCollided = true;
+				obj_coin.type = TYPE_DESTROYED;
+				Play::PlayAudio("error");
+				gameState.score -= 300;
+			}
+		}
+		if (gameState.score < 0)
+		{
+			gameState.score = 0;
+		}
+		Play::UpdateGameObject(obj_laser);
+		Play::DrawObject(obj_laser);
+
+		if (!Play::IsVisible(obj_laser) || hasCollided)
+		{
+			Play::DestroyGameObject(id_laser);
+		}
+	}
+}
+
+void UpdateDestroyed()
+{
+	std::vector<int> vDead = Play::CollectGameObjectIDsByType(TYPE_DESTROYED);
+
+	for (int id_dead : vDead)
+	{
+		GameObject& obj_dead = Play::GetGameObject(id_dead);
+		obj_dead.animSpeed = 0.2f;
+		Play::UpdateGameObject(obj_dead);
+
+		if (obj_dead.frame % 2)
+		{
+			Play::DrawObjectRotated(obj_dead, (10 - obj_dead.frame) / 10.0f);
+
+		}
+		if (!Play::IsVisible(obj_dead) || obj_dead.frame >= 10)
+		{
+			Play::DestroyGameObject(id_dead);
+		}
 	}
 }
