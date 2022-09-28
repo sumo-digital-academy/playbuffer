@@ -36,8 +36,9 @@ public:
 	// Get the screen position of the mouse cursor
 	Point2f GetMousePos() const { return m_mouseData.pos; }
 	// Returns true if the key has been pressed since it was last released
+	// If you omit the frame number then only the first call in the same frame will ever return true
 	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	bool KeyPressed( int vKey );
+	bool KeyPressed( int vKey, int frame = -1 );
 	// Returns true if the key is currently being held down
 	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	bool KeyDown( int vKey );

@@ -156,8 +156,12 @@ int PlayWindow::HandleWindows( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPS
 
 		} while( elapsedTime < 1000.0f / FRAMES_PER_SECOND );
 
-		// Call the main game update function
-		quit = MainGameUpdate( static_cast<float>( elapsedTime ) / 1000.0f );
+		// Call the main game update function (only while we have the input focus in release mode)
+#ifndef _DEBUG
+		if( GetFocus() == m_hWindow )
+#endif
+			quit = MainGameUpdate( static_cast<float>( elapsedTime ) / 1000.0f );
+		
 		lastDrawTime = now;
 
 		DwmFlush(); // Waits for DWM compositor to finish

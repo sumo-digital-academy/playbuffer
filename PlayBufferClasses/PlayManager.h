@@ -14,7 +14,6 @@
 #endif
 
 // PlayManager manges a map of GameObject structures
-// > Additional member variables can be added with PLAY_ADD_GAMEOBJECT_MEMBERS 
 struct GameObject
 {
 	GameObject( int type, Point2D pos, int collisionRadius, int spriteId );
@@ -34,6 +33,7 @@ struct GameObject
 	float animSpeed{ 0.0f };
 	int radius{ 0 };
 	float scale{ 1 };
+	// Add your own data members here if you want to
 	PLAY_ADD_GAMEOBJECT_MEMBERS
 
 	int GetId() { return m_id; }
@@ -64,6 +64,12 @@ namespace Play
 		HORIZONTAL = 0,
 		VERTICAL,
 		ALL,
+	};
+
+	enum DrawingSpace
+	{
+		WORLD = 0,
+		SCREEN,
 	};
 
 	// PlayManager uses colour values from 0-100 for red, green, blue and alpha
@@ -107,6 +113,19 @@ namespace Play
 	void StartAudioLoop( const char* mp3Filename );
 	// Stops a looping mp3 audio file started with Play::StartSoundLoop()
 	void StopAudioLoop( const char* mp3Filename );
+
+	// Camera functions
+	//**************************************************************************************************
+
+	// Move the camera to the position specified
+	void SetCameraPosition( Point2f pos );
+	// Changes the drawing space for all drawing functions ( WORLD = Normal, SCREEN = ignore camera )
+	void SetDrawingSpace( DrawingSpace space );
+	// Get the current camera position
+	Point2f GetCameraPosition( void );
+	// Get the current drawing space setting
+	DrawingSpace GetDrawingSpace( void );
+
 
 	// PlayGraphics functions
 	//**************************************************************************************************
@@ -171,6 +190,8 @@ namespace Play
 	void DrawSpriteRotated( const char* spriteName, Point2D pos, int frame, float angle, float scale = 1.0f, float opacity = 1.0f );
 	// Draws the sprite with rotation and transparency (slowest DrawSprite)
 	void DrawSpriteRotated( int spriteID, Point2D pos, int frame, float angle, float scale, float opacity = 1.0f );
+	// Draws the sprite using a tranformation matrix. Final rendering approach depends on the contents of the matrix
+	void DrawSpriteTransformed( int spriteID, const Matrix2D& transform, int frame, float opacity = 1.0f );
 	// Draws a single-pixel wide line between two points in the given colour
 	void DrawLine( Point2D start, Point2D end, Colour col );
 	// Draws a single-pixel wide circle in the given colour
@@ -182,7 +203,7 @@ namespace Play
 	void DrawSpriteLine( Point2D startPos, Point2D endPos, const char* penSprite, Colour c = cWhite );
 	// Draws a circle using a sprite
 	// > Note that colouring affects subsequent DrawSprite calls using the same sprite!!
-	void DrawSpriteCircle( int x, int y, int radius, const char* penSprite, Colour c = cWhite );
+	void DrawSpriteCircle( Point2D pos, int radius, const char* penSprite, Colour c = cWhite );
 	// Draws text using a sprite-based font exported from PlayFontTool
 	void DrawFontText( const char* fontId, std::string text, Point2D pos, Align justify = LEFT );
 	// Adds a sprite dynamically from memory (custom asset pipelines)

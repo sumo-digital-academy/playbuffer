@@ -55,20 +55,21 @@ bool PlayInput::GetMouseDown( MouseButton button ) const
 		return m_mouseData.right;
 };
 
-bool PlayInput::KeyPressed( int vKey )
+bool PlayInput::KeyPressed( int vKey, int frame )
 {
-	static std::map< int, bool > keyMap;
+	static std::map< int, int > keyMap;
 
-	bool& held = keyMap[vKey];
+	int& previous_frame = keyMap[vKey];
 
-	if( KeyDown( vKey ) && !held )
+	// Returns true if key wasn't pressed the last time we checked or if this is the same frame as the last check
+	if( KeyDown( vKey ) && ( previous_frame == 0 || ( previous_frame == frame && frame != -1 ) ) )
 	{
-		held = true;
+		previous_frame = frame;
 		return true;
 	}
 
 	if( !KeyDown( vKey ) )
-		held = false;
+		previous_frame = 0;
 
 	return false;
 }

@@ -25,19 +25,19 @@ public:
 	//********************************************************************************************************************************
 
 	// Sets the colour of an individual pixel on the render target
-	void DrawPixel( int posX, int posY, Pixel pix );
+	void DrawPixel( int posX, int posY, Pixel pix ) const;
 	// Draws a line of pixels into the render target
-	void DrawLine( int startX, int startY, int endX, int endY, Pixel pix );
+	void DrawLine( int startX, int startY, int endX, int endY, Pixel pix ) const;
 	// Draws pixel data to the render target using a direct copy
 	// > Setting alphaMultiply < 1 forces a less optimal rendering approach (~50% slower) 
 	void BlitPixels( const PixelData& srcImage, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, float alphaMultiply ) const;
 	// Draws rotated and scaled pixel data to the render target (much slower than BlitPixels)
-	// > Setting alphaMultiply isn't a signfiicant additional slow down on RotateScalePixels
-	void RotateScalePixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, int originX, int originY, float angle, float scale, float alphaMultiply = 1.0f ) const;
+	// > Setting alphaMultiply < 1 is not much slower overall (~10% slower) 
+	void TransformPixels( const PixelData& srcPixelData, int srcFrameOffset, int srcWidth, int srcHeight, const Point2f& origin, const Matrix2D& m, float alphaMultiply = 1.0f ) const;
 	// Clears the render target using the given pixel colour
-	void ClearRenderTarget( Pixel colour );
+	void ClearRenderTarget( Pixel colour ) const;
 	// Copies a background image of the correct size to the render target
-	void BlitBackground( PixelData& backgroundImage );
+	void BlitBackground( PixelData& backgroundImage ) const;
 
 private:
 

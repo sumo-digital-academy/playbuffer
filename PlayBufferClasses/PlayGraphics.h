@@ -98,6 +98,8 @@ public:
 	void DrawTransparent( int spriteId, Point2f pos, int frameIndex, float alphaMultiply ) const; // This just to force people to consider when they use an explicit alpha multiply
 	// Draw the sprite rotated with transparency (slowest draw)
 	void DrawRotated( int spriteId, Point2f pos, int frameIndex, float angle, float scale = 1.0f, float alphaMultiply = 1.0f ) const;
+	// Draw the sprite using a matrix transformation and transparency (slowest draw)
+	void DrawTransformed( int spriteId, const Matrix2D& transform, int frameIndex, float alphaMultiply = 1.0f ) const;
 	// Draws a previously loaded background image
 	void DrawBackground( int backgroundIndex = 0 );
 	// Multiplies the sprite image buffer by the colour values

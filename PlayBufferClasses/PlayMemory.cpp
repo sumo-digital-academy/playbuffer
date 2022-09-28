@@ -210,7 +210,7 @@ void PrintAllocations( const char* tagText )
 	{
 		ALLOC& a = g_allocations[n];
 		PrintAllocation( tagText, a );
-		bytes += a.size;
+		bytes += static_cast<int>(a.size);
 	}
 	sprintf_s( buffer, "%s Total = %d bytes\n", tagText, bytes );
 	DebugOutput( buffer );

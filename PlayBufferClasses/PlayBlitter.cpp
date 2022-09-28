@@ -12,7 +12,7 @@ PlayBlitter::PlayBlitter( PixelData* pRenderTarget )
 }
 
 
-void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix )
+void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix ) const
 {
 	if( srcPix.a == 0x00 || posX < 0 || posX >= m_pRenderTarget->width || posY < 0 || posY >= m_pRenderTarget->height )
 		return;
@@ -40,7 +40,7 @@ void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix )
 	return;
 }
 
-void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pix )
+void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pix ) const
 {
 	//Implementation of Bresenham's Line Drawing Algorithm
 	int dx = abs( endX - startX );
@@ -53,7 +53,7 @@ void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pi
 
 	int err = dx + dy;
 
-	if( err == 0 ) return;
+	if( dx == 0 && dy == 0 ) return;
 
 	int x = startX;
 	int y = startY;
@@ -81,10 +81,12 @@ void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pi
 
 //********************************************************************************************************************************
 // Function:	BlitPixels - draws image data with and without a global alpha multiply
-// Parameters:	spriteId = the id of the sprite to draw
-//				xpos, ypos = the position you want to draw the sprite
-//				frameIndex = which frame of the animation to draw (wrapped)
-// Notes:		Alpha multiply approach is relatively unoptimized
+// Parameters:	srcPixelData = the pixel data you want to draw
+//				srcOffset = the horizontal pixel offset for the required animation frame within the PixelData
+//				blitX, blitY = the position you want to draw the sprite within the buffer
+//				blitWidth, blitHeight = the width and height of the animation frame
+//				alphaMultiply = additional transparancy applied to the whole sprite
+// Notes:		Alpha multiply approach is ~50% slower
 //********************************************************************************************************************************
 void PlayBlitter::BlitPixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, float alphaMultiply ) const
 {
@@ -240,104 +242,83 @@ void PlayBlitter::BlitPixels( const PixelData& srcPixelData, int srcOffset, int 
 }
 
 //********************************************************************************************************************************
-// Function:	RotateScaleSprite - draws a rotated and scaled sprite with global alpha multiply
-// Parameters:	s = the sprite to draw
-//				xpos, ypos = the position of the center of rotation.
-//				frameIndex = which frame of the animation to draw (wrapped)
-//				angle = rotation angle
-//				scale = parameter to magnify the sprite.
-//				rotOffX, rotOffY = offset of centre of rotation to the top left of the sprite
-//				alpha = the fraction defining the amount of sprite and background that is draw. 255 = all sprite, 0 = all background.
-// Notes:		Pre-calculates roughly where the sprite will be in the display buffer and only processes those pixels. 
-//				Approx 15 times slower than not rotating.
+// Function:	TransformPixels - draws the image data transforming each screen pixel into image space
+// Parameters:	srcPixelData = the pixel data you want to draw
+//				srcFrameOffset = the horizontal pixel offset for the required animation frame within the PixelData
+//				srcDrawWidth, srcDrawHeight = the width and height of the source image frame
+//				srcOrigin = the centre of rotation for the source image
+//				alphaMultiply = additional transparancy applied to the whole sprite
+// Notes:		Much slower than BlitPixels, alphaMultiply is a negligable overhead compared to the rotation
 //********************************************************************************************************************************
-void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, int originX, int originY, float angle, float scale, float alphaMultiply ) const
-{
-	PLAY_ASSERT_MSG( m_pRenderTarget, "Render target not set for PlayBlitter" );
+void PlayBlitter::TransformPixels( const PixelData& srcPixelData, int srcFrameOffset, int srcDrawWidth, int srcDrawHeight, const Point2f& srcOrigin, const Matrix2D& transform, float alphaMultiply ) const
+{ 
+	static float inf = std::numeric_limits<float>::infinity();
+	float tgt_minx{ inf }, tgt_miny{ inf }, tgt_maxx{ -inf }, tgt_maxy{ -inf };
 
-	//pointers to start of source and destination buffers
-	uint32_t* pSrcBase = &srcPixelData.pPixels->bits + srcOffset;
-	uint32_t* pDstBase = &m_pRenderTarget->pPixels->bits;
-
-	//the centre of rotation in the sprite frame relative to the top corner
-	float fRotCentreU = static_cast<float>( originX );
-	float fRotCentreV = static_cast<float>( originY );
-
-	//u/v are co-ordinates in the rotated sprite frame. x/y are screen buffer co-ordinates.
-	//change in u/v for a unit change in x/y.
-	float dUdX = static_cast<float>( cos( -angle ) ) * ( 1.0f / scale );
-	float dVdX = static_cast<float>( sin( -angle ) ) * ( 1.0f / scale );
-	float dUdY = -dVdX;
-	float dVdY = dUdX;
-
-	//Position in the sprite rotated frame with origin at the center of rotation of the sprite corners.
-	float leftU = -fRotCentreU * scale;
-	float rightU = ( blitWidth + -fRotCentreU ) * scale;
-	float topV = ( -fRotCentreV ) * scale;
-	float bottomV = ( blitHeight - fRotCentreV ) * scale;
-
-	//Scale added in to cancel out the scale in dUdX.
-	float boundingBoxCorners[4][2]
-	{
-		{ ( dUdX * leftU + dVdX * topV ) * scale,			( dUdY * leftU + dVdY * topV ) * scale		},	// Top left
-		{ ( dUdX * leftU + dVdX * bottomV ) * scale,		( dUdY * leftU + dVdY * bottomV ) * scale		},	// Bottom left
-		{ ( dUdX * rightU + dVdX * bottomV ) * scale,		( dUdY * rightU + dVdY * bottomV ) * scale	},	// Bottom right
-		{ ( dUdX * rightU + dVdX * topV ) * scale,			( dUdY * rightU + dVdY * topV ) * scale,		},	// Top right
-	};
-
-	float minX = std::numeric_limits<float>::infinity();
-	float minY = std::numeric_limits<float>::infinity();
-	float maxX = -std::numeric_limits<float>::infinity();
-	float maxY = -std::numeric_limits<float>::infinity();
+	float x[2] = { -srcOrigin.x, srcDrawWidth - srcOrigin.x };
+	float y[2] = { -srcOrigin.y, srcDrawHeight - srcOrigin.y };
+	Point2f vertices[4] = { { x[0], y[0] }, { x[1], y[0] }, { x[1], y[1] }, { x[0], y[1] } };
 
 	//calculate the extremes of the rotated corners.
 	for( int i = 0; i < 4; i++ )
 	{
-		minX = std::min( minX, boundingBoxCorners[i][0] );
-		maxX = std::max( maxX, boundingBoxCorners[i][0] );
-		minY = std::min( minY, boundingBoxCorners[i][1] );
-		maxY = std::max( maxY, boundingBoxCorners[i][1] );
+		vertices[i] = transform.Transform( vertices[i] );
+		tgt_minx = floor( tgt_minx < vertices[i].x ? tgt_minx : vertices[i].x );
+		tgt_maxx = ceil( tgt_maxx > vertices[i].x ? tgt_maxx : vertices[i].x );
+		tgt_miny = floor( tgt_miny < vertices[i].y ? tgt_miny : vertices[i].y );
+		tgt_maxy = ceil( tgt_maxy > vertices[i].y ? tgt_maxy : vertices[i].y );
 	}
 
-	//clip the starting and finishing positions.
-	int startY = blitY + static_cast<int>( minY );
-	if( startY < 0 ) { startY = 0; minY = static_cast<float>( -blitY ); }
+	if( Determinant( transform ) == 0.0f ) return;
+	Matrix2D invTransform = transform;
+	invTransform.Inverse();
 
-	int endY = blitY + static_cast<int>( maxY );
-	if( endY > m_pRenderTarget->height ) { endY = m_pRenderTarget->height; }
+	int tgt_draw_width = static_cast<int>(tgt_maxx - tgt_minx);
+	int tgt_draw_height = static_cast<int>(tgt_maxy - tgt_miny);
+	int tgt_buffer_width = m_pRenderTarget->width;
+	int tgt_buffer_height = m_pRenderTarget->height;
 
-	int startX = blitX + static_cast<int>( minX );
-	if( startX < 0 ) { startX = 0; minX = static_cast<float>( -blitX ); }
+	if( tgt_miny < 0 ) { tgt_draw_height += (int)tgt_miny; tgt_miny = 0; }
+	if( tgt_maxy > (float)tgt_buffer_height ) { tgt_draw_height -= (int)tgt_maxy - tgt_buffer_height; tgt_maxy = (float)tgt_buffer_height; }
+	if( tgt_minx < 0 ) { tgt_draw_width += (int)tgt_minx; tgt_minx = 0; }
+	if( tgt_maxx > (float)tgt_buffer_width ) { tgt_draw_width -= (int)tgt_maxx - tgt_buffer_width;  tgt_maxx = (float)tgt_buffer_width; }
 
-	int endX = blitX + static_cast<int>( maxX );
-	if( endX > m_pRenderTarget->width ) { endX = m_pRenderTarget->width; }
+	Point2f tgt_pixel_start{ tgt_minx, tgt_miny };
+	Point2f src_pixel_start = invTransform.Transform( tgt_pixel_start ) + srcOrigin;
 
-	//rotate the basis so we get the edge of the bounding box in the sprite frame.
-	float startingU = dUdX * minX + dUdY * minY + fRotCentreU;
-	float startingV = dVdY * minY + dVdX * minX + fRotCentreV;
+	float src_posx = src_pixel_start.x;
+	float src_posy = src_pixel_start.y;
 
-	float rowU = startingU;
-	float rowV = startingV;
+	int tgt_posx = static_cast<int>( tgt_pixel_start.x );
+	int tgt_posy = static_cast<int>( tgt_pixel_start.y );
 
-	uint32_t* destPixels = pDstBase + ( static_cast<size_t>( m_pRenderTarget->width ) * startY ) + startX;
-	int nextRow = m_pRenderTarget->width - ( endX - startX );
+	float src_xincx = invTransform.row[0].x;
+	float src_xincy = invTransform.row[0].y;
+	float src_yincx = invTransform.row[1].x;
+	float src_yincy = invTransform.row[1].y;
+	float src_xresetx = src_xincx * tgt_draw_width;
+	float src_xresety = src_xincy * tgt_draw_width;
 
-	uint32_t* srcPixels = pSrcBase;
+	int tgt_start_pixel_index = tgt_posx + ( tgt_posy * tgt_buffer_width );
+	uint32_t* tgt_pixel = (uint32_t*)m_pRenderTarget->pPixels + tgt_start_pixel_index;
+	uint32_t* tgt_column_end = tgt_pixel + (tgt_draw_height * tgt_buffer_width );
 
-	//Start of double for loop. 
-	for( int y = startY; y < endY; y++ )
+	// Iterate through each pixel on the screen in turn
+	while( tgt_pixel < tgt_column_end )
 	{
-		float u = rowU;
-		float v = rowV;
+		uint32_t* tgt_row_end = tgt_pixel + tgt_draw_width;
 
-		for( int x = startX; x < endX; x++ )
+		while( tgt_pixel < tgt_row_end )
 		{
-			//Check to see if u and v correspond to a valid pixel in sprite.
-			if( u > 0 && v > 0 && u < blitWidth && v < blitHeight )
-			{
-				srcPixels = pSrcBase + static_cast<size_t>( u ) + ( static_cast<size_t>( v ) * srcPixelData.width );
-				uint32_t src = *srcPixels;
+			int roundX = static_cast<int>( src_posx + 0.5f );
+			int roundY = static_cast<int>( src_posy + 0.5f );
 
+			if( roundX >= 0 && roundY >= 0 && roundX < srcDrawWidth && roundY < srcDrawHeight )
+			{
+				int src_pixel_index = roundX + ( roundY * srcPixelData.width );
+				uint32_t src = *( (uint32_t*)srcPixelData.pPixels + src_pixel_index + srcFrameOffset );
+
+				// If this isn't a fully transparent pixel 
 				if( src < 0xFF000000 )
 				{
 					int srcAlpha = static_cast<int>( ( 0xFF - ( src >> 24 ) ) * alphaMultiply );
@@ -348,7 +329,7 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 					int destGreen = constAlpha * ( ( src >> 8 ) & 0xFF );
 					int destBlue = constAlpha * ( src & 0xFF );
 
-					uint32_t dest = *destPixels;
+					uint32_t dest = *tgt_pixel;
 					int invSrcAlpha = 0xFF - srcAlpha;
 
 					// Apply a standard Alpha blend [ src*srcAlpha + dest*(1-SrcAlpha) ]
@@ -362,35 +343,34 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 					destBlue >>= 8;
 
 					// Put ARGB components back together again
-					*destPixels = 0xFF000000 | ( destRed << 16 ) | ( destGreen << 8 ) | destBlue;
+					*tgt_pixel = 0xFF000000 | ( destRed << 16 ) | ( destGreen << 8 ) | destBlue;
 				}
 			}
 
-			destPixels++;
-
-			// Change the position in the sprite frame for changing X in the display
-			u += dUdX;
-			v += dVdX;
+			tgt_pixel++;
+			src_posx += src_xincx;
+			src_posy += src_xincy;
 		}
 
-		// Work out the change in the sprite frame for changing Y in the display
-		rowU += dUdY;
-		rowV += dVdY;
-		// Next row
-		destPixels += nextRow;
-	}
+		tgt_pixel += tgt_buffer_width - tgt_draw_width;
 
+		src_posx -= src_xresetx;
+		src_posy -= src_xresety;
+
+		src_posx += src_yincx;
+		src_posy += src_yincy;
+	}
 }
 
 
-void PlayBlitter::ClearRenderTarget( Pixel colour )
+void PlayBlitter::ClearRenderTarget( Pixel colour ) const
 {
 	Pixel* pBuffEnd = m_pRenderTarget->pPixels + ( m_pRenderTarget->width * m_pRenderTarget->height );
 	for( Pixel* pBuff = m_pRenderTarget->pPixels; pBuff < pBuffEnd; *pBuff++ = colour.bits );
 	m_pRenderTarget->preMultiplied = false;
 }
 
-void PlayBlitter::BlitBackground( PixelData& backgroundImage )
+void PlayBlitter::BlitBackground( PixelData& backgroundImage ) const
 {
 	PLAY_ASSERT_MSG( backgroundImage.height == m_pRenderTarget->height && backgroundImage.width == m_pRenderTarget->width, "Background size doesn't match render target!" );
 	// Takes about 1ms for 720p screen on i7-8550U

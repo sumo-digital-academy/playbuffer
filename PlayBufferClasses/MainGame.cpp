@@ -7,7 +7,7 @@ constexpr int MINI_HEIGHT = 144;
 constexpr int DISPLAY_SCALE = 1;
 
 // Function declarations
-void DrawSprite( int spriteId, Point2f pos, int frame, float opacity, float rot, bool transparent, bool rotated );
+void DrawSprite( int spriteId, Point2f pos, int frame, float opacity, float rot, float scale, bool transparent, bool rotated );
 void DrawTimingData( float yPos, float elapsedTime );
 void DrawMiniScreen( Point2f pos, float elapsedTime );
 void DrawSpiders( float elapsedTime );
@@ -142,16 +142,16 @@ void DrawSpiders( float elapsedTime )
 	for( int row = 0; row < ROWS; row++ )
 	{
 		for( int column = 0; column < COLUMNS; column++ )
-			DrawSprite( spr_walk_right, squad1_pos + Vector2f( column * COLUMN_DIST, row * ROW_DIST ), frameIndex, 0.1f * column, rot_angle, transparent, rotated );
+			DrawSprite( spr_walk_right, squad1_pos + Vector2f( column * COLUMN_DIST, row * ROW_DIST ), frameIndex, 0.1f * column, rot_angle, sin(rot_angle*5), transparent, rotated );
 
 		for( int column = 0; column < COLUMNS; column++ )
-			DrawSprite( spr_walk_left, squad2_pos + Vector2f( column * COLUMN_DIST, row * ROW_DIST ), frameIndex, 0.1f * column, rot_angle, transparent, rotated );
+			DrawSprite( spr_walk_left, squad2_pos + Vector2f( column * COLUMN_DIST, row * ROW_DIST ), frameIndex, 0.1f * column, rot_angle, cos(rot_angle*5), transparent, rotated );
 	}
 }
 
 
 // Draws a sprite using the specified method
-void DrawSprite( int spriteId, Point2f pos, int frame, float opacity, float rot, bool transparent, bool rotated )
+void DrawSprite( int spriteId, Point2f pos, int frame, float opacity, float rot, float scale, bool transparent, bool rotated )
 {
 	PlayGraphics& graphics = PlayGraphics::Instance();
 
@@ -165,7 +165,7 @@ void DrawSprite( int spriteId, Point2f pos, int frame, float opacity, float rot,
 	else
 	{
 		if( !transparent )
-			graphics.DrawRotated( spriteId, pos, frame, rot, 1.0f, 1.0f ); // A lot slower
+			graphics.DrawRotated( spriteId, pos, frame, rot, 0.75f + (scale*0.25f), 1.0f ); // A lot slower
 		else
 			graphics.DrawRotated( spriteId, pos, frame, rot, 1.0f, opacity ); // Not much slower
 	}

@@ -49,6 +49,15 @@ namespace Play
 	Colour cWhite{ 100.0f, 100.0f, 100.0f };
 	Colour cGrey{ 50.0f, 50.0f, 50.0f };
 
+	int frameCount = 0; // Updated in Play::Present
+
+	// The camera
+	Point2f cameraPos{ 0.0f, 0.0f };
+	DrawingSpace drawSpace = WORLD;
+
+	#define TRANSFORM_SPACE( p )  drawSpace == WORLD ? p - cameraPos : p
+	#define TRANSFORM_MATRIX_SPACE( t ) drawSpace == WORLD ? (t * MatrixTranslation( -cameraPos.x, -cameraPos.y )) : t
+
 	//**************************************************************************************************
 	// Manager creation and deletion
 	//**************************************************************************************************
@@ -110,19 +119,22 @@ namespace Play
 
 	void DrawDebugText( Point2D pos, const char* text, Colour c, bool centred )
 	{
-		PlayGraphics::Instance().DrawDebugString( pos, text, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, centred );
+		PlayGraphics::Instance().DrawDebugString( TRANSFORM_SPACE( pos ), text, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, centred );
 	}
 
 	void PresentDrawingBuffer()
 	{
 		PlayGraphics& pblt = PlayGraphics::Instance();
 		static bool debugInfo = false;
+		DrawingSpace originalDrawSpace = drawSpace;
 
 		if( KeyPressed( VK_F1 ) )
 			debugInfo = !debugInfo;
 
 		if( debugInfo )
 		{
+			drawSpace = SCREEN;
+
 			int textX = 10;
 			int textY = 10;
 			std::string s = "PlayBuffer Version:" + std::string( PLAY_VERSION );
@@ -131,6 +143,8 @@ namespace Play
 			pblt.DrawDebugString( { textX + 1, textY - 1 }, s, PIX_BLACK, false );
 			pblt.DrawDebugString( { textX - 1, textY + 1 }, s, PIX_BLACK, false );
 			pblt.DrawDebugString( { textX, textY }, s, PIX_YELLOW, false );
+
+			drawSpace = WORLD;
 
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
 			
@@ -157,13 +171,16 @@ namespace Play
 				DrawLine( { obj.pos.x - 20,  obj.pos.y - 20 }, { obj.pos.x + 20, obj.pos.y + 20 }, cWhite );
 				DrawLine( { obj.pos.x + 20, obj.pos.y - 20 }, { obj.pos.x - 20, obj.pos.y + 20 }, cWhite );
 
-				s = pblt.GetSpriteName( obj.spriteId ) + " f[" + std::to_string( obj.frame ) + "]";
-				pblt.DrawDebugString( { ( p0.x + p1.x ) / 2.0f, p0.y - 20 }, s, PIX_WHITE, true );
+				s = pblt.GetSpriteName( obj.spriteId ) + " f[" + std::to_string( obj.frame % pblt.GetSpriteFrames( obj.spriteId ) ) + "]";
+				DrawDebugText( { ( p0.x + p1.x ) / 2.0f, p0.y - 20 }, s.c_str() );
 			}
 #endif
 		}
 
 		PlayWindow::Instance().Present();
+		frameCount++;
+
+		drawSpace = originalDrawSpace;
 	}
 
 	Point2D GetMousePos()
@@ -198,7 +215,19 @@ namespace Play
 	}
 
 	//**************************************************************************************************
-	// PlayBuffer functions
+	// Camera functions
+	//**************************************************************************************************
+
+	void SetCameraPosition( Point2f pos ) { cameraPos = pos; }
+
+	Point2f GetCameraPosition( void ) { return cameraPos; }
+
+	void SetDrawingSpace( DrawingSpace space ) { drawSpace = space;	}
+
+	DrawingSpace GetDrawingSpace( void ) { return drawSpace; }
+
+	//**************************************************************************************************
+	// PlayGraphics functions
 	//**************************************************************************************************
 
 	int GetSpriteId( const char* spriteName )
@@ -310,47 +339,52 @@ namespace Play
 
 	void DrawSprite( const char* spriteName, Point2D pos, int frameIndex )
 	{
-		PlayGraphics::Instance().Draw( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex );
+		PlayGraphics::Instance().Draw( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex );
 	}
 
 	void DrawSprite( int spriteID, Point2D pos, int frameIndex )
 	{
-		PlayGraphics::Instance().Draw( spriteID, pos, frameIndex );
+		PlayGraphics::Instance().Draw( spriteID, TRANSFORM_SPACE( pos ), frameIndex );
 	}
 
 	void DrawSpriteTransparent( const char* spriteName, Point2D pos, int frameIndex, float opacity )
 	{
-		PlayGraphics::Instance().DrawTransparent( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex, opacity );
+		PlayGraphics::Instance().DrawTransparent( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex, opacity );
 	}
 
 	void DrawSpriteTransparent( int spriteID, Point2D pos, int frameIndex, float opacity )
 	{
-		PlayGraphics::Instance().DrawTransparent( spriteID, pos, frameIndex, opacity );
+		PlayGraphics::Instance().DrawTransparent( spriteID, TRANSFORM_SPACE( pos ), frameIndex, opacity );
 	}
 
 	void DrawSpriteRotated( const char* spriteName, Point2D pos, int frameIndex, float angle, float scale, float opacity )
 	{
-		PlayGraphics::Instance().DrawRotated( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex, angle, scale, opacity );
+		PlayGraphics::Instance().DrawRotated( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex, angle, scale, opacity );
 	}
 
 	void DrawSpriteRotated( int spriteID, Point2D pos, int frameIndex, float angle, float scale, float opacity )
 	{
-		PlayGraphics::Instance().DrawRotated( spriteID, pos, frameIndex, angle, scale, opacity );
+		PlayGraphics::Instance().DrawRotated( spriteID, TRANSFORM_SPACE( pos ), frameIndex, angle, scale, opacity );
+	}
+
+	void DrawSpriteTransformed( int spriteID, const Matrix2D& transform, int frameIndex, float opacity  )
+	{
+		PlayGraphics::Instance().DrawTransformed( spriteID, TRANSFORM_MATRIX_SPACE( transform ), frameIndex, opacity );
 	}
 
 	void DrawLine( Point2f start, Point2f end, Colour c )
 	{
-		return PlayGraphics::Instance().DrawLine( start, end, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }  );
+		return PlayGraphics::Instance().DrawLine( TRANSFORM_SPACE( start ), TRANSFORM_SPACE( end ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }  );
 	}
 
 	void DrawCircle( Point2D pos, int radius, Colour c )
 	{
-		PlayGraphics::Instance().DrawCircle( pos, radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
+		PlayGraphics::Instance().DrawCircle( TRANSFORM_SPACE( pos ), radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
 	}
 
 	void DrawRect( Point2D topLeft, Point2D bottomRight, Colour c, bool fill )
 	{
-		PlayGraphics::Instance().DrawRect( topLeft, bottomRight, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
+		PlayGraphics::Instance().DrawRect( TRANSFORM_SPACE( topLeft ), TRANSFORM_SPACE( bottomRight ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
 	}
 
 	void DrawSpriteLine( Point2f startPos, Point2f endPos, const char* penSprite, Colour c )
@@ -375,7 +409,7 @@ namespace Play
 		
 		int err = dx + dy;
 
-		if( err == 0 ) return;
+		if( dx == 0 && dy == 0 ) return;
 
 		while( true )
 		{
@@ -398,6 +432,7 @@ namespace Play
 		}
 	}
 
+	// Not exposed externally
 	void DrawCircleOctants( int spriteId, int x, int y, int ox, int oy )
 	{
 		//displaying all 8 coordinates of(x,y) residing in 8-octants
@@ -411,14 +446,16 @@ namespace Play
 		Play::DrawSprite( spriteId, { x - oy, y - ox }, 0 );
 	}
 
-	void DrawSpriteCircle( int x, int y, int radius, const char* penSprite, Colour c )
+	void DrawSpriteCircle( Point2D pos, int radius, const char* penSprite, Colour c )
 	{
 		int spriteId = PlayGraphics::Instance().GetSpriteId( penSprite );
 		ColourSprite( penSprite, c );
 
+		pos = TRANSFORM_SPACE( pos );
+
 		int ox = 0, oy = radius;
 		int d = 3 - 2 * radius;
-		DrawCircleOctants( spriteId, x, y, ox, oy );
+		DrawCircleOctants( spriteId, static_cast<int>(pos.x), static_cast<int>(pos.y), ox, oy );
 
 		while( oy >= ox )
 		{
@@ -432,7 +469,7 @@ namespace Play
 			{
 				d = d + 4 * ox + 6;
 			}
-			DrawCircleOctants( spriteId, x, y, ox, oy );
+			DrawCircleOctants( spriteId, static_cast<int>(pos.x), static_cast<int>(pos.y), ox, oy );
 		}
 	};
 
@@ -441,6 +478,7 @@ namespace Play
 		int font = PlayGraphics::Instance().GetSpriteId( fontId );
 
 		int totalWidth{ 0 };
+
 		for( char c : text )
 			totalWidth += PlayGraphics::Instance().GetFontCharWidth( font, c );
 
@@ -456,7 +494,8 @@ namespace Play
 				break;
 		}
 
-		PlayGraphics::Instance().DrawString( font, pos, text );
+		pos.x += PlayGraphics::Instance().GetSpriteOrigin( font ).x;
+		PlayGraphics::Instance().DrawString( font, TRANSFORM_SPACE( pos ), text );
 	}
 
 	void BeginTimingBar( Colour c )
@@ -591,7 +630,7 @@ namespace Play
 	void DestroyGameObjectsByType( int objType )
 	{
 		std::vector<int> typeVec = CollectGameObjectIDsByType( objType );
-		for( size_t i = 1; i < typeVec.size(); i++ )
+		for( size_t i = 0; i < typeVec.size(); i++ )
 			DestroyGameObject( typeVec[i] );
 	}
 
@@ -620,8 +659,10 @@ namespace Play
 		Vector2f spriteSize = pblt.GetSpriteSize( obj.spriteId );
 		Vector2f spriteOrigin = pblt.GetSpriteOrigin( spriteID );
 
-		return( obj.pos.x + spriteSize.width - spriteOrigin.x > 0 && obj.pos.x - spriteOrigin.x < pbuf.GetWidth() &&
-			obj.pos.y + spriteSize.height - spriteOrigin.y > 0 && obj.pos.y - spriteOrigin.y < pbuf.GetHeight() );
+		Point2f pos = TRANSFORM_SPACE( obj.pos );
+
+		return( pos.x + spriteSize.width - spriteOrigin.x > 0 && pos.x - spriteOrigin.x < pbuf.GetWidth() &&
+			pos.y + spriteSize.height - spriteOrigin.y > 0 && pos.y - spriteOrigin.y < pbuf.GetHeight() );
 	}
 
 	bool IsLeavingDisplayArea( GameObject& obj, Direction dirn )
@@ -635,21 +676,23 @@ namespace Play
 		Vector2f spriteSize = pblt.GetSpriteSize( obj.spriteId );
 		Vector2f spriteOrigin = pblt.GetSpriteOrigin( spriteID );
 
+		Point2f pos = TRANSFORM_SPACE( obj.pos );
+
 		if( dirn != VERTICAL )
 		{
-			if( obj.pos.x - spriteOrigin.x < 0 && obj.velocity.x < 0 )
+			if( pos.x - spriteOrigin.x < 0 && obj.velocity.x < 0 )
 				return true;
 
-			if( obj.pos.x + spriteSize.width - spriteOrigin.x > pbuf.GetWidth() && obj.velocity.x > 0 )
+			if( pos.x + spriteSize.width - spriteOrigin.x > pbuf.GetWidth() && obj.velocity.x > 0 )
 				return true;
 		}
 
 		if( dirn != HORIZONTAL )
 		{
-			if( obj.pos.y - spriteOrigin.y < 0 && obj.velocity.y < 0 )
+			if( pos.y - spriteOrigin.y < 0 && obj.velocity.y < 0 )
 				return true;
 
-			if( obj.pos.y + spriteSize.height - spriteOrigin.y > pbuf.GetHeight() && obj.velocity.y > 0 )
+			if( pos.y + spriteSize.height - spriteOrigin.y > pbuf.GetHeight() && obj.velocity.y > 0 )
 				return true;
 		}
 
@@ -696,19 +739,19 @@ namespace Play
 	void DrawObject( GameObject& obj )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().Draw( obj.spriteId, obj.pos, obj.frame );
+		PlayGraphics::Instance().Draw( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame );
 	}
 
 	void DrawObjectTransparent( GameObject& obj, float opacity )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().DrawTransparent( obj.spriteId, obj.pos, obj.frame, opacity );
+		PlayGraphics::Instance().DrawTransparent( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame, opacity );
 	}
 
 	void DrawObjectRotated( GameObject& obj, float opacity )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().DrawRotated( obj.spriteId, obj.pos, obj.frame, obj.rotation, obj.scale, opacity );
+		PlayGraphics::Instance().DrawRotated( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame, obj.rotation, obj.scale, opacity );
 	}
 
 #endif
@@ -719,7 +762,7 @@ namespace Play
 
 	bool KeyPressed( int vKey )
 	{
-		return PlayInput::Instance().KeyPressed( vKey );
+		return PlayInput::Instance().KeyPressed( vKey, frameCount );
 	}
 
 	bool KeyDown( int vKey )
