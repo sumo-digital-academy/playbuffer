@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"1.1.21.10.11"
+#define PLAY_VERSION	"1.1.22.09.28"
 
 #include <cstdint>
 #include <cstdlib>
@@ -129,11 +129,14 @@ constexpr float PLAY_PI	= 3.14159265358979323846f;   // pi
 #pragma warning (push)
 #pragma warning (disable : 4201) // nonstandard extension used: nameless struct/union
 
+struct Vector3f;
+
 // The main 2D structure used in the library
 struct Vector2f
 {
 	Vector2f() {}
 	// We're encouraging implicit type conversions between float and int with the same number of parameters
+	// This is really just to help new players who already suffering from cognitive overload! :-)
 	Vector2f( float x, float y ) : x( x ), y( y ) {}
 	Vector2f( int x, int y ) : x( static_cast<float>( x ) ), y( static_cast<float>( y ) ) {}
 	Vector2f( float x, int y ) : x( x ), y( static_cast<float>( y ) ) {}
@@ -147,14 +150,101 @@ struct Vector2f
 		struct { float width; float height; };
 	};
 
+	// Calculates and returns the length of the vector
+	float Length() const;
+	// Calculates and returns the length of the vector squared (faster)
+	float LengthSqr() const;
+	// Scales this vector to a unit length (with the same direction)
+	void Normalize();
+	// Returns a vector at right angles to this one
+	Vector2f Perpendicular() const;
+	// Returns true if the vector is euivalent to this one within tolerances (read about floating point accuracy!)
+	bool AboutEqualTo( const Vector2f& rhs, const float tolerance ) const;
+	// Returns the dot product between the  vector provided and this one
+	float Dot( const Vector2f& rhs ) const;
+	// Assignment operator with Vector3f
+	Vector2f& operator = ( const Vector3f& rhs );
+	// Copy constructor with Vector3f
+	Vector2f( const Vector3f& rhs );
+};
+
+// A 2D vector with a w component for use with matrices
+struct Vector3f
+{
+	Vector3f() {}
+	Vector3f( float x, float y, float w ) : x( x ), y( y ), w( w ) {}
+	//Vector3f( Vector2f v ) : x( v.x ), y( v.y ), w( 1.0f ) {}
+
+	// Different ways of accessing member data
+	union
+	{
+		float v[3];
+		struct { float x; float y; float w; };
+		struct { float width; float height; float w; };
+	};
+
+	// Returns the 2D part of the 3D vector
+	Vector2f As2D() const { return Vector2f( x, y ); }
+	// Calculates and returns the length of the vector
+	float Length() const;
+	// Calculates and returns the length of the vector squared (faster)
+	float LengthSqr() const;
+	// Scales this vector to a unit length (with the same direction)
+	void Normalize();
+	// Returns a vector at right angles to this one
+	Vector3f Perpendicular() const;
+	// Returns true if the vector is euivalent to this one within tolerances (read about floating point accuracy!)
+	bool AboutEqualTo( const Vector3f& rhs, const float tolerance ) const;
+	// Returns the dot product between the  vector provided and this one
+	float Dot( const Vector3f& rhs ) const;
+	// Assignment operator with Vector2f
+	Vector3f& operator = ( const Vector2f& rhs );
+	// Copy constructor with Vector3f
+	Vector3f( const Vector2f& rhs );
 };
 
 #pragma warning(pop)
 
-// A point is conceptually different to a vector, but maps to Vector2f for ease of use
+// A point is conceptually different to a vector, but maps to Vector2f/Vector3f for ease of use
 using Point2f = Vector2f;
 using Point2D = Vector2f;
-using Vector2D = Vector2f;
+using Vector2D = Vector2f; 
+
+using Point3f = Vector3f;
+using Point3D = Vector3f;
+using Vector3D = Vector3f;
+
+
+// Vector assignment and copy operations
+//**************************************************************************************************
+
+inline Vector2f& Vector2f::operator = ( const Vector3f& rhs )
+{
+	v[0] = rhs.v[0];
+	v[1] = rhs.v[1];
+	return *this;
+}
+
+inline Vector2f::Vector2f( const Vector3f& rhs )
+{
+	v[0] = rhs.v[0];
+	v[1] = rhs.v[1];
+}
+
+inline Vector3f& Vector3f::operator = ( const Vector2f& rhs )
+{
+	v[0] = rhs.v[0];
+	v[1] = rhs.v[1];
+	v[2] = 0.0f;
+	return *this;
+}
+
+inline Vector3f::Vector3f( const Vector2f& rhs )
+{
+	v[0] = rhs.v[0];
+	v[1] = rhs.v[1];
+	v[2] = 0.0f;
+}
 
 // Vector component operations
 //**************************************************************************************************
@@ -169,12 +259,29 @@ inline Vector2f operator + ( const Vector2f& lhs, const Vector2f& rhs )
 	return ret;
 }
 
+inline Vector3f operator + ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs.v[i] + rhs.v[i];
+
+	return ret;
+}
+
 // Vector component assignment addition
 inline Vector2f& operator += ( Vector2f& lhs, const Vector2f& rhs )
 {
 	for( int i = 0; i < 2; ++i )
 		lhs.v[i] += rhs.v[i];
 	
+	return lhs;
+}
+
+inline Vector3f& operator += ( Vector3f& lhs, const Vector3f& rhs )
+{
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] += rhs.v[i];
+
 	return lhs;
 }
 
@@ -188,12 +295,29 @@ inline Vector2f operator - ( const Vector2f& lhs, const Vector2f& rhs )
 	return ret;
 }
 
+inline Vector3f operator - ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs.v[i] - rhs.v[i];
+
+	return ret;
+}
+
 // Vector component assignment subtraction
 inline Vector2f& operator -= ( Vector2f& lhs, const Vector2f& rhs )
 {
 	for( int i = 0; i < 2; ++i )
 		lhs.v[i] -= rhs.v[i];
 	
+	return lhs;
+}
+
+inline Vector3f& operator -= ( Vector3f& lhs, const Vector3f& rhs )
+{
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] -= rhs.v[i];
+
 	return lhs;
 }
 
@@ -207,6 +331,15 @@ inline Vector2f operator - ( const Vector2f& op )
 	return ret;
 }
 
+inline Vector3f operator - ( const Vector3f& op )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = -op.v[i];
+
+	return ret;
+}
+
 // Vector component multiplication
 inline Vector2f operator * ( const Vector2f& lhs, const Vector2f& rhs )
 {
@@ -214,6 +347,15 @@ inline Vector2f operator * ( const Vector2f& lhs, const Vector2f& rhs )
 	for( int i = 0; i < 2; ++i )
 		ret.v[i] = lhs.v[i] * rhs.v[i];
 	
+	return ret;
+}
+
+inline Vector3f operator * ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs.v[i] * rhs.v[i];
+
 	return ret;
 }
 
@@ -227,6 +369,15 @@ inline Vector2f operator *= ( Vector2f& lhs, const Vector2f& rhs )
 	return lhs;
 }
 
+inline Vector3f operator *= ( Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] *= rhs.v[i];
+
+	return lhs;
+}
+
 // Vector component division
 inline Vector2f operator / ( const Vector2f& lhs, const Vector2f& rhs )
 {
@@ -237,6 +388,15 @@ inline Vector2f operator / ( const Vector2f& lhs, const Vector2f& rhs )
 	return ret;
 }
 
+inline Vector3f operator / ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs.v[i] / rhs.v[i];
+
+	return ret;
+}
+
 // Vector component assignment division
 inline Vector2f operator /= ( Vector2f& lhs, const Vector2f& rhs )
 {
@@ -244,6 +404,15 @@ inline Vector2f operator /= ( Vector2f& lhs, const Vector2f& rhs )
 	for( int i = 0; i < 2; ++i )
 		lhs.v[i] /= rhs.v[i];
 	
+	return lhs;
+}
+
+inline Vector3f operator /= ( Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] /= rhs.v[i];
+
 	return lhs;
 }
 
@@ -260,8 +429,22 @@ inline Vector2f operator * ( const Vector2f& lhs, const float rhs )
 	return ret;
 }
 
+inline Vector3f operator * ( const Vector3f& lhs, const float rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs.v[i] * rhs;
+
+	return ret;
+}
+
 // Vector scalar multiplication (reverse operands)
 inline Vector2f operator * ( const float lhs, const Vector2f& rhs )
+{
+	return rhs * lhs;
+}
+
+inline Vector3f operator * ( const float lhs, const Vector3f& rhs )
 {
 	return rhs * lhs;
 }
@@ -276,11 +459,26 @@ inline Vector2f operator *= ( Vector2f& lhs, const float& rhs )
 	return lhs;
 }
 
+inline Vector3f operator *= ( Vector3f& lhs, const float& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] *= rhs;
+
+	return lhs;
+}
+
 // Vector scalar division
 inline Vector2f operator / ( const Vector2f& lhs, const float rhs )
 {
 	return lhs * ( float( 1 ) / rhs );
 }
+
+inline Vector3f operator / ( const Vector3f& lhs, const float rhs )
+{
+	return lhs * ( float( 1 ) / rhs );
+}
+
 
 // Vector scalar division (reverse operands)
 inline Vector2f operator / ( const float lhs, const Vector2f& rhs )
@@ -292,6 +490,15 @@ inline Vector2f operator / ( const float lhs, const Vector2f& rhs )
 	return ret;
 }
 
+inline Vector3f operator / ( const float lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		ret.v[i] = lhs / rhs.v[i];
+
+	return ret;
+}
+
 // Vector scalar assignment multiplication
 inline Vector2f operator /= ( Vector2f& lhs, const float& rhs )
 {
@@ -299,6 +506,15 @@ inline Vector2f operator /= ( Vector2f& lhs, const float& rhs )
 	for( int i = 0; i < 2; ++i )
 		lhs.v[i] /= rhs;
 	
+	return lhs;
+}
+
+inline Vector3f operator /= ( Vector3f& lhs, const float& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+		lhs.v[i] /= rhs;
+
 	return lhs;
 }
 
@@ -317,19 +533,46 @@ inline bool operator == ( const Vector2f& lhs, const Vector2f& rhs )
 	return true;
 }
 
+inline bool operator == ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+	{
+		if( lhs.v[i] != rhs.v[i] )
+			return false;
+	}
+	return true;
+}
+
 // Vector components not equal
 inline bool operator != ( const Vector2f& lhs, const Vector2f& rhs )
 {
 	return !( lhs == rhs );
 }
 
+inline bool operator != ( const Vector3f& lhs, const Vector3f& rhs )
+{
+	return !( lhs == rhs );
+}
+
 // Vector components equal to within specified tolerance.
-inline bool EqualTol( const Vector2f& lhs, const Vector2f& rhs, const float tolerance )
+inline bool Vector2f::AboutEqualTo( const Vector2f& rhs, const float tolerance ) const
 {
 	Vector2f ret;
 	for( int i = 0; i < 2; ++i )
 	{
-		if( std::abs( lhs.v[i] - rhs.v[i] ) > tolerance )
+		if( std::abs( v[i] - rhs.v[i] ) > tolerance )
+			return false;
+	}
+	return true;
+}
+
+inline bool Vector3f::AboutEqualTo( const Vector3f& rhs, const float tolerance ) const
+{
+	Vector3f ret;
+	for( int i = 0; i < 3; ++i )
+	{
+		if( std::abs( v[i] - rhs.v[i] ) > tolerance )
 			return false;
 	}
 	return true;
@@ -339,41 +582,317 @@ inline bool EqualTol( const Vector2f& lhs, const Vector2f& rhs, const float tole
 //**************************************************************************************************
 
 // Dot product
-inline float dot( const Vector2f& lhs, const Vector2f& rhs )
+inline float  Vector2f::Dot( const Vector2f& rhs ) const
 {
 	float ret = 0.f;
 	for( int i = 0; i < 2; ++i )
-		ret += lhs.v[i] * rhs.v[i];
+		ret += v[i] * rhs.v[i];
 	
 	return ret;
 }
 
+inline float dot( const Vector2f& lhs, const Vector2f& rhs )
+{
+	return lhs.Dot( rhs );
+}
+
+
+inline float Vector3f::Dot( const Vector3f& rhs ) const
+{
+	float ret = 0.f;
+	for( int i = 0; i < 3; ++i )
+		ret += v[i] * rhs.v[i];
+
+	return ret;
+}
+
+inline float dot( const Vector3f& lhs, const Vector3f& rhs )
+{
+	return lhs.Dot( rhs );
+}
+
 // Orthogonal vector
-inline Vector2f normal( const Vector2f& lhs )
+inline Vector2f Vector2f::Perpendicular() const
 {
 	Vector2f ret;
-	ret.v[0] = -lhs.v[1];
-	ret.v[1] = lhs.v[0];
+	ret.v[0] = -v[1];
+	ret.v[1] = v[0];
+	return ret;
+}
+
+// Orthogonal vector
+inline Vector2f perpendicular( const Vector3f& rhs ) 
+{
+	Vector2f ret;
+	ret.v[0] = -rhs.v[1];
+	ret.v[1] = rhs.v[0];
 	return ret;
 }
 
 // Vector length squared
+inline float Vector2f::LengthSqr() const
+{
+	return Dot( *this );
+}
+
+inline float Vector3f::LengthSqr() const
+{
+	return Dot( *this );
+}
+
 inline float lengthSqr( const Vector2f& v )
 {
 	return dot( v, v );
 }
 
+inline float lengthSqr( const Vector3f& v )
+{
+	return dot( v, v );
+}
+
+
 // Vector length
+inline float Vector2f::Length() const
+{
+	return sqrt( Dot( *this ) );
+}
+
+inline float Vector3f::Length() const
+{
+	return sqrt( Dot( *this ) );
+}
+
 inline float length( const Vector2f& v )
 {
 	return sqrt( dot( v, v ) );
 }
 
+inline float length( const Vector3f& v )
+{
+	return sqrt( dot( v, v ) );
+}
+
 // Vector normalize
+inline void Vector2f::Normalize()
+{
+	*this /= Length();
+}
+
 inline Vector2f normalize( const Vector2f& v )
 {
-	return v / length( v );
+	return v / v.Length();
 }
+
+inline void Vector3f::Normalize()
+{
+	*this /= Length();
+}
+
+inline Vector3f normalize( const Vector3f& v )
+{
+	return v / v.Length();
+}
+
+
+// A 3x3 structure for representing 2D matrices
+struct Matrix2D
+{
+	Matrix2D() {}
+	explicit Matrix2D( const Vector3f& row0, const Vector3f& row1, const Vector3f& row2 )
+		: row{ row0, row1, row2 }
+	{
+	}
+	union
+	{
+		float m[3][3];
+		Vector3f row[3] = { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } };
+	};
+
+	// Transforms a vector by this matrix
+	Vector2f Transform( const Vector3f& v ) const;
+	// Transforms a vector by this matrix
+	Vector2f Transform( const Vector2f& v ) const;
+	// Transposes the matrix (swaps the columns and rows)
+	void Transpose();
+	// Compares this matrix to another within a tolerance (read about floating point inaccuracies!)
+	bool AboutEqualTo( const Matrix2D& rhs, const float tolerance ) const;
+	// Inverts this matrix (makes it perform the opposite operation)
+	void Inverse();
+};
+
+// Matrix addition
+inline Matrix2D operator + ( const Matrix2D& lhs, const Matrix2D& rhs )
+{
+	Matrix2D ret;
+	for( int i = 0; i < 3; ++i )
+		for( int j = 0; j < 3; ++j )
+			ret.m[i][j] = lhs.m[i][j] + rhs.m[i][j];
+	
+	return ret;
+}
+
+// Matrix subtraction
+inline Matrix2D operator - ( const Matrix2D& lhs, const Matrix2D& rhs )
+{
+	Matrix2D ret;
+	for( int i = 0; i < 3; ++i )
+		for( int j = 0; j < 3; ++j )
+			ret.m[i][j] = lhs.m[i][j] - rhs.m[i][j];
+	
+	return ret;
+}
+
+// Matrix multiplication
+inline Matrix2D operator * ( const Matrix2D& lhs, const Matrix2D& rhs )
+{
+	Matrix2D ret;
+	for( int i = 0; i < 3; ++i )
+	{
+		for( int j = 0; j < 3; ++j )
+		{
+			float t = 0;
+			for( int k = 0; k < 3; ++k )
+				t += lhs.m[k][i] * rhs.m[j][k];
+			
+			ret.m[j][i] = t;
+		}
+	}
+	return ret;
+}
+
+// Multipy a vector by a matrix
+inline Vector2f Matrix2D::Transform( const Vector2f& v ) const
+{
+	Vector3f v3 = v;
+	v3.w = 1.0f;
+	return Transform( v3 );
+}
+
+// Multipy a vector by a matrix
+inline Vector2f Matrix2D::Transform( const Vector3f& v ) const
+{
+	Vector3f ret;
+
+	for( int i = 0; i < 3; ++i )
+	{
+		ret.v[i] = float( 0 );
+		for( int j = 0; j < 3; ++j )
+			ret.v[i] += m[j][i] * v.v[j];
+	}
+	return Vector2f( ret.x, ret.y );
+}
+
+// Transpose the contents of a matrix
+inline void Matrix2D::Transpose()
+{
+	Matrix2D temp;
+	for( int i = 0; i < 3; ++i )
+	{
+		for( int j = 0; j < 3; ++j )
+			temp.m[j][i] = m[i][j];
+	}
+	*this = temp;
+}
+
+// Create an identity matrix
+inline Matrix2D MatrixIdentity()
+{
+	Matrix2D mat;
+	for( int i = 0; i < 3; ++i )
+		for( int j = 0; j < 3; ++j )
+			mat.m[i][j] = ( i == j ) ? float( 1 ) : 0;
+	return mat;
+}
+
+// Create a rotation matrix
+inline Matrix2D MatrixRotation( const float theta )
+{
+	float c = cos( theta );
+	float s = sin( theta );
+
+	return Matrix2D(
+		Vector3f( c, s, 0 ),
+		Vector3f( -s, c, 0 ),
+		Vector3f( 0, 0, 1 )
+	);
+}
+
+// Create a scaling matrix
+inline Matrix2D MatrixScale( const float x, const float y )
+{
+	return Matrix2D(
+		Vector3f( x, 0, 0 ),
+		Vector3f( 0, y, 0 ),
+		Vector3f( 0, 0, 1 )
+	);
+}
+
+// Create a translation matrix
+inline Matrix2D MatrixTranslation( const float x, const float y )
+{
+	return Matrix2D(
+		Vector3f( 1, 0, 0 ),
+		Vector3f( 0, 1, 0 ),
+		Vector3f( x, y, 1 )
+	);
+}
+
+// Compare two matrices within a tolerance value
+inline bool Matrix2D::AboutEqualTo( const Matrix2D& rhs, const float tolerance ) const
+{
+	for( int i = 0; i < 3; ++i )
+	{
+		for( int j = 0; j < 3; ++j )
+		{
+			if( std::abs( m[i][j] - rhs.m[i][j] ) > tolerance )
+				return false;
+		}
+	}
+	return true;
+}
+
+
+// Calculate the determinant of a 2x2 matrix
+inline float Determinant( const Matrix2D& m )
+{
+	return m.m[0][0] * m.m[1][1] * m.m[2][2]
+		+ m.m[1][0] * m.m[2][1] * m.m[0][2]
+		+ m.m[2][0] * m.m[0][1] * m.m[1][2]
+		- m.m[0][0] * m.m[2][1] * m.m[1][2]
+		- m.m[1][0] * m.m[0][1] * m.m[2][2]
+		- m.m[2][0] * m.m[1][1] * m.m[0][2];
+}
+
+inline float det2x2( float a, float b, float c, float d )
+{
+	return a * d - b * c;
+}
+
+// Calculate the inverse of a 2D matrix
+inline void Matrix2D::Inverse()
+{
+	float d = Determinant( *this );
+	PLAY_ASSERT_MSG( d != 0.f, "Zero determinant" );
+
+	float f = float( 1 ) / d;
+
+	float c00 = det2x2( m[1][1], m[2][1], m[1][2], m[2][2] ) * f;
+	float c10 = det2x2( m[0][1], m[2][1], m[0][2], m[2][2] ) * -f;
+	float c20 = det2x2( m[0][1], m[1][1], m[0][2], m[1][2] ) * f;
+
+	float c01 = det2x2( m[1][0], m[2][0], m[1][2], m[2][2] ) * -f;
+	float c11 = det2x2( m[0][0], m[2][0], m[0][2], m[2][2] ) * f;
+	float c21 = det2x2( m[0][0], m[1][0], m[0][2], m[1][2] ) * -f;
+
+	float c02 = det2x2( m[1][0], m[2][0], m[1][1], m[2][1] ) * f;
+	float c12 = det2x2( m[0][0], m[2][0], m[0][1], m[2][1] ) * -f;
+	float c22 = det2x2( m[0][0], m[1][0], m[0][1], m[1][1] ) * f;
+
+	row[0] = Vector3f( c00, c10, c20 );
+	row[1] = Vector3f( c01, c11, c21 );
+	row[2] = Vector3f( c02, c12, c22 );
+}
+
 
 #endif
 
@@ -579,19 +1098,19 @@ public:
 	//********************************************************************************************************************************
 
 	// Sets the colour of an individual pixel on the render target
-	void DrawPixel( int posX, int posY, Pixel pix );
+	void DrawPixel( int posX, int posY, Pixel pix ) const;
 	// Draws a line of pixels into the render target
-	void DrawLine( int startX, int startY, int endX, int endY, Pixel pix );
+	void DrawLine( int startX, int startY, int endX, int endY, Pixel pix ) const;
 	// Draws pixel data to the render target using a direct copy
 	// > Setting alphaMultiply < 1 forces a less optimal rendering approach (~50% slower) 
 	void BlitPixels( const PixelData& srcImage, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, float alphaMultiply ) const;
 	// Draws rotated and scaled pixel data to the render target (much slower than BlitPixels)
-	// > Setting alphaMultiply isn't a signfiicant additional slow down on RotateScalePixels
-	void RotateScalePixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, int originX, int originY, float angle, float scale, float alphaMultiply = 1.0f ) const;
+	// > Setting alphaMultiply < 1 is not much slower overall (~10% slower) 
+	void TransformPixels( const PixelData& srcPixelData, int srcFrameOffset, int srcWidth, int srcHeight, const Point2f& origin, const Matrix2D& m, float alphaMultiply = 1.0f ) const;
 	// Clears the render target using the given pixel colour
-	void ClearRenderTarget( Pixel colour );
+	void ClearRenderTarget( Pixel colour ) const;
 	// Copies a background image of the correct size to the render target
-	void BlitBackground( PixelData& backgroundImage );
+	void BlitBackground( PixelData& backgroundImage ) const;
 
 private:
 
@@ -690,6 +1209,8 @@ public:
 	void SetSpriteOrigins( const char* rootName, Vector2f newOrigin, bool relative = false );
 	// Gets the number of sprites which have been loaded and created by PlayGraphics
 	int GetTotalLoadedSprites() const { return m_nTotalSprites; }
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId ) const { return &vSpriteData[spriteId].canvasBuffer; }
 
 	// Sprite Drawing functions
 	//********************************************************************************************************************************
@@ -700,6 +1221,8 @@ public:
 	void DrawTransparent( int spriteId, Point2f pos, int frameIndex, float alphaMultiply ) const; // This just to force people to consider when they use an explicit alpha multiply
 	// Draw the sprite rotated with transparency (slowest draw)
 	void DrawRotated( int spriteId, Point2f pos, int frameIndex, float angle, float scale = 1.0f, float alphaMultiply = 1.0f ) const;
+	// Draw the sprite using a matrix transformation and transparency (slowest draw)
+	void DrawTransformed( int spriteId, const Matrix2D& transform, int frameIndex, float alphaMultiply = 1.0f ) const;
 	// Draws a previously loaded background image
 	void DrawBackground( int backgroundIndex = 0 );
 	// Multiplies the sprite image buffer by the colour values
@@ -908,8 +1431,9 @@ public:
 	// Get the screen position of the mouse cursor
 	Point2f GetMousePos() const { return m_mouseData.pos; }
 	// Returns true if the key has been pressed since it was last released
+	// If you omit the frame number then only the first call in the same frame will ever return true
 	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-	bool KeyPressed( int vKey );
+	bool KeyPressed( int vKey, int frame = -1 );
 	// Returns true if the key is currently being held down
 	// > https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 	bool KeyDown( int vKey );
@@ -957,7 +1481,6 @@ private:
 #endif
 
 // PlayManager manges a map of GameObject structures
-// > Additional member variables can be added with PLAY_ADD_GAMEOBJECT_MEMBERS 
 struct GameObject
 {
 	GameObject( int type, Point2D pos, int collisionRadius, int spriteId );
@@ -977,6 +1500,7 @@ struct GameObject
 	float animSpeed{ 0.0f };
 	int radius{ 0 };
 	float scale{ 1 };
+	// Add your own data members here if you want to
 	PLAY_ADD_GAMEOBJECT_MEMBERS
 
 	int GetId() { return m_id; }
@@ -1007,6 +1531,12 @@ namespace Play
 		HORIZONTAL = 0,
 		VERTICAL,
 		ALL,
+	};
+
+	enum DrawingSpace
+	{
+		WORLD = 0,
+		SCREEN,
 	};
 
 	// PlayManager uses colour values from 0-100 for red, green, blue and alpha
@@ -1051,6 +1581,19 @@ namespace Play
 	// Stops a looping mp3 audio file started with Play::StartSoundLoop()
 	void StopAudioLoop( const char* mp3Filename );
 
+	// Camera functions
+	//**************************************************************************************************
+
+	// Move the camera to the position specified
+	void SetCameraPosition( Point2f pos );
+	// Changes the drawing space for all drawing functions ( WORLD = Normal, SCREEN = ignore camera )
+	void SetDrawingSpace( DrawingSpace space );
+	// Get the current camera position
+	Point2f GetCameraPosition( void );
+	// Get the current drawing space setting
+	DrawingSpace GetDrawingSpace( void );
+
+	
 	// PlayGraphics functions
 	//**************************************************************************************************
 
@@ -1101,6 +1644,8 @@ namespace Play
 	Point2D GetSpriteOrigin( const char* spriteName );
 	// Gets the origin of the sprite with a specific ID
 	Point2D GetSpriteOrigin( int spriteId );
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId );
 
 	// Draws the first matching sprite whose filename contains the given text
 	void DrawSprite( const char* spriteName, Point2D pos, int frameIndex );
@@ -1114,6 +1659,8 @@ namespace Play
 	void DrawSpriteRotated( const char* spriteName, Point2D pos, int frame, float angle, float scale = 1.0f, float opacity = 1.0f );
 	// Draws the sprite with rotation and transparency (slowest DrawSprite)
 	void DrawSpriteRotated( int spriteID, Point2D pos, int frame, float angle, float scale, float opacity = 1.0f );
+	// Draws the sprite using a tranformation matrix. Final rendering approach depends on the contents of the matrix
+	void DrawSpriteTransformed( int spriteID, const Matrix2D& transform, int frame, float opacity = 1.0f );
 	// Draws a single-pixel wide line between two points in the given colour
 	void DrawLine( Point2D start, Point2D end, Colour col );
 	// Draws a single-pixel wide circle in the given colour
@@ -1125,7 +1672,7 @@ namespace Play
 	void DrawSpriteLine( Point2D startPos, Point2D endPos, const char* penSprite, Colour c = cWhite );
 	// Draws a circle using a sprite
 	// > Note that colouring affects subsequent DrawSprite calls using the same sprite!!
-	void DrawSpriteCircle( int x, int y, int radius, const char* penSprite, Colour c = cWhite );
+	void DrawSpriteCircle( Point2D pos, int radius, const char* penSprite, Colour c = cWhite );
 	// Draws text using a sprite-based font exported from PlayFontTool
 	void DrawFontText( const char* fontId, std::string text, Point2D pos, Align justify = LEFT );
 	// Adds a sprite dynamically from memory (custom asset pipelines)
@@ -1444,7 +1991,7 @@ void PrintAllocations( const char* tagText )
 	{
 		ALLOC& a = g_allocations[n];
 		PrintAllocation( tagText, a );
-		bytes += a.size;
+		bytes += static_cast<int>(a.size);
 	}
 	sprintf_s( buffer, "%s Total = %d bytes\n", tagText, bytes );
 	DebugOutput( buffer );
@@ -1613,8 +2160,12 @@ int PlayWindow::HandleWindows( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPS
 
 		} while( elapsedTime < 1000.0f / FRAMES_PER_SECOND );
 
-		// Call the main game update function
-		quit = MainGameUpdate( static_cast<float>( elapsedTime ) / 1000.0f );
+		// Call the main game update function (only while we have the input focus in release mode)
+#ifndef _DEBUG
+		if( GetFocus() == m_hWindow )
+#endif
+			quit = MainGameUpdate( static_cast<float>( elapsedTime ) / 1000.0f );
+		
 		lastDrawTime = now;
 
 		DwmFlush(); // Waits for DWM compositor to finish
@@ -1847,7 +2398,7 @@ PlayBlitter::PlayBlitter( PixelData* pRenderTarget )
 }
 
 
-void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix )
+void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix ) const
 {
 	if( srcPix.a == 0x00 || posX < 0 || posX >= m_pRenderTarget->width || posY < 0 || posY >= m_pRenderTarget->height )
 		return;
@@ -1875,7 +2426,7 @@ void PlayBlitter::DrawPixel( int posX, int posY, Pixel srcPix )
 	return;
 }
 
-void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pix )
+void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pix ) const
 {
 	//Implementation of Bresenham's Line Drawing Algorithm
 	int dx = abs( endX - startX );
@@ -1888,7 +2439,7 @@ void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pi
 
 	int err = dx + dy;
 
-	if( err == 0 ) return;
+	if( dx == 0 && dy == 0 ) return;
 
 	int x = startX;
 	int y = startY;
@@ -1916,10 +2467,12 @@ void PlayBlitter::DrawLine( int startX, int startY, int endX, int endY, Pixel pi
 
 //********************************************************************************************************************************
 // Function:	BlitPixels - draws image data with and without a global alpha multiply
-// Parameters:	spriteId = the id of the sprite to draw
-//				xpos, ypos = the position you want to draw the sprite
-//				frameIndex = which frame of the animation to draw (wrapped)
-// Notes:		Alpha multiply approach is relatively unoptimized
+// Parameters:	srcPixelData = the pixel data you want to draw
+//				srcOffset = the horizontal pixel offset for the required animation frame within the PixelData
+//				blitX, blitY = the position you want to draw the sprite within the buffer
+//				blitWidth, blitHeight = the width and height of the animation frame
+//				alphaMultiply = additional transparancy applied to the whole sprite
+// Notes:		Alpha multiply approach is ~50% slower
 //********************************************************************************************************************************
 void PlayBlitter::BlitPixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, float alphaMultiply ) const
 {
@@ -2075,104 +2628,83 @@ void PlayBlitter::BlitPixels( const PixelData& srcPixelData, int srcOffset, int 
 }
 
 //********************************************************************************************************************************
-// Function:	RotateScaleSprite - draws a rotated and scaled sprite with global alpha multiply
-// Parameters:	s = the sprite to draw
-//				xpos, ypos = the position of the center of rotation.
-//				frameIndex = which frame of the animation to draw (wrapped)
-//				angle = rotation angle
-//				scale = parameter to magnify the sprite.
-//				rotOffX, rotOffY = offset of centre of rotation to the top left of the sprite
-//				alpha = the fraction defining the amount of sprite and background that is draw. 255 = all sprite, 0 = all background.
-// Notes:		Pre-calculates roughly where the sprite will be in the display buffer and only processes those pixels. 
-//				Approx 15 times slower than not rotating.
+// Function:	TransformPixels - draws the image data transforming each screen pixel into image space
+// Parameters:	srcPixelData = the pixel data you want to draw
+//				srcFrameOffset = the horizontal pixel offset for the required animation frame within the PixelData
+//				srcDrawWidth, srcDrawHeight = the width and height of the source image frame
+//				srcOrigin = the centre of rotation for the source image
+//				alphaMultiply = additional transparancy applied to the whole sprite
+// Notes:		Much slower than BlitPixels, alphaMultiply is a negligable overhead compared to the rotation
 //********************************************************************************************************************************
-void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffset, int blitX, int blitY, int blitWidth, int blitHeight, int originX, int originY, float angle, float scale, float alphaMultiply ) const
-{
-	PLAY_ASSERT_MSG( m_pRenderTarget, "Render target not set for PlayBlitter" );
+void PlayBlitter::TransformPixels( const PixelData& srcPixelData, int srcFrameOffset, int srcDrawWidth, int srcDrawHeight, const Point2f& srcOrigin, const Matrix2D& transform, float alphaMultiply ) const
+{ 
+	static float inf = std::numeric_limits<float>::infinity();
+	float tgt_minx{ inf }, tgt_miny{ inf }, tgt_maxx{ -inf }, tgt_maxy{ -inf };
 
-	//pointers to start of source and destination buffers
-	uint32_t* pSrcBase = &srcPixelData.pPixels->bits + srcOffset;
-	uint32_t* pDstBase = &m_pRenderTarget->pPixels->bits;
-
-	//the centre of rotation in the sprite frame relative to the top corner
-	float fRotCentreU = static_cast<float>( originX );
-	float fRotCentreV = static_cast<float>( originY );
-
-	//u/v are co-ordinates in the rotated sprite frame. x/y are screen buffer co-ordinates.
-	//change in u/v for a unit change in x/y.
-	float dUdX = static_cast<float>( cos( -angle ) ) * ( 1.0f / scale );
-	float dVdX = static_cast<float>( sin( -angle ) ) * ( 1.0f / scale );
-	float dUdY = -dVdX;
-	float dVdY = dUdX;
-
-	//Position in the sprite rotated frame with origin at the center of rotation of the sprite corners.
-	float leftU = -fRotCentreU * scale;
-	float rightU = ( blitWidth + -fRotCentreU ) * scale;
-	float topV = ( -fRotCentreV ) * scale;
-	float bottomV = ( blitHeight - fRotCentreV ) * scale;
-
-	//Scale added in to cancel out the scale in dUdX.
-	float boundingBoxCorners[4][2]
-	{
-		{ ( dUdX * leftU + dVdX * topV ) * scale,			( dUdY * leftU + dVdY * topV ) * scale		},	// Top left
-		{ ( dUdX * leftU + dVdX * bottomV ) * scale,		( dUdY * leftU + dVdY * bottomV ) * scale		},	// Bottom left
-		{ ( dUdX * rightU + dVdX * bottomV ) * scale,		( dUdY * rightU + dVdY * bottomV ) * scale	},	// Bottom right
-		{ ( dUdX * rightU + dVdX * topV ) * scale,			( dUdY * rightU + dVdY * topV ) * scale,		},	// Top right
-	};
-
-	float minX = std::numeric_limits<float>::infinity();
-	float minY = std::numeric_limits<float>::infinity();
-	float maxX = -std::numeric_limits<float>::infinity();
-	float maxY = -std::numeric_limits<float>::infinity();
+	float x[2] = { -srcOrigin.x, srcDrawWidth - srcOrigin.x };
+	float y[2] = { -srcOrigin.y, srcDrawHeight - srcOrigin.y };
+	Point2f vertices[4] = { { x[0], y[0] }, { x[1], y[0] }, { x[1], y[1] }, { x[0], y[1] } };
 
 	//calculate the extremes of the rotated corners.
 	for( int i = 0; i < 4; i++ )
 	{
-		minX = std::min( minX, boundingBoxCorners[i][0] );
-		maxX = std::max( maxX, boundingBoxCorners[i][0] );
-		minY = std::min( minY, boundingBoxCorners[i][1] );
-		maxY = std::max( maxY, boundingBoxCorners[i][1] );
+		vertices[i] = transform.Transform( vertices[i] );
+		tgt_minx = floor( tgt_minx < vertices[i].x ? tgt_minx : vertices[i].x );
+		tgt_maxx = ceil( tgt_maxx > vertices[i].x ? tgt_maxx : vertices[i].x );
+		tgt_miny = floor( tgt_miny < vertices[i].y ? tgt_miny : vertices[i].y );
+		tgt_maxy = ceil( tgt_maxy > vertices[i].y ? tgt_maxy : vertices[i].y );
 	}
 
-	//clip the starting and finishing positions.
-	int startY = blitY + static_cast<int>( minY );
-	if( startY < 0 ) { startY = 0; minY = static_cast<float>( -blitY ); }
+	if( Determinant( transform ) == 0.0f ) return;
+	Matrix2D invTransform = transform;
+	invTransform.Inverse();
 
-	int endY = blitY + static_cast<int>( maxY );
-	if( endY > m_pRenderTarget->height ) { endY = m_pRenderTarget->height; }
+	int tgt_draw_width = static_cast<int>(tgt_maxx - tgt_minx);
+	int tgt_draw_height = static_cast<int>(tgt_maxy - tgt_miny);
+	int tgt_buffer_width = m_pRenderTarget->width;
+	int tgt_buffer_height = m_pRenderTarget->height;
 
-	int startX = blitX + static_cast<int>( minX );
-	if( startX < 0 ) { startX = 0; minX = static_cast<float>( -blitX ); }
+	if( tgt_miny < 0 ) { tgt_draw_height += (int)tgt_miny; tgt_miny = 0; }
+	if( tgt_maxy > (float)tgt_buffer_height ) { tgt_draw_height -= (int)tgt_maxy - tgt_buffer_height; tgt_maxy = (float)tgt_buffer_height; }
+	if( tgt_minx < 0 ) { tgt_draw_width += (int)tgt_minx; tgt_minx = 0; }
+	if( tgt_maxx > (float)tgt_buffer_width ) { tgt_draw_width -= (int)tgt_maxx - tgt_buffer_width;  tgt_maxx = (float)tgt_buffer_width; }
 
-	int endX = blitX + static_cast<int>( maxX );
-	if( endX > m_pRenderTarget->width ) { endX = m_pRenderTarget->width; }
+	Point2f tgt_pixel_start{ tgt_minx, tgt_miny };
+	Point2f src_pixel_start = invTransform.Transform( tgt_pixel_start ) + srcOrigin;
 
-	//rotate the basis so we get the edge of the bounding box in the sprite frame.
-	float startingU = dUdX * minX + dUdY * minY + fRotCentreU;
-	float startingV = dVdY * minY + dVdX * minX + fRotCentreV;
+	float src_posx = src_pixel_start.x;
+	float src_posy = src_pixel_start.y;
 
-	float rowU = startingU;
-	float rowV = startingV;
+	int tgt_posx = static_cast<int>( tgt_pixel_start.x );
+	int tgt_posy = static_cast<int>( tgt_pixel_start.y );
 
-	uint32_t* destPixels = pDstBase + ( static_cast<size_t>( m_pRenderTarget->width ) * startY ) + startX;
-	int nextRow = m_pRenderTarget->width - ( endX - startX );
+	float src_xincx = invTransform.row[0].x;
+	float src_xincy = invTransform.row[0].y;
+	float src_yincx = invTransform.row[1].x;
+	float src_yincy = invTransform.row[1].y;
+	float src_xresetx = src_xincx * tgt_draw_width;
+	float src_xresety = src_xincy * tgt_draw_width;
 
-	uint32_t* srcPixels = pSrcBase;
+	int tgt_start_pixel_index = tgt_posx + ( tgt_posy * tgt_buffer_width );
+	uint32_t* tgt_pixel = (uint32_t*)m_pRenderTarget->pPixels + tgt_start_pixel_index;
+	uint32_t* tgt_column_end = tgt_pixel + (tgt_draw_height * tgt_buffer_width );
 
-	//Start of double for loop. 
-	for( int y = startY; y < endY; y++ )
+	// Iterate through each pixel on the screen in turn
+	while( tgt_pixel < tgt_column_end )
 	{
-		float u = rowU;
-		float v = rowV;
+		uint32_t* tgt_row_end = tgt_pixel + tgt_draw_width;
 
-		for( int x = startX; x < endX; x++ )
+		while( tgt_pixel < tgt_row_end )
 		{
-			//Check to see if u and v correspond to a valid pixel in sprite.
-			if( u > 0 && v > 0 && u < blitWidth && v < blitHeight )
-			{
-				srcPixels = pSrcBase + static_cast<size_t>( u ) + ( static_cast<size_t>( v ) * srcPixelData.width );
-				uint32_t src = *srcPixels;
+			int roundX = static_cast<int>( src_posx + 0.5f );
+			int roundY = static_cast<int>( src_posy + 0.5f );
 
+			if( roundX >= 0 && roundY >= 0 && roundX < srcDrawWidth && roundY < srcDrawHeight )
+			{
+				int src_pixel_index = roundX + ( roundY * srcPixelData.width );
+				uint32_t src = *( (uint32_t*)srcPixelData.pPixels + src_pixel_index + srcFrameOffset );
+
+				// If this isn't a fully transparent pixel 
 				if( src < 0xFF000000 )
 				{
 					int srcAlpha = static_cast<int>( ( 0xFF - ( src >> 24 ) ) * alphaMultiply );
@@ -2183,7 +2715,7 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 					int destGreen = constAlpha * ( ( src >> 8 ) & 0xFF );
 					int destBlue = constAlpha * ( src & 0xFF );
 
-					uint32_t dest = *destPixels;
+					uint32_t dest = *tgt_pixel;
 					int invSrcAlpha = 0xFF - srcAlpha;
 
 					// Apply a standard Alpha blend [ src*srcAlpha + dest*(1-SrcAlpha) ]
@@ -2197,35 +2729,34 @@ void PlayBlitter::RotateScalePixels( const PixelData& srcPixelData, int srcOffse
 					destBlue >>= 8;
 
 					// Put ARGB components back together again
-					*destPixels = 0xFF000000 | ( destRed << 16 ) | ( destGreen << 8 ) | destBlue;
+					*tgt_pixel = 0xFF000000 | ( destRed << 16 ) | ( destGreen << 8 ) | destBlue;
 				}
 			}
 
-			destPixels++;
-
-			// Change the position in the sprite frame for changing X in the display
-			u += dUdX;
-			v += dVdX;
+			tgt_pixel++;
+			src_posx += src_xincx;
+			src_posy += src_xincy;
 		}
 
-		// Work out the change in the sprite frame for changing Y in the display
-		rowU += dUdY;
-		rowV += dVdY;
-		// Next row
-		destPixels += nextRow;
-	}
+		tgt_pixel += tgt_buffer_width - tgt_draw_width;
 
+		src_posx -= src_xresetx;
+		src_posy -= src_xresety;
+
+		src_posx += src_yincx;
+		src_posy += src_yincy;
+	}
 }
 
 
-void PlayBlitter::ClearRenderTarget( Pixel colour )
+void PlayBlitter::ClearRenderTarget( Pixel colour ) const
 {
 	Pixel* pBuffEnd = m_pRenderTarget->pPixels + ( m_pRenderTarget->width * m_pRenderTarget->height );
 	for( Pixel* pBuff = m_pRenderTarget->pPixels; pBuff < pBuffEnd; *pBuff++ = colour.bits );
 	m_pRenderTarget->preMultiplied = false;
 }
 
-void PlayBlitter::BlitBackground( PixelData& backgroundImage )
+void PlayBlitter::BlitBackground( PixelData& backgroundImage ) const
 {
 	PLAY_ASSERT_MSG( backgroundImage.height == m_pRenderTarget->height && backgroundImage.width == m_pRenderTarget->width, "Background size doesn't match render target!" );
 	// Takes about 1ms for 720p screen on i7-8550U
@@ -2639,9 +3170,14 @@ void PlayGraphics::DrawTransparent( int spriteId, Point2f pos, int frameIndex, f
 
 void PlayGraphics::DrawRotated( int spriteId, Point2f pos, int frameIndex, float angle, float scale, float alphaMultiply ) const
 {
+	Matrix2D trans =  MatrixScale( scale, scale ) * MatrixRotation( angle );
+	trans.row[2] = { pos.x, pos.y, 1.0f };
+	DrawTransformed( spriteId, trans, frameIndex, alphaMultiply );
+}
+
+void PlayGraphics::DrawTransformed( int spriteId, const Matrix2D& trans, int frameIndex, float alphaMultiply ) const
+{
 	const Sprite& spr = vSpriteData[spriteId];
-	int destx = static_cast<int>( pos.x + 0.5f );
-	int desty = static_cast<int>( pos.y + 0.5f );
 	frameIndex = frameIndex % spr.totalCount;
 	int frameX = frameIndex % spr.hCount;
 	int frameY = frameIndex / spr.hCount;
@@ -2649,7 +3185,8 @@ void PlayGraphics::DrawRotated( int spriteId, Point2f pos, int frameIndex, float
 	int pixelY = frameY * spr.height;
 	int frameOffset = pixelX + ( spr.canvasBuffer.width * pixelY );
 
-	m_blitter.RotateScalePixels( spr.preMultAlpha, frameOffset, destx, desty, spr.width, spr.height, spr.originX, spr.originY, angle, scale, alphaMultiply );
+	Vector2f origin = { spr.originX, spr.originY };
+	m_blitter.TransformPixels( spr.preMultAlpha, frameOffset, spr.width, spr.height, origin, trans, alphaMultiply );
 }
 
 
@@ -3095,13 +3632,12 @@ void PlayGraphics::DrawPixelData( PixelData* pixelData, Point2f pos, float alpha
 // A 96x36 font image @ 1bpp containing basic ASCII characters from 0x30 (0) to 0x5F (underscore) at 6x12 pixels each
 static const uint32_t debugFontData[] =
 {
-	0x87304178, 0x0800861F, 0xFFFFFFE1, 0x7BBFBE79, 0xF7FE79EF, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EC, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EC, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EF, 0xFFEE3DFE, 0x6BB86080,
-	0x1078860F, 0xE3DFFEFE, 0x5BB7FEFB, 0xE7BE7BEF, 0xFFBFFF41, 0x7BB7FEFB, 0xE7BE7BEC, 0xFFDFFEDF, 0x7BB7FEFB, 0xE7BE7BEC, 0xFFEE3DDF, 0x7BB7FEFB, 0xE7BE7BEF, 0xFFFFFFFF, 0x7BB7BEF9, 0xE7BE7BEF,
-	0xFFFFFFDF, 0x87B001F8, 0x187E87EF, 0xFFFFFFDF, 0x86106104, 0x00007A30, 0x1E7C5061, 0x79E79E79, 0xF7DF7B7F, 0x5E7DA79E, 0x79E79F79, 0xF7DF7B7F, 0x5E7DA79E, 0x79E79F79, 0xF7DF7B7F, 0x5E7DA79E,
-	0x59E79F79, 0xF7DF7B7F, 0x597DA79E, 0x58005F78, 0x30D0037F, 0x477DA79E, 0x59E79F79, 0xF7DE7B7F, 0x597DA79E, 0x59E79F79, 0xF7DE7B7F, 0x5E7DA79E, 0x41E79F79, 0xF7DE7B7F, 0x5E7DA79E, 0x7DE79F79,
-	0xF7DE7B7F, 0x5E7DA79E, 0x7DE79E79, 0xF7DE7B7F, 0x5E7DA79E, 0x81E06104, 0x07C17A38, 0xDE01A7A1, 0x06106101, 0xE79E79E0, 0x337F3FFF, 0x79E79EED, 0xE79E79EF, 0xB77FBFFF, 0x79E79FED, 0xE79E79EF,
-	0xB7BFBFFF, 0x79E79FED, 0xE79A79EF, 0xB7BFBFFF, 0x79E75FED, 0xE79AB5EF, 0x77DFBFFF, 0x05E0E1ED, 0xE79ACC0E, 0xF7DFBFFF, 0x7DE77EED, 0xE79AB7ED, 0xF7EFBFFF, 0x7DE7BEED, 0xE79A7BEB, 0xF7EFBFFF,
-	0x7DE7BEED, 0xE79A7BE7, 0xF7F7BFFF, 0x7DA7BEED, 0xE79A7BE7, 0xF7F7BCFF, 0x7DD79EED, 0xEB5A7BE7, 0xF7FBBCFF, 0x7C27A1EE, 0x1CE57810, 0x33FB3EC0
+	0x87304178, 0x0800861F, 0xFFFFFFE1, 0x7BBFBE79, 0xF7FE79EF, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EC, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EC, 0xFFFFFFFE, 0x7BBFBE79, 0xF7FE79EF, 0xFFEE3DFE, 0x6BB86080,	0x1078860F, 0xE3DFFEFE, 
+	0x5BB7FEFB, 0xE7BE7BEF, 0xFFBFFF41, 0x7BB7FEFB, 0xE7BE7BEC, 0xFFDFFEDF, 0x7BB7FEFB, 0xE7BE7BEC, 0xFFEE3DDF, 0x7BB7FEFB, 0xE7BE7BEF, 0xFFFFFFFF, 0x7BB7BEF9, 0xE7BE7BEF,	0xFFFFFFDF, 0x87B001F8, 0x187E87EF, 0xFFFFFFDF, 
+	0x86106104, 0x00007A30, 0x1E7C5061, 0x79E79E79, 0xF7DF7B7F, 0x5E7DA79E, 0x79E79F79, 0xF7DF7B7F, 0x5E7DA79E, 0x79E79F79, 0xF7DF7B7F, 0x5E7DA79E,	0x59E79F79, 0xF7DF7B7F, 0x597DA79E, 0x58005F78, 0x30D0037F, 0x477DA79E, 
+	0x59E79F79, 0xF7DE7B7F, 0x597DA79E, 0x59E79F79, 0xF7DE7B7F, 0x5E7DA79E, 0x41E79F79, 0xF7DE7B7F, 0x5E7DA79E, 0x7DE79F79,	0xF7DE7B7F, 0x5E7DA79E, 0x7DE79E79, 0xF7DE7B7F, 0x5E7DA79E, 0x81E06104, 0x07C17A38, 0xDE01A7A1, 
+	0x06106101, 0xE79E79E0, 0x337F3FFF, 0x79E79EED, 0xE79E79EF, 0xB77FBFFF, 0x79E79FED, 0xE79E79EF,	0xB7BFBFFF, 0x79E79FED, 0xE79A79EF, 0xB7BFBFFF, 0x79E75FED, 0xE79AB5EF, 0x77DFBFFF, 0x05E0E1ED, 0xE79ACC0E, 0xF7DFBFFF, 
+	0x7DE77EED, 0xE79AB7ED, 0xF7EFBFFF, 0x7DE7BEED, 0xE79A7BEB, 0xF7EFBFFF,	0x7DE7BEED, 0xE79A7BE7, 0xF7F7BFFF, 0x7DA7BEED, 0xE79A7BE7, 0xF7F7BCFF, 0x7DD79EED, 0xEB5A7BE7, 0xF7FBBCFF, 0x7C27A1EE, 0x1CE57810, 0x33FB3EC0
 };
 
 void PlayGraphics::DecompressDubugFont( void )
@@ -3413,20 +3949,21 @@ bool PlayInput::GetMouseDown( MouseButton button ) const
 		return m_mouseData.right;
 };
 
-bool PlayInput::KeyPressed( int vKey )
+bool PlayInput::KeyPressed( int vKey, int frame )
 {
-	static std::map< int, bool > keyMap;
+	static std::map< int, int > keyMap;
 
-	bool& held = keyMap[vKey];
+	int& previous_frame = keyMap[vKey];
 
-	if( KeyDown( vKey ) && !held )
+	// Returns true if key wasn't pressed the last time we checked or if this is the same frame as the last check
+	if( KeyDown( vKey ) && ( previous_frame == 0 || ( previous_frame == frame && frame != -1 ) ) )
 	{
-		held = true;
+		previous_frame = frame;
 		return true;
 	}
 
 	if( !KeyDown( vKey ) )
-		held = false;
+		previous_frame = 0;
 
 	return false;
 }
@@ -3484,6 +4021,15 @@ namespace Play
 	Colour cOrange{ 100.0f, 50.0f, 0.0f };
 	Colour cWhite{ 100.0f, 100.0f, 100.0f };
 	Colour cGrey{ 50.0f, 50.0f, 50.0f };
+
+	int frameCount = 0; // Updated in Play::Present
+
+	// The camera
+	Point2f cameraPos{ 0.0f, 0.0f };
+	DrawingSpace drawSpace = WORLD;
+
+	#define TRANSFORM_SPACE( p )  drawSpace == WORLD ? p - cameraPos : p
+	#define TRANSFORM_MATRIX_SPACE( t ) drawSpace == WORLD ? (t * MatrixTranslation( -cameraPos.x, -cameraPos.y )) : t
 
 	//**************************************************************************************************
 	// Manager creation and deletion
@@ -3546,19 +4092,22 @@ namespace Play
 
 	void DrawDebugText( Point2D pos, const char* text, Colour c, bool centred )
 	{
-		PlayGraphics::Instance().DrawDebugString( pos, text, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, centred );
+		PlayGraphics::Instance().DrawDebugString( TRANSFORM_SPACE( pos ), text, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, centred );
 	}
 
 	void PresentDrawingBuffer()
 	{
 		PlayGraphics& pblt = PlayGraphics::Instance();
 		static bool debugInfo = false;
+		DrawingSpace originalDrawSpace = drawSpace;
 
 		if( KeyPressed( VK_F1 ) )
 			debugInfo = !debugInfo;
 
 		if( debugInfo )
 		{
+			drawSpace = SCREEN;
+
 			int textX = 10;
 			int textY = 10;
 			std::string s = "PlayBuffer Version:" + std::string( PLAY_VERSION );
@@ -3567,6 +4116,8 @@ namespace Play
 			pblt.DrawDebugString( { textX + 1, textY - 1 }, s, PIX_BLACK, false );
 			pblt.DrawDebugString( { textX - 1, textY + 1 }, s, PIX_BLACK, false );
 			pblt.DrawDebugString( { textX, textY }, s, PIX_YELLOW, false );
+
+			drawSpace = WORLD;
 
 #ifdef PLAY_USING_GAMEOBJECT_MANAGER
 			
@@ -3593,13 +4144,16 @@ namespace Play
 				DrawLine( { obj.pos.x - 20,  obj.pos.y - 20 }, { obj.pos.x + 20, obj.pos.y + 20 }, cWhite );
 				DrawLine( { obj.pos.x + 20, obj.pos.y - 20 }, { obj.pos.x - 20, obj.pos.y + 20 }, cWhite );
 
-				s = pblt.GetSpriteName( obj.spriteId ) + " f[" + std::to_string( obj.frame ) + "]";
-				pblt.DrawDebugString( { ( p0.x + p1.x ) / 2.0f, p0.y - 20 }, s, PIX_WHITE, true );
+				s = pblt.GetSpriteName( obj.spriteId ) + " f[" + std::to_string( obj.frame % pblt.GetSpriteFrames( obj.spriteId ) ) + "]";
+				DrawDebugText( { ( p0.x + p1.x ) / 2.0f, p0.y - 20 }, s.c_str() );
 			}
 #endif
 		}
 
 		PlayWindow::Instance().Present();
+		frameCount++;
+
+		drawSpace = originalDrawSpace;
 	}
 
 	Point2D GetMousePos()
@@ -3634,7 +4188,19 @@ namespace Play
 	}
 
 	//**************************************************************************************************
-	// PlayBuffer functions
+	// Camera functions
+	//**************************************************************************************************
+
+	void SetCameraPosition( Point2f pos ) { cameraPos = pos; }
+
+	Point2f GetCameraPosition( void ) { return cameraPos; }
+
+	void SetDrawingSpace( DrawingSpace space ) { drawSpace = space;	}
+
+	DrawingSpace GetDrawingSpace( void ) { return drawSpace; }
+
+	//**************************************************************************************************
+	// PlayGraphics functions
 	//**************************************************************************************************
 
 	int GetSpriteId( const char* spriteName )
@@ -3675,6 +4241,11 @@ namespace Play
 	const char* GetSpriteName( int spriteId )
 	{
 		return PlayGraphics::Instance().GetSpriteName( spriteId ).c_str();
+	}
+
+	const PixelData* GetSpritePixelData( int spriteId )
+	{
+		return PlayGraphics::Instance().GetSpritePixelData( spriteId );
 	}
 
 	int GetSpriteFrames( int spriteId )
@@ -3746,47 +4317,52 @@ namespace Play
 
 	void DrawSprite( const char* spriteName, Point2D pos, int frameIndex )
 	{
-		PlayGraphics::Instance().Draw( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex );
+		PlayGraphics::Instance().Draw( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex );
 	}
 
 	void DrawSprite( int spriteID, Point2D pos, int frameIndex )
 	{
-		PlayGraphics::Instance().Draw( spriteID, pos, frameIndex );
+		PlayGraphics::Instance().Draw( spriteID, TRANSFORM_SPACE( pos ), frameIndex );
 	}
 
 	void DrawSpriteTransparent( const char* spriteName, Point2D pos, int frameIndex, float opacity )
 	{
-		PlayGraphics::Instance().DrawTransparent( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex, opacity );
+		PlayGraphics::Instance().DrawTransparent( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex, opacity );
 	}
 
 	void DrawSpriteTransparent( int spriteID, Point2D pos, int frameIndex, float opacity )
 	{
-		PlayGraphics::Instance().DrawTransparent( spriteID, pos, frameIndex, opacity );
+		PlayGraphics::Instance().DrawTransparent( spriteID, TRANSFORM_SPACE( pos ), frameIndex, opacity );
 	}
 
 	void DrawSpriteRotated( const char* spriteName, Point2D pos, int frameIndex, float angle, float scale, float opacity )
 	{
-		PlayGraphics::Instance().DrawRotated( PlayGraphics::Instance().GetSpriteId( spriteName ), pos, frameIndex, angle, scale, opacity );
+		PlayGraphics::Instance().DrawRotated( PlayGraphics::Instance().GetSpriteId( spriteName ), TRANSFORM_SPACE( pos ), frameIndex, angle, scale, opacity );
 	}
 
 	void DrawSpriteRotated( int spriteID, Point2D pos, int frameIndex, float angle, float scale, float opacity )
 	{
-		PlayGraphics::Instance().DrawRotated( spriteID, pos, frameIndex, angle, scale, opacity );
+		PlayGraphics::Instance().DrawRotated( spriteID, TRANSFORM_SPACE( pos ), frameIndex, angle, scale, opacity );
+	}
+
+	void DrawSpriteTransformed( int spriteID, const Matrix2D& transform, int frameIndex, float opacity  )
+	{
+		PlayGraphics::Instance().DrawTransformed( spriteID, TRANSFORM_MATRIX_SPACE( transform ), frameIndex, opacity );
 	}
 
 	void DrawLine( Point2f start, Point2f end, Colour c )
 	{
-		return PlayGraphics::Instance().DrawLine( start, end, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }  );
+		return PlayGraphics::Instance().DrawLine( TRANSFORM_SPACE( start ), TRANSFORM_SPACE( end ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }  );
 	}
 
 	void DrawCircle( Point2D pos, int radius, Colour c )
 	{
-		PlayGraphics::Instance().DrawCircle( pos, radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
+		PlayGraphics::Instance().DrawCircle( TRANSFORM_SPACE( pos ), radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
 	}
 
 	void DrawRect( Point2D topLeft, Point2D bottomRight, Colour c, bool fill )
 	{
-		PlayGraphics::Instance().DrawRect( topLeft, bottomRight, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
+		PlayGraphics::Instance().DrawRect( TRANSFORM_SPACE( topLeft ), TRANSFORM_SPACE( bottomRight ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
 	}
 
 	void DrawSpriteLine( Point2f startPos, Point2f endPos, const char* penSprite, Colour c )
@@ -3811,7 +4387,7 @@ namespace Play
 		
 		int err = dx + dy;
 
-		if( err == 0 ) return;
+		if( dx == 0 && dy == 0 ) return;
 
 		while( true )
 		{
@@ -3834,6 +4410,7 @@ namespace Play
 		}
 	}
 
+	// Not exposed externally
 	void DrawCircleOctants( int spriteId, int x, int y, int ox, int oy )
 	{
 		//displaying all 8 coordinates of(x,y) residing in 8-octants
@@ -3847,14 +4424,16 @@ namespace Play
 		Play::DrawSprite( spriteId, { x - oy, y - ox }, 0 );
 	}
 
-	void DrawSpriteCircle( int x, int y, int radius, const char* penSprite, Colour c )
+	void DrawSpriteCircle( Point2D pos, int radius, const char* penSprite, Colour c )
 	{
 		int spriteId = PlayGraphics::Instance().GetSpriteId( penSprite );
 		ColourSprite( penSprite, c );
 
+		pos = TRANSFORM_SPACE( pos );
+
 		int ox = 0, oy = radius;
 		int d = 3 - 2 * radius;
-		DrawCircleOctants( spriteId, x, y, ox, oy );
+		DrawCircleOctants( spriteId, static_cast<int>(pos.x), static_cast<int>(pos.y), ox, oy );
 
 		while( oy >= ox )
 		{
@@ -3868,7 +4447,7 @@ namespace Play
 			{
 				d = d + 4 * ox + 6;
 			}
-			DrawCircleOctants( spriteId, x, y, ox, oy );
+			DrawCircleOctants( spriteId, static_cast<int>(pos.x), static_cast<int>(pos.y), ox, oy );
 		}
 	};
 
@@ -3877,6 +4456,7 @@ namespace Play
 		int font = PlayGraphics::Instance().GetSpriteId( fontId );
 
 		int totalWidth{ 0 };
+
 		for( char c : text )
 			totalWidth += PlayGraphics::Instance().GetFontCharWidth( font, c );
 
@@ -3892,7 +4472,8 @@ namespace Play
 				break;
 		}
 
-		PlayGraphics::Instance().DrawString( font, pos, text );
+		pos.x += PlayGraphics::Instance().GetSpriteOrigin( font ).x;
+		PlayGraphics::Instance().DrawString( font, TRANSFORM_SPACE( pos ), text );
 	}
 
 	void BeginTimingBar( Colour c )
@@ -4027,7 +4608,7 @@ namespace Play
 	void DestroyGameObjectsByType( int objType )
 	{
 		std::vector<int> typeVec = CollectGameObjectIDsByType( objType );
-		for( size_t i = 1; i < typeVec.size(); i++ )
+		for( size_t i = 0; i < typeVec.size(); i++ )
 			DestroyGameObject( typeVec[i] );
 	}
 
@@ -4056,8 +4637,10 @@ namespace Play
 		Vector2f spriteSize = pblt.GetSpriteSize( obj.spriteId );
 		Vector2f spriteOrigin = pblt.GetSpriteOrigin( spriteID );
 
-		return( obj.pos.x + spriteSize.width - spriteOrigin.x > 0 && obj.pos.x - spriteOrigin.x < pbuf.GetWidth() &&
-			obj.pos.y + spriteSize.height - spriteOrigin.y > 0 && obj.pos.y - spriteOrigin.y < pbuf.GetHeight() );
+		Point2f pos = TRANSFORM_SPACE( obj.pos );
+
+		return( pos.x + spriteSize.width - spriteOrigin.x > 0 && pos.x - spriteOrigin.x < pbuf.GetWidth() &&
+			pos.y + spriteSize.height - spriteOrigin.y > 0 && pos.y - spriteOrigin.y < pbuf.GetHeight() );
 	}
 
 	bool IsLeavingDisplayArea( GameObject& obj, Direction dirn )
@@ -4071,21 +4654,23 @@ namespace Play
 		Vector2f spriteSize = pblt.GetSpriteSize( obj.spriteId );
 		Vector2f spriteOrigin = pblt.GetSpriteOrigin( spriteID );
 
+		Point2f pos = TRANSFORM_SPACE( obj.pos );
+
 		if( dirn != VERTICAL )
 		{
-			if( obj.pos.x - spriteOrigin.x < 0 && obj.velocity.x < 0 )
+			if( pos.x - spriteOrigin.x < 0 && obj.velocity.x < 0 )
 				return true;
 
-			if( obj.pos.x + spriteSize.width - spriteOrigin.x > pbuf.GetWidth() && obj.velocity.x > 0 )
+			if( pos.x + spriteSize.width - spriteOrigin.x > pbuf.GetWidth() && obj.velocity.x > 0 )
 				return true;
 		}
 
 		if( dirn != HORIZONTAL )
 		{
-			if( obj.pos.y - spriteOrigin.y < 0 && obj.velocity.y < 0 )
+			if( pos.y - spriteOrigin.y < 0 && obj.velocity.y < 0 )
 				return true;
 
-			if( obj.pos.y + spriteSize.height - spriteOrigin.y > pbuf.GetHeight() && obj.velocity.y > 0 )
+			if( pos.y + spriteSize.height - spriteOrigin.y > pbuf.GetHeight() && obj.velocity.y > 0 )
 				return true;
 		}
 
@@ -4132,19 +4717,19 @@ namespace Play
 	void DrawObject( GameObject& obj )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().Draw( obj.spriteId, obj.pos, obj.frame );
+		PlayGraphics::Instance().Draw( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame );
 	}
 
 	void DrawObjectTransparent( GameObject& obj, float opacity )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().DrawTransparent( obj.spriteId, obj.pos, obj.frame, opacity );
+		PlayGraphics::Instance().DrawTransparent( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame, opacity );
 	}
 
 	void DrawObjectRotated( GameObject& obj, float opacity )
 	{
 		if( obj.type == -1 ) return; // Don't draw noObject
-		PlayGraphics::Instance().DrawRotated( obj.spriteId, obj.pos, obj.frame, obj.rotation, obj.scale, opacity );
+		PlayGraphics::Instance().DrawRotated( obj.spriteId, TRANSFORM_SPACE( obj.pos ), obj.frame, obj.rotation, obj.scale, opacity );
 	}
 
 #endif
@@ -4155,7 +4740,7 @@ namespace Play
 
 	bool KeyPressed( int vKey )
 	{
-		return PlayInput::Instance().KeyPressed( vKey );
+		return PlayInput::Instance().KeyPressed( vKey, frameCount );
 	}
 
 	bool KeyDown( int vKey )
