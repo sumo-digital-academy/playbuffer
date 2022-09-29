@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"1.1.22.09.28"
+#define PLAY_VERSION	"1.1.22.09.29"
 
 #include <cstdint>
 #include <cstdlib>
@@ -1487,6 +1487,7 @@ struct GameObject
 
 	// Default member variables: don't change these!
 	int type{ -1 };
+	int oldType{ -1 };
 	int spriteId{ -1 };
 	Point2D pos{ 0.0f, 0.0f };
 	Point2D oldPos{ 0.0f, 0.0f };
@@ -1500,6 +1501,8 @@ struct GameObject
 	float animSpeed{ 0.0f };
 	int radius{ 0 };
 	float scale{ 1 };
+	int lastFrameUpdated{ -1 };
+
 	// Add your own data members here if you want to
 	PLAY_ADD_GAMEOBJECT_MEMBERS
 
@@ -1704,7 +1707,8 @@ namespace Play
 	// Collects the IDs of all of the GameObjects
 	std::vector<int> CollectAllGameObjectIDs();
 	// Performs a typical update of the object's position and animation
-	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0 );
+	// > Cam only be called once per object per frame unless allowMultipleUpdatesPerFrame is set to true
+	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0, bool allowMultipleUpdatesPerFrame = false );
 	// Deletes the GameObject with the corresponding id
 	//> Use GameObject.GetId() to find out its unique id
 	void DestroyGameObject( int id );
@@ -4520,6 +4524,13 @@ namespace Play
 
 	GameObject& GetGameObjectByType( int type )
 	{
+		int count = 0;
+
+		for( std::pair<const int, GameObject&>& i : objectMap )
+			if( i.second.type == type ) { count++; }
+
+		PLAY_ASSERT_MSG( count <= 1, "Multiple objects of type found, use CollectGameObjectIDsByType instead" );
+
 		for( std::pair<const int, GameObject&>& i : objectMap )
 		{
 			if( i.second.type == type )
@@ -4550,9 +4561,13 @@ namespace Play
 		return vec; // Returning a copy of the vector
 	}
 
-	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize )
+	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize, bool allowMultipleUpdatesPerFrame )
 	{
 		if( obj.type == -1 ) return; // Don't update noObject
+
+		// We allow multiple updates if the object type has changed
+		PLAY_ASSERT_MSG( obj.lastFrameUpdated != frameCount || obj.type != obj.oldType || allowMultipleUpdatesPerFrame, "Trying to update the same GameObject more than once in the same frame!" );
+		obj.lastFrameUpdated = frameCount;
 
 		// Save the current position in case we need to go back
 		obj.oldPos = obj.pos;

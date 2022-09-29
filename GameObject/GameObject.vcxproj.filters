@@ -41,7 +41,7 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\PlayBuffer\Play.h">
+    <ClInclude Include="..\Play.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
