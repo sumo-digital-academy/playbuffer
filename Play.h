@@ -24,7 +24,7 @@
 #ifndef PLAYPCH_H
 #define PLAYPCH_H
 
-#define PLAY_VERSION	"1.1.22.09.28"
+#define PLAY_VERSION	"1.1.22.09.29"
 
 #include <cstdint>
 #include <cstdlib>
@@ -678,7 +678,7 @@ inline void Vector2f::Normalize()
 	*this /= Length();
 }
 
-inline Vector2f normalize( Vector2f& v )
+inline Vector2f normalize( const Vector2f& v )
 {
 	return v / v.Length();
 }
@@ -688,7 +688,7 @@ inline void Vector3f::Normalize()
 	*this /= Length();
 }
 
-inline Vector3f normalize( Vector3f& v )
+inline Vector3f normalize( const Vector3f& v )
 {
 	return v / v.Length();
 }
@@ -1209,6 +1209,8 @@ public:
 	void SetSpriteOrigins( const char* rootName, Vector2f newOrigin, bool relative = false );
 	// Gets the number of sprites which have been loaded and created by PlayGraphics
 	int GetTotalLoadedSprites() const { return m_nTotalSprites; }
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId ) const { return &vSpriteData[spriteId].canvasBuffer; }
 
 	// Sprite Drawing functions
 	//********************************************************************************************************************************
@@ -1485,6 +1487,7 @@ struct GameObject
 
 	// Default member variables: don't change these!
 	int type{ -1 };
+	int oldType{ -1 };
 	int spriteId{ -1 };
 	Point2D pos{ 0.0f, 0.0f };
 	Point2D oldPos{ 0.0f, 0.0f };
@@ -1498,6 +1501,8 @@ struct GameObject
 	float animSpeed{ 0.0f };
 	int radius{ 0 };
 	float scale{ 1 };
+	int lastFrameUpdated{ -1 };
+
 	// Add your own data members here if you want to
 	PLAY_ADD_GAMEOBJECT_MEMBERS
 
@@ -1591,7 +1596,7 @@ namespace Play
 	// Get the current drawing space setting
 	DrawingSpace GetDrawingSpace( void );
 
-
+	
 	// PlayGraphics functions
 	//**************************************************************************************************
 
@@ -1642,6 +1647,8 @@ namespace Play
 	Point2D GetSpriteOrigin( const char* spriteName );
 	// Gets the origin of the sprite with a specific ID
 	Point2D GetSpriteOrigin( int spriteId );
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId );
 
 	// Draws the first matching sprite whose filename contains the given text
 	void DrawSprite( const char* spriteName, Point2D pos, int frameIndex );
@@ -1700,7 +1707,8 @@ namespace Play
 	// Collects the IDs of all of the GameObjects
 	std::vector<int> CollectAllGameObjectIDs();
 	// Performs a typical update of the object's position and animation
-	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0 );
+	// > Cam only be called once per object per frame unless allowMultipleUpdatesPerFrame is set to true
+	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0, bool allowMultipleUpdatesPerFrame = false );
 	// Deletes the GameObject with the corresponding id
 	//> Use GameObject.GetId() to find out its unique id
 	void DestroyGameObject( int id );
@@ -4239,6 +4247,11 @@ namespace Play
 		return PlayGraphics::Instance().GetSpriteName( spriteId ).c_str();
 	}
 
+	const PixelData* GetSpritePixelData( int spriteId )
+	{
+		return PlayGraphics::Instance().GetSpritePixelData( spriteId );
+	}
+
 	int GetSpriteFrames( int spriteId )
 	{
 		return static_cast<int>( PlayGraphics::Instance().GetSpriteFrames( spriteId ) );
@@ -4511,6 +4524,13 @@ namespace Play
 
 	GameObject& GetGameObjectByType( int type )
 	{
+		int count = 0;
+
+		for( std::pair<const int, GameObject&>& i : objectMap )
+			if( i.second.type == type ) { count++; }
+
+		PLAY_ASSERT_MSG( count <= 1, "Multiple objects of type found, use CollectGameObjectIDsByType instead" );
+
 		for( std::pair<const int, GameObject&>& i : objectMap )
 		{
 			if( i.second.type == type )
@@ -4541,9 +4561,13 @@ namespace Play
 		return vec; // Returning a copy of the vector
 	}
 
-	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize )
+	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize, bool allowMultipleUpdatesPerFrame )
 	{
 		if( obj.type == -1 ) return; // Don't update noObject
+
+		// We allow multiple updates if the object type has changed
+		PLAY_ASSERT_MSG( obj.lastFrameUpdated != frameCount || obj.type != obj.oldType || allowMultipleUpdatesPerFrame, "Trying to update the same GameObject more than once in the same frame!" );
+		obj.lastFrameUpdated = frameCount;
 
 		// Save the current position in case we need to go back
 		obj.oldPos = obj.pos;
