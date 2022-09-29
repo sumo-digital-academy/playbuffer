@@ -558,7 +558,7 @@ inline void Vector2f::Normalize()
 	*this /= Length();
 }
 
-inline Vector2f normalize( Vector2f& v )
+inline Vector2f normalize( const Vector2f& v )
 {
 	return v / v.Length();
 }
@@ -568,7 +568,7 @@ inline void Vector3f::Normalize()
 	*this /= Length();
 }
 
-inline Vector3f normalize( Vector3f& v )
+inline Vector3f normalize( const Vector3f& v )
 {
 	return v / v.Length();
 }

@@ -270,6 +270,11 @@ namespace Play
 		return PlayGraphics::Instance().GetSpriteName( spriteId ).c_str();
 	}
 
+	const PixelData* GetSpritePixelData( int spriteId )
+	{
+		return PlayGraphics::Instance().GetSpritePixelData( spriteId );
+	}
+
 	int GetSpriteFrames( int spriteId )
 	{
 		return static_cast<int>( PlayGraphics::Instance().GetSpriteFrames( spriteId ) );
@@ -542,6 +547,13 @@ namespace Play
 
 	GameObject& GetGameObjectByType( int type )
 	{
+		int count = 0;
+
+		for( std::pair<const int, GameObject&>& i : objectMap )
+			if( i.second.type == type ) { count++; }
+
+		PLAY_ASSERT_MSG( count <= 1, "Multiple objects of type found, use CollectGameObjectIDsByType instead" );
+
 		for( std::pair<const int, GameObject&>& i : objectMap )
 		{
 			if( i.second.type == type )
@@ -572,9 +584,13 @@ namespace Play
 		return vec; // Returning a copy of the vector
 	}
 
-	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize )
+	void UpdateGameObject( GameObject& obj, bool bWrap, int wrapBorderSize, bool allowMultipleUpdatesPerFrame )
 	{
 		if( obj.type == -1 ) return; // Don't update noObject
+
+		// We allow multiple updates if the object type has changed
+		PLAY_ASSERT_MSG( obj.lastFrameUpdated != frameCount || obj.type != obj.oldType || allowMultipleUpdatesPerFrame, "Trying to update the same GameObject more than once in the same frame!" );
+		obj.lastFrameUpdated = frameCount;
 
 		// Save the current position in case we need to go back
 		obj.oldPos = obj.pos;

@@ -20,6 +20,7 @@ struct GameObject
 
 	// Default member variables: don't change these!
 	int type{ -1 };
+	int oldType{ -1 };
 	int spriteId{ -1 };
 	Point2D pos{ 0.0f, 0.0f };
 	Point2D oldPos{ 0.0f, 0.0f };
@@ -33,6 +34,8 @@ struct GameObject
 	float animSpeed{ 0.0f };
 	int radius{ 0 };
 	float scale{ 1 };
+	int lastFrameUpdated{ -1 };
+
 	// Add your own data members here if you want to
 	PLAY_ADD_GAMEOBJECT_MEMBERS
 
@@ -126,7 +129,7 @@ namespace Play
 	// Get the current drawing space setting
 	DrawingSpace GetDrawingSpace( void );
 
-
+	
 	// PlayGraphics functions
 	//**************************************************************************************************
 
@@ -177,6 +180,8 @@ namespace Play
 	Point2D GetSpriteOrigin( const char* spriteName );
 	// Gets the origin of the sprite with a specific ID
 	Point2D GetSpriteOrigin( int spriteId );
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId );
 
 	// Draws the first matching sprite whose filename contains the given text
 	void DrawSprite( const char* spriteName, Point2D pos, int frameIndex );
@@ -235,7 +240,8 @@ namespace Play
 	// Collects the IDs of all of the GameObjects
 	std::vector<int> CollectAllGameObjectIDs();
 	// Performs a typical update of the object's position and animation
-	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0 );
+	// > Cam only be called once per object per frame unless allowMultipleUpdatesPerFrame is set to true
+	void UpdateGameObject( GameObject& object, bool bWrap = false, int wrapBorderSize = 0, bool allowMultipleUpdatesPerFrame = false );
 	// Deletes the GameObject with the corresponding id
 	//> Use GameObject.GetId() to find out its unique id
 	void DestroyGameObject( int id );

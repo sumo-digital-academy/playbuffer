@@ -88,6 +88,8 @@ public:
 	void SetSpriteOrigins( const char* rootName, Vector2f newOrigin, bool relative = false );
 	// Gets the number of sprites which have been loaded and created by PlayGraphics
 	int GetTotalLoadedSprites() const { return m_nTotalSprites; }
+	// Gets a (read only) pointer to a sprite's canvas buffer data
+	const PixelData* GetSpritePixelData( int spriteId ) const { return &vSpriteData[spriteId].canvasBuffer; }
 
 	// Sprite Drawing functions
 	//********************************************************************************************************************************
