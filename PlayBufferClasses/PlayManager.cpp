@@ -56,7 +56,7 @@ namespace Play
 	DrawingSpace drawSpace = WORLD;
 
 	#define TRANSFORM_SPACE( p )  drawSpace == WORLD ? p - cameraPos : p
-	#define TRANSFORM_MATRIX_SPACE( t ) drawSpace == WORLD ? (t * MatrixTranslation( -cameraPos.x, -cameraPos.y )) : t
+	#define TRANSFORM_MATRIX_SPACE( t ) drawSpace == WORLD ? (MatrixTranslation( -cameraPos.x, -cameraPos.y ) * t) : t
 
 	//**************************************************************************************************
 	// Manager creation and deletion
