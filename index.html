@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>PlayManager Reference</title>
+	<link rel="stylesheet" href="playManualStyle.css"/>
+	<link rel="stylesheet" href="prismjs/prism.css"/>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@300&family=Mitr:wght@300&family=Ubuntu+Condensed&family=Zilla+Slab:ital,wght@0,500;1,500&display=swap');
+	</style>
+		
+</head>
+
+<body>
+	<script src="prismjs/prism.js"></script>
+
+	<div class="contentsSidebar" style="width:320px" id="Sidebar">
+	<h2 class="contentsHeader" style="margin-top: 0px; margin-bottom: 4px;">Contents</h2>
+	<div class="contentsLinks">
+	<img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align:middle"> Function<br>
+	<img src="images/struct_icon.svg" title="Struct" height="14" width="14" style="vertical-align:middle"> Struct<br>
+	<img src="images/class_icon.svg" title="Class" height="14" width="14" style="vertical-align:middle"> Class<br>
+	<img src="images/enum_icon.svg" title="Enum" height="14" width="14" style="vertical-align:middle"> Enum<br>
+	<a class="linkToGroup" href="#group-manager">Manager Setup and Shutdown</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CreateManager">Play::CreateManager</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DestroyManager">Play::DestroyManager</a><br><a class="linkToGroup" href="#group-drawingbuffer">Drawing Buffer</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-PresentDrawingBuffer">Play::PresentDrawingBuffer</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetBufferWidth">Play::GetBufferWidth</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetBufferHeight">Play::GetBufferHeight</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-ClearDrawingBuffer">Play::ClearDrawingBuffer</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-LoadBackground">Play::LoadBackground</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawBackground">Play::DrawBackground</a><br><a class="linkToGroup" href="#group-input">Input</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetMousePos">Play::GetMousePos</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetMouseButton">Play::GetMouseButton</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-KeyPressed">Play::KeyPressed</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-KeyDown">Play::KeyDown</a><br><a class="linkToGroup" href="#group-sound">Sound</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-PlayAudio">Play::PlayAudio</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-PlayAudioPitch">Play::PlayAudioPitch</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-StartAudioLoop">Play::StartAudioLoop</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-StopAudioLoop">Play::StopAudioLoop</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-StopAudio">Play::StopAudio</a><br><a class="linkToGroup" href="#group-camera">Camera</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetCameraPosition">Play::SetCameraPosition</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetDrawingSpace">Play::SetDrawingSpace</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetCameraPosition">Play::GetCameraPosition</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetDrawingSpace">Play::GetDrawingSpace</a><br><a class="linkToGroup" href="#group-graphics">Graphics</a><br><img src="images/struct_icon.svg" title="Struct" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#struct-Colour">Colour</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawDebugText">Play::DrawDebugText</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteId">Play::GetSpriteId</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteHeight">Play::GetSpriteHeight</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteWidth">Play::GetSpriteWidth</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteHeight">Play::GetSpriteHeight</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteWidth">Play::GetSpriteWidth</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteName">Play::GetSpriteName</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteFrames">Play::GetSpriteFrames</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-ColourSprite">Play::ColourSprite</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CentreSpriteOrigin">Play::CentreSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CentreMatchingSpriteOrigins">Play::CentreMatchingSpriteOrigins</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CentreAllSpriteOrigins">Play::CentreAllSpriteOrigins</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-MoveSpriteOrigin">Play::MoveSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-MoveMatchingSpriteOrigins">Play::MoveMatchingSpriteOrigins</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-MoveAllSpriteOrigins">Play::MoveAllSpriteOrigins</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetSpriteOrigin">Play::SetSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetSpriteOrigin">Play::SetSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteOrigin">Play::GetSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpriteOrigin">Play::GetSpriteOrigin</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetSpritePixelData">Play::GetSpritePixelData</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetDrawingBlendMode">Play::SetDrawingBlendMode</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSprite">Play::DrawSprite</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSprite">Play::DrawSprite</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteTransparent">Play::DrawSpriteTransparent</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteTransparent">Play::DrawSpriteTransparent</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteRotated">Play::DrawSpriteRotated</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteRotated">Play::DrawSpriteRotated</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteTransformed">Play::DrawSpriteTransformed</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawLine">Play::DrawLine</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawCircle">Play::DrawCircle</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawRect">Play::DrawRect</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteLine">Play::DrawSpriteLine</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawSpriteCircle">Play::DrawSpriteCircle</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawFontText">Play::DrawFontText</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawPixel">Play::DrawPixel</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-BeginTimingBar">Play::BeginTimingBar</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-ColourTimingBar">Play::ColourTimingBar</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawTimingBar">Play::DrawTimingBar</a><br><img src="images/enum_icon.svg" title="Enum" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#enum-Align">Align</a><br><img src="images/enum_icon.svg" title="Enum" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#enum-DrawingSpace">DrawingSpace</a><br><img src="images/enum_icon.svg" title="Enum" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#enum-BlendMode">BlendMode</a><br><a class="linkToGroup" href="#group-misc">Misc</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-RandomRoll">Play::RandomRoll</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-RandomRollRange">Play::RandomRollRange</a><br><a class="linkToGroup" href="#group-gameobject">GameObject</a><br><img src="images/struct_icon.svg" title="Struct" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#struct-GameObject">GameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CreateGameObject">Play::CreateGameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetGameObject">Play::GetGameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-GetGameObjectByType">Play::GetGameObjectByType</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CollectGameObjectIDsByType">Play::CollectGameObjectIDsByType</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-CollectAllGameObjectIDs">Play::CollectAllGameObjectIDs</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-UpdateGameObject">Play::UpdateGameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DestroyGameObject">Play::DestroyGameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DestroyGameObjectsByType">Play::DestroyGameObjectsByType</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DestroyAllGameObjects">Play::DestroyAllGameObjects</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-IsColliding">Play::IsColliding</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-IsVisible">Play::IsVisible</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-IsLeavingDisplayArea">Play::IsLeavingDisplayArea</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-IsAnimationComplete">Play::IsAnimationComplete</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetGameObjectDirection">Play::SetGameObjectDirection</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-PointGameObject">Play::PointGameObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-SetSprite">Play::SetSprite</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawObject">Play::DrawObject</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawObjectTransparent">Play::DrawObjectTransparent</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawObjectRotated">Play::DrawObjectRotated</a><br><img src="images/function_icon.svg" title="Function" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#funct-DrawGameObjectsDebug">Play::DrawGameObjectsDebug</a><br><img src="images/enum_icon.svg" title="Enum" height="14" width="14" style="vertical-align: middle"> <a class="linkToContent" href="#enum-Direction">Direction</a><br>
+	</div>
+	</div>
+
+	<div class="main-content" style="margin-left:320px">
+	<div class="page-header"><br><br>
+		<h1>PlayManager Reference</h1><br>
+	</div>
+	<div>
+		This document is a reference guide to all the functions that you will need to start making your first games using PlayBuffer!
+	</div>
+
+	<a id="group-manager"><H2>Manager Setup and Shutdown</H2></a>
+<body>These functions start and shutdown the PlayBuffer. </body>
+
+<h3>Functions</h3><a id="funct-CreateManager"><h4>Play::CreateManager</h4></a>
+<p>Initialises the manager and creates a window of the required dimensions. </p>
+
+<code class="language-cpp">void CreateManager( int width, int height, int scale )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>width</td><td>The width of the window in pixels. </td></tr>
+<tr><td>height</td><td>The height of the window in pixels. </td></tr>
+<tr><td>scale</td><td>Pixel scale. One-pixel equals (scale x scale) pixels in final window. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">constexpr int DISPLAY_WIDTH = 1280;
+constexpr int DISPLAY_HEIGHT = 720;
+constexpr int DISPLAY_SCALE = 1;
+
+Play::CreateManager(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE);</code></pre><a id="funct-DestroyManager"><h4>Play::DestroyManager</h4></a>
+<p>Shuts down the manager and closes the window. </p>
+
+<code class="language-cpp">void DestroyManager()</code><br>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DestroyManager();</code></pre>
+<a id="group-drawingbuffer"><H2>Drawing Buffer</H2></a>
+<body>These functions allow you to present the buffer for display on the screen, clear it to a single colour and get the size of the buffer. </body>
+
+<h3>Functions</h3><a id="funct-PresentDrawingBuffer"><h4>Play::PresentDrawingBuffer</h4></a>
+<p>Copies the contents of the drawing buffer to the window. </p>
+
+<code class="language-cpp">void PresentDrawingBuffer()</code><br>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::PresentDrawingBuffer();</code></pre><a id="funct-GetBufferWidth"><h4>Play::GetBufferWidth</h4></a>
+<p>Gets the width of the display buffer. </p>
+
+<code class="language-cpp">int GetBufferWidth()</code><br>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): Width of the display buffer in pixels. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int BufferWidth = Play::GetBufferWidth();</code></pre><a id="funct-GetBufferHeight"><h4>Play::GetBufferHeight</h4></a>
+<p>Gets the height of the display buffer. </p>
+
+<code class="language-cpp">int GetBufferHeight()</code><br>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): Height of the display buffer in pixels. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int BufferHeight = Play::GetBufferHeight();</code></pre><a id="funct-ClearDrawingBuffer"><h4>Play::ClearDrawingBuffer</h4></a>
+<p>Clears the display buffer using the colour provided. </p>
+
+<code class="language-cpp">void ClearDrawingBuffer( Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>col</td><td>The colour to clear the drawing buffer with. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::ClearDrawingBuffer( Play::cOrange );</code></pre><a id="funct-LoadBackground"><h4>Play::LoadBackground</h4></a>
+<p>Loads a PNG file as a background image for the window. </p>
+
+<code class="language-cpp">int LoadBackground( const char * pngFilename )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pngFilename</td><td>The full path and filename of the background image in PNG format. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The index of the newly loaded background </p>
+<b>Example:</b><br><pre><code class="language-cpp">int backgroundIndex = Play::LoadBackground( "Data\\Backgrounds\\spr_background.png" );</code></pre><a id="funct-DrawBackground"><h4>Play::DrawBackground</h4></a>
+<p>Draws the background image previously loaded with Play::LoadBackground() into the drawing buffer. </p>
+
+<code class="language-cpp">void DrawBackground( int background )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>background</td><td>Optional argument to specify the background index. Defaults to zero (the first loaded background). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawBackground( backgroundIndex );</code></pre>
+<a id="group-input"><H2>Input</H2></a>
+<body>These functions let you get what keys have been pressed or held down. These also allow you to get where the mouse is and what mouse buttons are pressed or held down. </body>
+
+<h3>Functions</h3><a id="funct-GetMousePos"><h4>Play::GetMousePos</h4></a>
+<p>Gets the co-ordinates of the mouse cursor within the display buffer. </p>
+
+<code class="language-cpp">Point2D GetMousePos()</code><br>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">Point2D</code>): The x/y coordinates of the mouse cursor in pixels. </p>
+<b>Example:</b><br><pre><code class="language-cpp">Point2D mousePos = Play::GetMousePos();</code></pre><a id="funct-GetMouseButton"><h4>Play::GetMouseButton</h4></a>
+<p>Gets the status of the mouse buttons. </p>
+
+<code class="language-cpp">bool GetMouseButton( Align button )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>button</td><td>Mouse button to check </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): The x/y coordinates of the mouse cursor in pixels. </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool LeftButtonClicked = Play::GetMouseButton(LEFT);</code></pre><a id="funct-KeyPressed"><h4>Play::KeyPressed</h4></a>
+<p>Returns true if the key has been pressed since it was last released. </p>
+
+<code class="language-cpp">bool KeyPressed( KeyboardButton key )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>key</td><td>The key that you want to check for. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): If the key has been pressed. This will return true on the frame the key is pushed down, but after that point will return false, even if held. </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool spacePressed = Play::KeyPressed( Play::KEY_SPACE );</code></pre><a id="funct-KeyDown"><h4>Play::KeyDown</h4></a>
+<p>Returns true if the key is currently pressed down. </p>
+
+<code class="language-cpp">bool KeyDown( KeyboardButton key )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>key</td><td>The key that you want to check for. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): If the key has been pressed. This will return true while it is down, and false if not pressed </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool spaceDown = Play::KeyDown( Play::KEY_SPACE );</code></pre>
+<a id="group-sound"><H2>Sound</H2></a>
+<body>These functions allow you to play sounds in PlayBuffer. You can play 'one-shot' sounds or looping sounds. </body>
+
+<h3>Functions</h3><a id="funct-PlayAudio"><h4>Play::PlayAudio</h4></a>
+<p>Plays an audio file from the "Data/Audio" directory, in WAV format. </p>
+
+<code class="language-cpp">int PlayAudio( const char * wavFilename )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>wavFilename</td><td>The filename of the audio file you want to play. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The id of the sound that is playing. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int soundID = Play::PlayAudio( "blast" );</code></pre><a id="funct-PlayAudioPitch"><h4>Play::PlayAudioPitch</h4></a>
+<p>Plays an audio file from the "Data/Audio" directory, in WAV format, at a random pitch from min to max percent. </p>
+
+<code class="language-cpp">int PlayAudioPitch( const char * wavFilename, int minPercent, int maxPercent )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>wavFilename</td><td>The filename of the audio file you want to play. </td></tr>
+<tr><td>minPercent</td><td>Minimum random pitch, as a percentage. </td></tr>
+<tr><td>maxPercent</td><td>Maximum random pitch, as a percentage. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The id of the sound that is playing. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int pitchSoundID = Play::PlayAudioPitch( "blast", 45, 65 );</code></pre><a id="funct-StartAudioLoop"><h4>Play::StartAudioLoop</h4></a>
+<p>Plays an audio file from the "Data/Audio" directory, in WAV format, and loops it repeatedly until you stop it. </p>
+
+<code class="language-cpp">int StartAudioLoop( const char * wavFilename )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>wavFilename</td><td>The filename of the audio file you want to play. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The id of the sound that is playing. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int loopedSoundID = Play::StartAudioLoop( "music" );</code></pre><a id="funct-StopAudioLoop"><h4>Play::StopAudioLoop</h4></a>
+<p>Stops a looping audio file, using the sound ID that the StartAudioLoop function returned. </p>
+
+<code class="language-cpp">bool StopAudioLoop( int soundId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>soundId</td><td>The ID of the sound you want to stop. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): Whether the sound stopped playing successfully. </p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::StopAudioLoop( loopedSoundID );</code></pre><a id="funct-StopAudio"><h4>Play::StopAudio</h4></a>
+<p>Stops a sound, based upon the filename. </p>
+
+<code class="language-cpp">bool StopAudio( const char * fileName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>fileName</td><td>The filename of the audio file you want to stop. This can be either a normal sound or a looping sound. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): Whether the sound stopped playing successfully. </p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::StopAudio( "blast" );
+Play::StopAudio( "music" );</code></pre>
+<a id="group-camera"><H2>Camera</H2></a>
+<body>These functions control the built in camera. The camera allows you to set up a "world" with tiles and then pan around it by moving the camera, rather than adjusting the position of every tile and object. It also allows you to set the drawing space. </body>
+
+<h3>Functions</h3><a id="funct-SetCameraPosition"><h4>Play::SetCameraPosition</h4></a>
+<p>Move the camera to the position specified. </p>
+
+<code class="language-cpp">void SetCameraPosition( Point2f pos )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>The desired position of the camera </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetCameraPosition( Point2f( 100.0f, 200.0f ) );</code></pre><a id="funct-SetDrawingSpace"><h4>Play::SetDrawingSpace</h4></a>
+<p>Changes the drawing space for all drawing functions. </p>
+
+<code class="language-cpp">void SetDrawingSpace( DrawingSpace space )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>space</td><td>What drawing space should the item be drawn in. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">// Go into screen space, so we can position things on the screen
+// without having the camera position affect them.
+Play::SetDrawingSpace(SCREEN);
+
+// Draw some user interface elements...
+Play::DrawFontText( "font64px_10x10", "Level 1: Get ready!",
+{ DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 },
+Play::CENTRE );
+
+// Go back into world space ready for the next frame.
+Play::SetDrawingSpace(WORLD);</code></pre><a id="funct-GetCameraPosition"><h4>Play::GetCameraPosition</h4></a>
+<p>Get the camera's current position. </p>
+
+<code class="language-cpp">Point2f GetCameraPosition()</code><br>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">Point2f</code>): The position of the camera </p>
+<b>Example:</b><br><pre><code class="language-cpp">Point2f currentCameraPosition = Play::GetCameraPosition();</code></pre><a id="funct-GetDrawingSpace"><h4>Play::GetDrawingSpace</h4></a>
+<p>Gets the current drawing space. </p>
+
+<code class="language-cpp">DrawingSpace GetDrawingSpace()</code><br>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">DrawingSpace</code>): What drawing space PlayBuffer is currently using </p>
+<b>Example:</b><br><pre><code class="language-cpp">DrawingSpace myDrawingSpace = Play::GetDrawingSpace();</code></pre>
+<a id="group-graphics"><H2>Graphics</H2></a>
+<body>These functions allow you to draw things on screen. You can draw sprites, lines, text or even individual pixels! These functions also allow you to load sprites, get any details (such as how many animation frames or their size), and manipulate them (change their colour or their origin). </body>
+<h3>Structs</h3><a id="struct-Colour"><h4>Colour</h4></a>
+<p>A PlayBuffer colour value.<br>Colours are defined in percentages of red, green and blue. All zero is black, All 100 is white. </p>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+<tr><td>red</td><td>float</td><td>Red value, from 0 to 100.</td></tr>
+<tr><td>green</td><td>float</td><td>Green value, from 0 to 100.</td></tr>
+<tr><td>blue</td><td>float</td><td>Blue value, from 0 to 100.</td></tr>
+</table>
+
+
+<h3>Play::Colour Functions</h3><a id="funct-Colour"><h4>Play::Colour::Colour</h4></a>
+<p>Create a colour using float values. </p>
+
+<code class="language-cpp">Colour( float r, float g, float b )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>r</td><td>Amount of red. </td></tr>
+<tr><td>g</td><td>Amount of green. </td></tr>
+<tr><td>b</td><td>Amount of blue. </td></tr>
+</table>
+
+<p></p>
+<a id="funct-Colour"><h4>Play::Colour::Colour</h4></a>
+<p>Create a colour using int values. </p>
+
+<code class="language-cpp">Colour( int r, int g, int b )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>r</td><td>Amount of red. </td></tr>
+<tr><td>g</td><td>Amount of green. </td></tr>
+<tr><td>b</td><td>Amount of blue. </td></tr>
+</table>
+
+<p></p>
+
+
+<h3>Functions</h3><a id="funct-DrawDebugText"><h4>Play::DrawDebugText</h4></a>
+<p>Draws text to the screen, using the built in debug font. </p>
+
+<code class="language-cpp">void DrawDebugText( Point2D pos, const char * text, Colour col, bool centred )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>Position of the text on screen. This position is affected by the Drawing Space. </td></tr>
+<tr><td>text</td><td>The text you want to draw, as a string literal. </td></tr>
+<tr><td>col</td><td>Optional argument to set the colour of the text (defaults to white). </td></tr>
+<tr><td>centred</td><td>Optional argument to centre the text (defaults to true). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawDebugText( { 50, 50 }, "Hello World!", Play::cBlue, true );</code></pre><a id="funct-GetSpriteId"><h4>Play::GetSpriteId</h4></a>
+<p>Gets the sprite ID of the first matching sprite whose filename contains the given text. </p>
+
+<code class="language-cpp">int GetSpriteId( const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to find the ID for. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The ID of the sprite, if PlayBuffer could find it. If PlayBuffer couldn't find the sprite, then it returns -1 </p>
+<b>Example:</b><br><pre><code class="language-cpp">int agent8_sprId = Play::GetSpriteId( "agent8" );</code></pre><a id="funct-GetSpriteHeight"><h4>Play::GetSpriteHeight</h4></a>
+<p>Gets the pixel height of a sprite. </p>
+
+<code class="language-cpp">int GetSpriteHeight( const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to find the height of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The height of the sprite in pixels </p>
+<b>Example:</b><br><pre><code class="language-cpp">int fan_height = Play::GetSpriteHeight( "fan" );</code></pre><a id="funct-GetSpriteWidth"><h4>Play::GetSpriteWidth</h4></a>
+<p>Gets the pixel width of a sprite. </p>
+
+<code class="language-cpp">int GetSpriteWidth( const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to find the width of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The width of the sprite in pixels </p>
+<b>Example:</b><br><pre><code class="language-cpp">int fan_width = Play::GetSpriteWidth( "fan" );</code></pre><a id="funct-GetSpriteHeight"><h4>Play::GetSpriteHeight</h4></a>
+<p>Gets the pixel height of a sprite. </p>
+
+<code class="language-cpp">int GetSpriteHeight( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The Id number of the sprite you want to find the height of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The height of the sprite in pixels. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int agent8_height = Play::GetSpriteHeight( agent8_sprId );</code></pre><a id="funct-GetSpriteWidth"><h4>Play::GetSpriteWidth</h4></a>
+<p>Gets the pixel width of a sprite. </p>
+
+<code class="language-cpp">int GetSpriteWidth( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The Id number of the sprite you want to find the width of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The width of the sprite in pixels </p>
+<b>Example:</b><br><pre><code class="language-cpp">int agent8_width = Play::GetSpriteWidth( agent8_sprId );</code></pre><a id="funct-GetSpriteName"><h4>Play::GetSpriteName</h4></a>
+<p>Gets the stem filename for the sprite this does not include the path or the extension. </p>
+
+<code class="language-cpp">const char * GetSpriteName( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The Id number of the sprite you want to get the filename of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">const char *</code>): The stem filename for the sprite </p>
+<b>Example:</b><br><pre><code class="language-cpp">const char* agent8_name = Play::GetSpriteName( agent8_sprId );</code></pre><a id="funct-GetSpriteFrames"><h4>Play::GetSpriteFrames</h4></a>
+<p>Gets the total number of frames in the sprite. </p>
+
+<code class="language-cpp">int GetSpriteFrames( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The Id number of the sprite you want to find the number of frames of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The number of frames that the sprite has </p>
+<b>Example:</b><br><pre><code class="language-cpp">int agent8_numFrames = Play::GetSpriteFrames( agent8_sprId );</code></pre><a id="funct-ColourSprite"><h4>Play::ColourSprite</h4></a>
+<p>Blends the sprite with the given colour. </p>
+<div style='note'><h5>Warning:</h5></div>
+<code class="language-cpp">void ColourSprite( const char * spriteName, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to colour. </td></tr>
+<tr><td>col</td><td>The colour you want to blend with the sprite. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::ColourSprite( "agent8" , Play::cGreen );</code></pre><a id="funct-CentreSpriteOrigin"><h4>Play::CentreSpriteOrigin</h4></a>
+<p>Centres the origin of the first sprite found matching the given name. </p>
+
+<code class="language-cpp">void CentreSpriteOrigin( const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to centre the origin of. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::CentreSpriteOrigin( "agent8_fall" );</code></pre><a id="funct-CentreMatchingSpriteOrigins"><h4>Play::CentreMatchingSpriteOrigins</h4></a>
+<p>Centres the origins of all sprites found with matching parts of their name. </p>
+
+<code class="language-cpp">void CentreMatchingSpriteOrigins( const char * partName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>partName</td><td>A common part of a sprite name to centre all the origins of. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::CentreMatchingSpriteOrigins( "agent8" );</code></pre><a id="funct-CentreAllSpriteOrigins"><h4>Play::CentreAllSpriteOrigins</h4></a>
+<p>Centres the origins of all loaded sprites. </p>
+
+<code class="language-cpp">void CentreAllSpriteOrigins()</code><br>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::CentreAllSpriteOrigins();</code></pre><a id="funct-MoveSpriteOrigin"><h4>Play::MoveSpriteOrigin</h4></a>
+<p>Moves the origins of a sprite by a given number of pixels in x and y. A sprite's origin does not have to be inside the sprite itself and can be moved any distance. </p>
+
+<code class="language-cpp">void MoveSpriteOrigin( const char * spriteName, int xOffset, int yOffset )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to centre the origin of. </td></tr>
+<tr><td>xOffset</td><td>The number of pixels you want to move the origin to the right (negative value moves left). </td></tr>
+<tr><td>yOffset</td><td>The number of pixels you want to move the origin up (negative value moves down). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::MoveSpriteOrigin( "agent8_fall", 10, 20);</code></pre><a id="funct-MoveMatchingSpriteOrigins"><h4>Play::MoveMatchingSpriteOrigins</h4></a>
+<p>Moves the origins of all sprites found matching the given name by a given number of pixels. A sprite's origin does not have to be inside the sprite itself and can be moved any distance. </p>
+
+<code class="language-cpp">void MoveMatchingSpriteOrigins( const char * partName, int xoffset, int yoffset )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>partName</td><td>A common part of a sprite name to centre all the origins of. </td></tr>
+<tr><td>xoffset</td><td>The number of pixels you want to move the origin to the right (negative value moves left). </td></tr>
+<tr><td>yoffset</td><td>The number of pixels you want to move the origin up (negative value moves down). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::MoveMatchingSpriteOrigins( "agent8", 10, 20 );</code></pre><a id="funct-MoveAllSpriteOrigins"><h4>Play::MoveAllSpriteOrigins</h4></a>
+<p>Moves the origins of all sprites by a given number of pixels in x and y. A sprite's origin does not have to be inside the sprite itself and can be moved any distance. </p>
+
+<code class="language-cpp">void MoveAllSpriteOrigins( int xoffset, int yoffset )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>xoffset</td><td>The number of pixels you want to move the origin to the right (negative value moves left). </td></tr>
+<tr><td>yoffset</td><td>The number of pixels you want to move the origin up (negative value moves down). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::MoveAllSpriteOrigins( 10, 20 );</code></pre><a id="funct-SetSpriteOrigin"><h4>Play::SetSpriteOrigin</h4></a>
+<p>Sets the origins of a sprite, to the x and y coordinates, relative to the bottom left corner of the sprite. A sprite's origin does not have to be inside the sprite itself and can be positioned anywhere. </p>
+
+<code class="language-cpp">void SetSpriteOrigin( const char * spriteName, int xOrigin, int yOrigin )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to set the origin of. </td></tr>
+<tr><td>xOrigin</td><td>Where you want to move the origin on the x axis, relative to the left of the sprite. </td></tr>
+<tr><td>yOrigin</td><td>Where you want to move the origin on the y axis, relative to the bottom of the sprite. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetSpriteOrigin( "agent8_fall", 10, 20);</code></pre><a id="funct-SetSpriteOrigin"><h4>Play::SetSpriteOrigin</h4></a>
+<p>Sets the origins of a sprite, to the x and y coordinates, relative to the bottom left corner of the sprite. A sprite's origin does not have to be inside the sprite itself and can be positioned anywhere. </p>
+
+<code class="language-cpp">void SetSpriteOrigin( int spriteId, int xOrigin, int yOrigin )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The id of the sprite you want to set the origin of. </td></tr>
+<tr><td>xOrigin</td><td>Where you want to move the origin on the x axis, relative to the left of the sprite. </td></tr>
+<tr><td>yOrigin</td><td>Where you want to move the origin on the y axis, relative to the bottom of the sprite. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetSpriteOrigin( agent8_sprId, 10, 20);</code></pre><a id="funct-GetSpriteOrigin"><h4>Play::GetSpriteOrigin</h4></a>
+<p>Gets the origin of the first sprite found matching the given name. This value is relative to the bottom left corner of the sprite. </p>
+
+<code class="language-cpp">Point2D GetSpriteOrigin( const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to get the origin of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">Point2D</code>): None</p>
+<b>Example:</b><br><pre><code class="language-cpp">Point2D agent8_fall_sprOrigin = Play::GetSpriteOrigin( "agent8_fall" );</code></pre><a id="funct-GetSpriteOrigin"><h4>Play::GetSpriteOrigin</h4></a>
+<p>Gets the origin of the sprite with the given ID. This value is relative to the bottom left corner of the sprite. </p>
+
+<code class="language-cpp">Point2D GetSpriteOrigin( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The ID of the sprite you want to get the origin of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">Point2D</code>): The origin of the sprite, relative to it's bottom left corner. </p>
+<b>Example:</b><br><pre><code class="language-cpp">Point2D agent8_sprOrigin = Play::GetSpriteOrigin( agent8_sprId );</code></pre><a id="funct-GetSpritePixelData"><h4>Play::GetSpritePixelData</h4></a>
+<p>Gets a pointer to the raw pixel data of the sprite. The pixel data is read-only, and cannot be edited. </p>
+
+<code class="language-cpp">const PixelData * GetSpritePixelData( int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteId</td><td>The ID of the sprite you want to get the pixel data of. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">const PixelData *</code>): A pointer to the raw pixel data. Read-only. </p>
+<b>Example:</b><br><pre><code class="language-cpp">const PixelData *agent8_pixelData = Play::GetSpritePixelData( agent8_sprId );</code></pre><a id="funct-SetDrawingBlendMode"><h4>Play::SetDrawingBlendMode</h4></a>
+<p>Set the blend mode for all subsequent drawing operations that support different blend modes. </p>
+
+<code class="language-cpp">void SetDrawingBlendMode( BlendMode blendMode )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>blendMode</td><td>The blend mode that you want to draw things with. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetDrawingBlendMode(BLEND_ADD);</code></pre><a id="funct-DrawSprite"><h4>Play::DrawSprite</h4></a>
+<p>Draws the first matching sprite whose filename contains the given text. </p>
+
+<code class="language-cpp">void DrawSprite( const char * spriteName, Point2D pos, int frameIndex )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frameIndex</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSprite( "agent8", { 100, 100 }, 0 );</code></pre><a id="funct-DrawSprite"><h4>Play::DrawSprite</h4></a>
+<p>Draws the sprite with the matching sprite ID. Using this is more efficient than drawing it using the sprite name. </p>
+
+<code class="language-cpp">void DrawSprite( int spriteID, Point2D pos, int frameIndex )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteID</td><td>The ID of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frameIndex</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSprite( agent8_sprId, { 100, 100 }, 0 );</code></pre><a id="funct-DrawSpriteTransparent"><h4>Play::DrawSpriteTransparent</h4></a>
+<p>Draws the first matching sprite whose filename contains the given text, using transparency. This is slower than DrawSprite and should only be used if you need transparency. </p>
+
+<code class="language-cpp">void DrawSpriteTransparent( const char * spriteName, Point2D pos, int frame, float opacity, Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frame</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+<tr><td>opacity</td><td>Controls how transparent the sprite should be. 0 is completely transparent and 1 is fully opaque (unable to see through it at all). </td></tr>
+<tr><td>colour</td><td>The colour tint of the sprite. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play:: DrawSpriteTransparent( "agent8", { 100, 100 }, 0, 0.5f );</code></pre><a id="funct-DrawSpriteTransparent"><h4>Play::DrawSpriteTransparent</h4></a>
+<p>Draws the sprite with the matching sprite ID, using transparency. This is slower than DrawSprite and should only be used if you need transparency. </p>
+
+<code class="language-cpp">void DrawSpriteTransparent( int spriteID, Point2D pos, int frame, float opacity, Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteID</td><td>The ID of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frame</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+<tr><td>opacity</td><td>Controls how transparent the sprite should be. 0 is completely transparent and 1 is fully opaque (unable to see through it at all). </td></tr>
+<tr><td>colour</td><td>The colour tint of the sprite. Defaults to white. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play:: DrawSpriteTransparent( agent8_sprId, { 100, 100 }, 0, 0.5f );</code></pre><a id="funct-DrawSpriteRotated"><h4>Play::DrawSpriteRotated</h4></a>
+<p>Draws the first matching sprite whose filename contains the given text, using the specified angle, scale, and opacity. Note that this is the slowest sprite draw function and so should only be used when you need rotation or scale. </p>
+
+<code class="language-cpp">void DrawSpriteRotated( const char * spriteName, Point2D pos, int frame, float angle, float scale, float opacity, Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteName</td><td>The name of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frame</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+<tr><td>angle</td><td>Angle in radians to rotate the sprite clockwise. </td></tr>
+<tr><td>scale</td><td>Amount to scale the sprite, with 1.0f being full size, 0.5f half size, 2.0f double sized and so on. Defaults to 1.0f (normal scale). </td></tr>
+<tr><td>opacity</td><td>Controls how transparent the sprite should be. 0 is completely transparent and 1 is fully opaque (unable to see through it at all). Defaults to 1.0f (completely opaque). </td></tr>
+<tr><td>colour</td><td>The colour tint of the sprite. Defaults to white. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSpriteRotated( "agent8", { 100, 100 }, 0, DegToRad(120.0f) );</code></pre><a id="funct-DrawSpriteRotated"><h4>Play::DrawSpriteRotated</h4></a>
+<p>Draws the sprite with the matching sprite ID, using the specified angle, scale, and opacity. Note that this is the slowest sprite draw function and so should only be used when you need rotation or scale. </p>
+
+<code class="language-cpp">void DrawSpriteRotated( int spriteID, Point2D pos, int frame, float angle, float scale, float opacity, Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteID</td><td>The ID of the sprite you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y position on the display you want to draw the sprite. Specifically, the point where the origin of the sprite will be drawn. </td></tr>
+<tr><td>frame</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+<tr><td>angle</td><td>Angle in radians to rotate the sprite clockwise. </td></tr>
+<tr><td>scale</td><td>Amount to scale the sprite, with 1.0f being full size, 0.5f half size, 2.0f double sized and so on. Defaults to 1.0f (normal scale). </td></tr>
+<tr><td>opacity</td><td>Controls how transparent the sprite should be. 0 is completely transparent and 1 is fully opaque (unable to see through it at all). Defaults to 1.0f (completely opaque). </td></tr>
+<tr><td>colour</td><td>The colour tint of the sprite. Defaults to white. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSpriteRotated( agent8_sprId, { 100, 100 }, 0, DegToRad(120.0f) );</code></pre><a id="funct-DrawSpriteTransformed"><h4>Play::DrawSpriteTransformed</h4></a>
+<p>Draws the sprite with the matching sprite ID, using a transformation matrix. This can be slower or faster depending on the contents of the matrix. </p>
+
+<code class="language-cpp">void DrawSpriteTransformed( int spriteID, const Matrix2D & transform, int frame, float opacity, Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>spriteID</td><td>The ID of the sprite you want to draw. </td></tr>
+<tr><td>transform</td><td>The transformation matrix that you want to use to draw the sprite with. </td></tr>
+<tr><td>frame</td><td>When sprites consist of multiple frames the frame index determines which frame is drawn, starting at frame 0. Where a sprite has only one frame, this argument has no effect. </td></tr>
+<tr><td>opacity</td><td>Controls how transparent the sprite should be. 0 is completely transparent and 1 is fully opaque (unable to see through it at all). Defaults to 1.0f (completely opaque). </td></tr>
+<tr><td>colour</td><td>The colour tint of the sprite. Defaults to white. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Matrix2D transformMatrix =  MatrixScale(0.5f, 2.0f) *
+MatrixRotation( DegToRad(45.0f) ) *
+MatrixTranslation(100.0f, 150.0f);
+Play::DrawSpriteTransformed( agent8_sprId, transformMatrix, 0);</code></pre><a id="funct-DrawLine"><h4>Play::DrawLine</h4></a>
+<p>Draws a single-pixel wide line between two points in the given colour. </p>
+
+<code class="language-cpp">void DrawLine( Point2D start, Point2D end, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>start</td><td>The x/y coordinate for the start point of the line. </td></tr>
+<tr><td>end</td><td>The x/y coordinate for the end point of the line. </td></tr>
+<tr><td>col</td><td>The colour of the line. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawLine( {10, 10 }, { 40, 40 }, Play::cWhite );</code></pre><a id="funct-DrawCircle"><h4>Play::DrawCircle</h4></a>
+<p>Draws a single-pixel wide circle at a given origin. </p>
+
+<code class="language-cpp">void DrawCircle( Point2D pos, int radius, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>The x/y coordinate for the origin of the circle. </td></tr>
+<tr><td>radius</td><td>The length of the circle's radius in pixels. </td></tr>
+<tr><td>col</td><td>The colour of the circle. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawCircle( { 150, 150 }, 30, Play::cWhite );</code></pre><a id="funct-DrawRect"><h4>Play::DrawRect</h4></a>
+<p>Draws a rectangle, defined by the top left and bottom right corners, in the given colour. </p>
+
+<code class="language-cpp">void DrawRect( Point2D topLeft, Point2D bottomRight, Colour col, bool fill )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>topLeft</td><td>The x/y coordinate for the top left corner. </td></tr>
+<tr><td>bottomRight</td><td>The x/y coordinate for the bottom right corner. </td></tr>
+<tr><td>col</td><td>The colour of the rectangle. </td></tr>
+<tr><td>fill</td><td>Is the rectangle filled in? Defaults to not filled in. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawRect( { 100, 100 }, { 300, 200 }, Play::cWhite );</code></pre><a id="funct-DrawSpriteLine"><h4>Play::DrawSpriteLine</h4></a>
+<p>Draws a line between two points using a sprite as a 'pen', blended with the given colour. Note that colouring affects subsequent DrawSprite calls using the same sprite! </p>
+
+<code class="language-cpp">void DrawSpriteLine( Point2D startPos, Point2D endPos, const char * penSprite, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>startPos</td><td>The x/y coordinate for the start point of the line. </td></tr>
+<tr><td>endPos</td><td>The x/y coordinate for the end point of the line. </td></tr>
+<tr><td>penSprite</td><td>The sprite to use as the 'pen'. </td></tr>
+<tr><td>col</td><td>The colour of the sprites drawing the line. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSpriteLine( { 10, 10 }, { 40, 40 }, "pen_8px", Play::cBlue );</code></pre><a id="funct-DrawSpriteCircle"><h4>Play::DrawSpriteCircle</h4></a>
+<p>Draws a circle using a sprite as a 'pen', blended with the given colour. Note that colouring affects subsequent DrawSprite calls using the same sprite! </p>
+
+<code class="language-cpp">void DrawSpriteCircle( Point2D pos, int radius, const char * penSprite, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>The x/y coordinate for the origin of the circle. </td></tr>
+<tr><td>radius</td><td>The length of the circle's radius in pixels. </td></tr>
+<tr><td>penSprite</td><td>The sprite to use as the 'pen'. </td></tr>
+<tr><td>col</td><td>The colour of the sprites drawing the circle. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawSpriteCircle( { 150, 150 }, 40, "pen_8px", Play::cBlue );</code></pre><a id="funct-DrawFontText"><h4>Play::DrawFontText</h4></a>
+<p>Draws text using a sprite-based font exported from PlayFontTool. </p>
+
+<code class="language-cpp">void DrawFontText( const char * fontId, std::string text, Point2D pos, Align justify )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>fontId</td><td>The unique sprite id of the font you want to use. </td></tr>
+<tr><td>text</td><td>The string containing the text you want to draw. </td></tr>
+<tr><td>pos</td><td>The x/y coordinate for the location for text to be drawn at. </td></tr>
+<tr><td>justify</td><td>Optional argument determining whether the text is left, right, or centre justified (defaults to left justified). </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawFontText( "font64px_10x10", "Level 1: Get ready!",
+{ DISPLAY_WIDTH/2, DISPLAY_HEIGHT/2 },
+Play::CENTRE );</code></pre><a id="funct-DrawPixel"><h4>Play::DrawPixel</h4></a>
+<p>Draws a single pixel on screen. </p>
+
+<code class="language-cpp">void DrawPixel( Point2D pos, Colour col )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>The x/y coordinate of the pixel you wish to draw. </td></tr>
+<tr><td>col</td><td>The colour of the pixel. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawPixel( { 150, 150 }, Play::cBlue );</code></pre><a id="funct-BeginTimingBar"><h4>Play::BeginTimingBar</h4></a>
+<p>Resets the timing bar data and sets the current timing bar segment to a specific colour. </p>
+
+<code class="language-cpp">void BeginTimingBar( Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>colour</td><td>Colour of the timing bar segment. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::BeginTimingBar(cWhite);</code></pre><a id="funct-ColourTimingBar"><h4>Play::ColourTimingBar</h4></a>
+<p> </p>
+
+<code class="language-cpp">int ColourTimingBar( Colour colour )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>colour</td><td>Colour of the timing bar segment. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The number of timing segments </p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::ColourTimingBar(cRed);</code></pre><a id="funct-DrawTimingBar"><h4>Play::DrawTimingBar</h4></a>
+<p>Draws the timing bar for the previous frame at the given position and size. </p>
+
+<code class="language-cpp">void DrawTimingBar( Point2f pos, Point2f size )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>pos</td><td>The x/y coordinate you want to draw the timing bar at. </td></tr>
+<tr><td>size</td><td>The size of the timing bar in pixels. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawTimingBar({ 0,0 }, { 20, 10 });</code></pre>
+<h3>Enums</h3><a id="enum-Align"><h4>Align</h4></a>
+<p>Alignment for font drawing operations.<br></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>LEFT</td><td>Text is aligned to the left of the origin.</td></tr>
+<tr><td>RIGHT</td><td>Text is aligned to the right of the origin.</td></tr>
+<tr><td>CENTRE</td><td>Text is aligned to the middle of the origin.</td></tr>
+</table>
+<a id="enum-DrawingSpace"><h4>DrawingSpace</h4></a>
+<p>The drawing space values.<br>The drawing space determines where things are drawn on the screen. There are two values for this, WORLD and SCREEN.</p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>WORLD</td><td>This takes the camera position into account when things are drawn. Essentially, the position that is used is DrawingPosition - CameraPosition.</td></tr>
+<tr><td>SCREEN</td><td>This ignores the camera position, and purely uses the position that gets passed through. This is most useful for user interface elements that should always be drawn in the same position on the screen.</td></tr>
+</table>
+<a id="enum-BlendMode"><h4>BlendMode</h4></a>
+<p>The Blend modes for sprite drawing.<br></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>BLEND_NORMAL</td><td>This blends the sprite normally. If using a transparent sprite draw, this also uses the transparency of the sprite.</td></tr>
+<tr><td>BLEND_ADD</td><td>This uses an additive blend, where the colour values of the sprite being drawn are added to the buffer underneath. This has the effect of brightening what is underneath the sprite.</td></tr>
+<tr><td>BLEND_MULTIPLY</td><td>This uses an multiplicative blend, where the colour values of the sprite being drawn are multiplied with what is in the buffer underneath. This will darken what is underneath the sprite.</td></tr>
+</table>
+<a id="group-misc"><H2>Misc</H2></a>
+<body>These functions don't really fit into any of the other category. They're mainly the random number generation functions, that let you get a random value, so everything isn't identical on every run. </body>
+
+<h3>Functions</h3><a id="funct-RandomRoll"><h4>Play::RandomRoll</h4></a>
+<p>Returns a random number as if you rolled a die with this many sides. </p>
+
+<code class="language-cpp">int RandomRoll( int sides )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>sides</td><td>How many sides the 'die' has. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The number that was rolled. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int hitRoll = Play::RandomRoll( 20 );</code></pre><a id="funct-RandomRollRange"><h4>Play::RandomRollRange</h4></a>
+<p>Returns a random number, between the min and max parameters. </p>
+
+<code class="language-cpp">int RandomRollRange( int min, int max )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>min</td><td>The smallest number that the roll can return. </td></tr>
+<tr><td>max</td><td>The largest number that the roll can return. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): The number that was rolled. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int damageRoll = Play::RandomRollRange( 4, 12 );</code></pre>
+<a id="group-gameobject"><H2>GameObject</H2></a>
+<body>PlayBuffer has an optional GameObject system included as part of it. A GameObject is a structure (or 'struct') provided by PlayManager that represents an interactive object in a typical game. Each GameObject has a set of useful, common properties and PlayManager has a number of functions for managing them. Note that Play::GameObject and its associated functionality is only included if you add <code class="language-cpp">#define PLAY_USING_GAMEOBJECT_MANAGER</code> to the top of your main code file. </body>
+<h3>Structs</h3><a id="struct-GameObject"><h4>GameObject</h4></a>
+<p>The Gameobject struct.<br>Holds all the data that a GameObject requires, and can be extended by the user. </p>
+<table>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+<tr><td>type</td><td>int</td><td>A number representing the type of the GameObject as an int or enum. So a type of 1 might correspond to a health pickup and a type of 2 might correspond to a missile, for example. The only type value defined by PlayManager is -1, which corresponds to "no type". It is up to the user to decide how to assign other GameObject types. PlayManager will simply treat each unique value as a distinct type.</td></tr>
+<tr><td>oldType</td><td>int</td><td>If the object has changed type since it was created, then this holds the previous type of the object.</td></tr>
+<tr><td>spriteId</td><td>int</td><td>The unique id of the sprite to be associated with the GameObject as used in certain DrawSprite commands.</td></tr>
+<tr><td>pos</td><td>Point2D</td><td>The x/y position where the origin of the GameObject is placed. Used for calculating collisions as well as drawing the sprite.</td></tr>
+<tr><td>oldPos</td><td>Point2D</td><td>The x/y position of the GameObject from the previous frame.</td></tr>
+<tr><td>velocity</td><td>Vector2D</td><td>An x/y vector that determines how the position of the GameObject changes each time it is updated. The x-velocity will be added to the x position, and y-velocity to the y position.</td></tr>
+<tr><td>acceleration</td><td>Vector2D</td><td>An x/y vector that determines how the velocity of the GameObject changes each time it is updated. The x-acceleration will be added to the x velocity, and y-acceleration to the y velocity.</td></tr>
+<tr><td>rotation</td><td>float</td><td>The angle by which GameObject should be rotated when it is drawn. Measured in radians, clockwise from 12-o'clock.</td></tr>
+<tr><td>rotSpeed</td><td>float</td><td>A constant value which is added to the rotation of the GameObject each time it is updated.</td></tr>
+<tr><td>oldRot</td><td>float</td><td>The angle of rotation of the GameObject from the previous frame.</td></tr>
+<tr><td>frame</td><td>int</td><td>The sprite frame to use when the GameObject is drawn.</td></tr>
+<tr><td>framePos</td><td>float</td><td>The fraction of the sprite frame that the animation is currently on. animSpeed adds on to this value every frame, and when this rolls over 1, then it resets back down and increments frame.</td></tr>
+<tr><td>animSpeed</td><td>float</td><td>The amount the sprite frame is increased by each time the GameObject is updated. Numbers greater than 1 will result in frame-skipping. Numbers less than 1 will slow the animation down, but are best kept to fractions that divide equally into 1 (0.2, 0.5. 0.333, etc).</td></tr>
+<tr><td>radius</td><td>int</td><td>The distance away from GameObject's origin to detect collisions. Measured in pixels.</td></tr>
+<tr><td>scale</td><td>float</td><td>The size to draw the sprite associated with the GameObject. 1.0f is full size, 0.5f half size, 2.0f double size, and so on.</td></tr>
+<tr><td>order</td><td>int</td><td></td></tr>
+<tr><td>lastFrameUpdated</td><td>int</td><td>What frame did this GameObject last get updated on? This stops GameObjects being updated multiple times per frame.</td></tr>
+</table>
+
+<b>Example:</b><br><pre><code class="language-cpp">int agent8_id = Play::CreateGameObject(TYPE_PLAYER, {512, 128}, 64, "agent8");
+GameObject& agent8 = Play::GetGameObject( agent8_id );
+agent8.velocity = { 10, 0 };
+agent8.pos.y = 75;</code></pre>
+<h3>Play::GameObject Functions</h3><a id="funct-GameObject"><h4>Play::GameObject::GameObject</h4></a>
+<p>GameObject constructor. </p>
+
+<code class="language-cpp">GameObject( int type, None pos, int collisionRadius, int spriteId )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>type</td><td>The type of the GameObject. </td></tr>
+<tr><td>pos</td><td>The initial x/y coordinates of the GameObject. </td></tr>
+<tr><td>collisionRadius</td><td>The radius of the collision circle of this GameObject. </td></tr>
+<tr><td>spriteId</td><td>The sprite ID of the GameObject. </td></tr>
+</table>
+
+<p></p>
+<a id="funct-GetId"><h4>Play::GameObject::GetId</h4></a>
+<p>Allows you to get the unique ID of a GameObject if you only have a reference or a copy of it. </p>
+
+<code class="language-cpp">int GetId()</code><br>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): This GameObject's unique ID. </p>
+
+
+<h3>Functions</h3><a id="funct-CreateGameObject"><h4>Play::CreateGameObject</h4></a>
+<p>Creates a new GameObject and adds it to the managed list. </p>
+
+<code class="language-cpp">int CreateGameObject( int type, Point2D pos, int collisionRadius, const char * spriteName )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>type</td><td>The type of the GameObject. </td></tr>
+<tr><td>pos</td><td>The initial x/y coordinates of the GameObject. </td></tr>
+<tr><td>collisionRadius</td><td>The radius of the collision circle of this GameObject. </td></tr>
+<tr><td>spriteName</td><td>The name of the sprite to use for the GameObject. </td></tr>
+</table>
+
+<p><b>Returns</b> (as an <code class="language-cpp">int</code>): Returns the new object's unique id. </p>
+<b>Example:</b><br><pre><code class="language-cpp">int coin_id = Play::CreateGameObject(TYPE_COIN, {320, 64}, 32, "coin");</code></pre><a id="funct-GetGameObject"><h4>Play::GetGameObject</h4></a>
+<p>Retrieves a GameObject from the ID passed to this function. </p>
+
+<code class="language-cpp">GameObject & GetGameObject( int id )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>id</td><td>The ID of the GameObject you wish to retrieve. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">GameObject &</code>): The game object associated with that ID. An object with a type of -1 is returned if no object can be found. </p>
+<b>Example:</b><br><pre><code class="language-cpp">GameObject& coin = Play::GetGameObject( coin_id );</code></pre><a id="funct-GetGameObjectByType"><h4>Play::GetGameObjectByType</h4></a>
+<p>Retrieves the first GameObject matching the type that you pass through as a parameter. </p>
+
+<code class="language-cpp">GameObject & GetGameObjectByType( int type )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>type</td><td>The type of the GameObject you wish to retrieve. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">GameObject &</code>): The first GameObject that matches the given type. An object with a type of -1 is returned if no object can be found. </p>
+<b>Example:</b><br><pre><code class="language-cpp">GameObject& laser = Play::GetGameObjectByType(TYPE_LASER);</code></pre><a id="funct-CollectGameObjectIDsByType"><h4>Play::CollectGameObjectIDsByType</h4></a>
+<p>Collects the IDs of all of the GameObjects with the matching type. </p>
+
+<code class="language-cpp">std::vector< int > CollectGameObjectIDsByType( int type )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>type</td><td>The type of the GameObjects you wish to retrieve. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">std::vector< int ></code>): A vector containing IDs of GameObjects of that type. The vector will be empty if no GameObjects match the type. </p>
+<b>Example:</b><br><pre><code class="language-cpp">std::vector<int> tool_IDs = Play::CollectGameObjectIDsByType(TYPE_TOOL);</code></pre><a id="funct-CollectAllGameObjectIDs"><h4>Play::CollectAllGameObjectIDs</h4></a>
+<p>Collects the IDs of all of the GameObjects. </p>
+
+<code class="language-cpp">std::vector< int > CollectAllGameObjectIDs()</code><br>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">std::vector< int ></code>): A vector containing the IDs of all of the GameObjects that the manager contains. The vector will be empty if there are no GameObjects. </p>
+<b>Example:</b><br><pre><code class="language-cpp">std::vector<int> gameObject_IDs = Play::CollectAllGameObjectIDs();</code></pre><a id="funct-UpdateGameObject"><h4>Play::UpdateGameObject</h4></a>
+<p>Performs a typical update of the object's position and animation. Changes its velocity by its acceleration, its position by its velocity, its rotation by its rotation speed, and its animation frame by its animation speed. </p>
+<div style='note'><h5>Warning:</h5></div>
+<code class="language-cpp">void UpdateGameObject( GameObject & object, bool bWrap, int wrapBorderSize, bool allowMultipleUpdatesPerFrame )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>object</td><td>The GameObject you wish to update. </td></tr>
+<tr><td>bWrap</td><td>Should the object wrap around the edge of the screen to the other side? Defaults to no. </td></tr>
+<tr><td>wrapBorderSize</td><td>If the object is wrapping, then how far off the edge of the screen should the object get before it wraps? Defaults to 0 pixels. </td></tr>
+<tr><td>allowMultipleUpdatesPerFrame</td><td>If set to true, then this allows for the object to be updated again if it already has this frame. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::UpdateGameObject( agent8 );</code></pre><a id="funct-DestroyGameObject"><h4>Play::DestroyGameObject</h4></a>
+<p>Deletes the GameObject with the corresponding Id. </p>
+
+<code class="language-cpp">void DestroyGameObject( int id )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>id</td><td>The unique id of the GameObject you wish to delete. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DestroyGameObject( agent8_id );</code></pre><a id="funct-DestroyGameObjectsByType"><h4>Play::DestroyGameObjectsByType</h4></a>
+<p>Deletes all GameObjects with the corresponding type. </p>
+
+<code class="language-cpp">void DestroyGameObjectsByType( int type )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>type</td><td>The type of the GameObjects you wish to delete. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DestroyGameObjectsByType(TYPE_TOOL);</code></pre><a id="funct-DestroyAllGameObjects"><h4>Play::DestroyAllGameObjects</h4></a>
+<p>Deletes all GameObjects. </p>
+
+<code class="language-cpp">void DestroyAllGameObjects()</code><br>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DestroyAllGameObjects();</code></pre><a id="funct-IsColliding"><h4>Play::IsColliding</h4></a>
+<p>Checks whether the two GameObjects are within each other's collision radii. </p>
+
+<code class="language-cpp">bool IsColliding( GameObject & obj1, GameObject & obj2 )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj1</td><td>The first GameObject we want to check has collided. </td></tr>
+<tr><td>obj2</td><td>The second GameObject we want to check has collided. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): Returns true if the GameObjects are overlapping, false otherwise. </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool shotByLaser = Play::IsColliding( agent8, laser );</code></pre><a id="funct-IsVisible"><h4>Play::IsVisible</h4></a>
+<p>Checks whether any part of the GameObject is visible within the DisplayBuffer. </p>
+
+<code class="language-cpp">bool IsVisible( GameObject & obj )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject that we want to check for visibility. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): None</p>
+<b>Example:</b><br><pre><code class="language-cpp">bool agent8Visible = Play::IsVisible( agent8 );</code></pre><a id="funct-IsLeavingDisplayArea"><h4>Play::IsLeavingDisplayArea</h4></a>
+<p>Checks whether the GameObject is overlapping the edge of the screen and moving outwards. </p>
+
+<code class="language-cpp">bool IsLeavingDisplayArea( GameObject & obj, Direction dirn )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject that we want to check for overlapping. </td></tr>
+<tr><td>dirn</td><td>Which side of the screen are we checking? Defaults to all sides. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): Returns true if the object is overlapping, false otherwise. </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool leaving = Play::IsLeavingDisplayArea( agent8, Play::VERTICAL );</code></pre><a id="funct-IsAnimationComplete"><h4>Play::IsAnimationComplete</h4></a>
+<p>Checks whether the animation has completed playing. </p>
+
+<code class="language-cpp">bool IsAnimationComplete( GameObject & obj )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject that we want to check. </td></tr>
+</table>
+
+<p><b>Returns</b> (as a <code class="language-cpp">bool</code>): Returns true if the animation has finished, false if it hasn't. </p>
+<b>Example:</b><br><pre><code class="language-cpp">bool agent8AnimationComplete = Play::IsAnimationComplete( agent8 );</code></pre><a id="funct-SetGameObjectDirection"><h4>Play::SetGameObjectDirection</h4></a>
+<p>Sets the velocity and angle of the GameObject. </p>
+
+<code class="language-cpp">void SetGameObjectDirection( GameObject & obj, int speed, float rotation )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to change the velocity and direction of. </td></tr>
+<tr><td>speed</td><td>The number of pixels you want the GameObject to move in a straight line each time it is updated. </td></tr>
+<tr><td>rotation</td><td>The angle you want the GameObject to move in. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetGameObjectDirection( agent8, 10, PLAY_PI);</code></pre><a id="funct-PointGameObject"><h4>Play::PointGameObject</h4></a>
+<p>Sets the rotation of the object to point towards the target coordinate. </p>
+
+<code class="language-cpp">void PointGameObject( GameObject & obj, int targetX, int targetY )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to change the direction of. </td></tr>
+<tr><td>targetX</td><td>The x coordinate of the point you wish the object to point at. </td></tr>
+<tr><td>targetY</td><td>The y coordinate of the point you wish the object to point at. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::PointGameObject( agent8, 400, 400);</code></pre><a id="funct-SetSprite"><h4>Play::SetSprite</h4></a>
+<p>Changes the GameObject's current spite and resets its animation frame to the start. </p>
+
+<code class="language-cpp">void SetSprite( GameObject & obj, const char * spriteName, float animSpeed )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to set the sprite for. </td></tr>
+<tr><td>spriteName</td><td>The name of the sprite you wish to set for the GameObject. </td></tr>
+<tr><td>animSpeed</td><td>The number of frames to increase the animation by each time the GameObject is updated. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::SetSprite( agent8, "agent8", 1 );</code></pre><a id="funct-DrawObject"><h4>Play::DrawObject</h4></a>
+<p>Draws the GameObject's sprite without rotation or transparency. This is the fastest way to draw a GameObject, and so should be the preferred method when rotation and alpha are not required. </p>
+
+<code class="language-cpp">void DrawObject( GameObject & obj )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to draw. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawObject( agent8 );</code></pre><a id="funct-DrawObjectTransparent"><h4>Play::DrawObjectTransparent</h4></a>
+<p>Draws the GameObject's sprite with transparency. This is slower than DrawObject and so should only be used if you require transparency. </p>
+
+<code class="language-cpp">void DrawObjectTransparent( GameObject & obj, float opacity )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to draw. </td></tr>
+<tr><td>opacity</td><td>How transparent the object should be. 0.0f is fully transparent and 1.0f is fully opaque. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawObjectTransparent( agent8, 0.7f );</code></pre><a id="funct-DrawObjectRotated"><h4>Play::DrawObjectRotated</h4></a>
+<p>Draws the object's sprite with rotation, scale, and transparency. This is slower than DrawObject or DrawObjectTransparent and so should only be used if you require rotation or scale. Rotation and scale are taken from the properties of the GameObject. </p>
+
+<code class="language-cpp">void DrawObjectRotated( GameObject & obj, float opacity )</code><br>
+<table>
+<tr><th>Argument</th><th>Description</th></tr>
+<tr><td>obj</td><td>The GameObject you wish to draw. </td></tr>
+<tr><td>opacity</td><td>How transparent the object should be. 0.0f is fully transparent and 1.0f is fully opaque. </td></tr>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawObjectRotated( agent8, DegToRad(45.0f) );</code></pre><a id="funct-DrawGameObjectsDebug"><h4>Play::DrawGameObjectsDebug</h4></a>
+<p>Draws debug info for all of the GameObjects that exist. </p>
+
+<code class="language-cpp">void DrawGameObjectsDebug()</code><br>
+</table>
+
+<p></p>
+<b>Example:</b><br><pre><code class="language-cpp">Play::DrawGameObjectsDebug();</code></pre>
+<h3>Enums</h3><a id="enum-Direction"><h4>Direction</h4></a>
+<p>Used to indicate which edge of the screen you want to check if a GameObject is moving off.<br></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>HORIZONTAL</td><td>Check if it's moving off the left or right sides of the screen.</td></tr>
+<tr><td>VERTICAL</td><td>Check if it's moving off the top or bottom sides of the screen.</td></tr>
+<tr><td>ALL</td><td>Check if it's moving off any side of the screen.</td></tr>
+</table>
+
+	</div>
+	<footer class="page-footer"><br><br><br><br>The PlayManager and the PlayBuffer library are ©
+		<script>document.write(new Date().getFullYear())</script> Sumo Digital Ltd.<br>
+		Compiled on 08/02/2024, Commit ID UNKNOWN<br><br>
+	</footer>
+</body>
+</html>

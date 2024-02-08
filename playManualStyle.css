@@ -1,0 +1,162 @@
+.mitr-regular {
+	font-family: "Mitr", sans-serif;
+	font-weight: 300;
+	font-style: normal;
+  }  
+  
+  .londrina-solid-black {
+	font-family: "Londrina Solid", sans-serif;
+	font-weight: 900;
+	font-style: normal;
+  }
+  
+  .zilla-slab-medium {
+	font-family: "Zilla Slab", serif;
+	font-weight: 500;
+	font-style: normal;
+  }
+  
+  .zilla-slab-medium-italic {
+	font-family: "Zilla Slab", serif;
+	font-weight: 500;
+	font-style: italic;
+  }  
+  
+.ubuntu-condensed-regular {
+	font-family: "Ubuntu Condensed", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+  }  
+
+h1 {
+	color: #e06f16;
+	text-align: center;
+	font-family: 'Londrina Solid';
+	font-size: 72pt;
+	text-transform: uppercase;
+    transform: scaleX(0.7);
+}
+
+h2 {
+	font-family: 'Mitr';
+	color: white;
+	font-size: 24pt;
+	background-color: #e06f16;
+	text-align: center;
+	padding: 12px;
+	padding-left: 44px;
+	margin-left: -32px;
+}
+
+h4 {
+	font-family: 'Ubuntu Condensed';
+	font-size: 14pt;
+	color: white;
+	background-color: #e06f16;
+	padding: 4px;
+	padding-left: 36px;
+	margin-left: -32px;
+}
+
+body {
+	position: relative;
+	font-family: 'Zilla Slab';
+	background-image: url("./images/HeaderSpyder.png"), url("./images/ComputerFooter.png");
+	background-repeat: no-repeat, no-repeat;
+	background-position-x: 100%, 320px;
+	background-position-y: -40px, bottom;
+	background-attachment: fixed, scroll;
+	background-size: 220px, 400px;
+	margin-left: 32px;
+	margin-right: 0px;
+	margin-top: -4px;
+}
+
+
+.daterevstring {
+	font-family: 'Mitr';
+	color: e06f16;
+	font-size: 12pt;
+	text-align: center;
+	padding: 12px;
+	padding-left: 44px;
+	margin-left: -32px;
+}
+
+table,
+th,
+td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding-left: 4px;
+	padding-right: 12px;
+	text-align: left;
+	min-width: 150px;
+	max-width: 800px;
+}
+
+th {
+	color: white;
+	background-color: #595959;
+}
+
+.page-header {
+	background-image: url("./images/HeaderLeft.png");
+	background-repeat: no-repeat;
+	background-size: 320px;
+	margin-left: -32px;
+	margin-top: 0px;
+}
+
+.page-footer { 
+	background-image: url(./images/FooterSpyder.png), url(./images/FooterSpyderBar.png);
+	background-repeat: no-repeat, repeat-x;
+	background-position: right, bottom;
+	background-size: 220px, 360px;
+	text-align: center;
+	color: white;
+	margin-left:286px;
+	margin-right: 0px;
+	margin-bottom: -8px;
+}
+
+.contentsSidebar {
+	height: 100%;
+	width: 15%;
+	background-color: #fff;
+	position: fixed !important;
+	z-index: 2;
+	overflow: auto;
+	margin-left: -32px;
+}
+
+.contentsLinks
+{
+	margin-left: 8px;
+}
+
+a.linkToGroup{
+	font-size: 22px;
+}
+a.linkToGroup:link {
+	color: #ff0000;
+}
+a.linkToGroup:visited {
+	color: #aa0000;
+}
+a.linkToGroup:hover {
+	color: #ffcc00;
+}
+
+a.linkToGroup{
+	font-size: 20px;
+}
+a.linkToContent:link {
+	color:	#00a4de;
+}
+a.linkToContent:visited {
+	color: #006b91;
+}
+a.linkToContent:hover {
+	color: #00abff;
+}
