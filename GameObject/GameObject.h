@@ -1,84 +1,85 @@
 #pragma once
 
-// An abstract base class representing GameObjects
+// The GameObject type is the only representation of type which is visible to code externally
+enum GameObjectType
+{
+	TYPE_NULL = -1,
+	TYPE_AGENT8,
+	TYPE_FAN,
+	TYPE_TOOL,
+	TYPE_COIN,
+	TYPE_STAR,
+	TYPE_LASER,
+	TYPE_DESTROYED,
+};
+
 class GameObject
 {
 public:
+	// Constructors and (virtual) destructor
+	GameObject() = delete; // Delete the default constructor as we don't want unmanaged GameObjects
+	GameObject( GameObjectType objType, Play::Point2f position, Play::Vector2f velocity, std::string spriteName );
+	virtual ~GameObject() {}; 
+	
+	// Providing no implementation of the virtual Update function makes this an abstract base class
+	virtual void Update() = 0;
+	// These virtuals have implementations and so are optional overrides
+	virtual void OnCollision( GameObject* ) {};
+	virtual void UpdateDestroyed();
 
-    // Add new GameObject types to this enumeration
-    enum Type
-    {
-        OBJ_NONE = -1,
-        OBJ_PLAYER = 0,
-        OBJ_SAUCER,
-        OBJ_LASER,
-        OBJ_ALL = 999
-    };
+	// Various tests on game objects
+	bool IsColliding( GameObject* obj );
+	bool IsDestroyed() { return m_destroy; }
+	bool IsLeavingDisplay( bool vertical = true, bool horizontal = true );
+	bool IsOutsideDisplay();
+	bool IsHidden() { return m_hidden; }
 
-    // Creates a new GameObject instance and adds it to the update and draw lists
-    GameObject( Point2f pos );
-    // Creates a new GameObject instance and adds it to the update and draw lists
-    GameObject( Matrix2D& mat );
-    // Removes the instance from the update and draw lists
-    virtual ~GameObject();
+	// Standard updates and destruction flagging
+	void StandardMovementUpdate();
+	void UpdateAnimation();
+	void Destroy( bool inOne = false );
 
-    // Virtual Update and Draw functions to be overridden by derived classes
-    virtual void Update( GameState& state ) = 0;
-    virtual void Draw( GameState& gState ) const = 0;
+	// Setters
+	void SetVelocity( Play::Vector2f velocity ) { m_velocity = velocity; }
+	void SetAcceleration( Play::Vector2f acceleration ) { m_acceleration = acceleration; }
+	void SetPosition( Play::Point2f pos ) { m_pos = pos; }
+	void SetSprite( std::string spriteName, float animationSpeed );
+	void SetAnimationSpeed( float animationSpeed ) { m_animSpeed = animationSpeed; }
+	void SetRotation( float rotation ) { m_rotation = rotation; }
+	void SetRotationSpeed( float rotationSpeed ) { m_rotSpeed = rotationSpeed; }
+	void SetFrame( float frame ) { m_frame = frame; }
+	void SetVisible( bool render ) { m_hidden = render; }
 
-    // Sets the screen position of the GameObject
-    void SetPosition( Point2f pos ) { m_worldMat.row[2] = pos; }
-    // Gets the screen position of the GameObject
-    Point2f GetPosition() const { return m_worldMat.row[2].As2D(); };
-    // Sets the velocity of the GameObject in pixels per frame
-    void SetVelocity( Vector2f vel ) { m_velocity = vel; }
-    // Gets the velocity of the GameObject in pixels per frame
-    Vector2f GetVelocity() const { return m_velocity; };
-    // Sets the drawing order of the object (higher values are further away)
-    void SetDrawOrder( int drawOrder ) { m_drawOrder = drawOrder; }
-    // Gets the drawing order of the object (higher values are further away)
-    int GetDrawOrder() const { return m_drawOrder; };
-    // Sets the update order of the object (lower values are updated first)
-    void SetUpdateOrder( int updateOrder ) { m_updateOrder = updateOrder; }
-    // Gets the update order of the object (lower values are updated first)
-    int GetUpdateOrder() const { return m_updateOrder; };
-
-    // Uses the update list to count how many objects of each type there are
-    static int GetObjectCount( Type eType );
-    // Adds all the GameObjects of a specified type to a vector provided
-    static int GetObjectList( GameObject::Type eType, std::vector< GameObject* >& vList );
-
-    // Sorts the update list and uses it to update all GameObjects
-    static void UpdateAll( GameState& state );
-    // Sorts the draw list and uses it to draw all GameObjects
-    static void DrawAll( GameState& state );
-    // Uses the draw list to destroy all GameObjects
-    static void DestroyAll();
+	// Getters
+	Play::Vector2f GetVelocity() { return m_velocity; }
+	Play::Vector2f GetAcceleration() { return m_acceleration; }
+	Play::Vector2f GetPosition() { return m_pos; }
+	float GetRotation() { return m_rotation; }
+	float GetFrame() { return m_frame; };
+	int GetSpriteID() { return m_spriteID; }
+	GameObjectType GetObjectType() { return m_type; }
 
 protected:
 
-    // Internal functions to define the way in which the Draw and Update lists are sorted
-    static bool DrawOrder( const GameObject* a, const GameObject* b ) { return a->m_drawOrder > b->m_drawOrder; }
-    static bool UpdateOrder( const GameObject* a, const GameObject* b ) { return a->m_updateOrder > b->m_updateOrder; }
+	// Mostly just adapted from Play::GameObject
+	GameObjectType m_type{ GameObjectType::TYPE_NULL };
 
-    // Add new object types to the enumeration above
-    Type m_type{ OBJ_NONE };
-    // Inactive objects are destroyed at the end of the next update
-    bool m_active{ true };
-    // Velocity in pixels per frame
-    Vector2f m_velocity{ 0, 0 };
-    // Id of the attached sprite for drawing
-    int m_spriteId{ -1 };
-    // Higher values are further away
-    int m_drawOrder{ 0 };
-    // Lower values are updated first
-    int m_updateOrder{ 0 };
-    // Every GameObject has a world transformation matrix
-    Matrix2D m_worldMat;
+	Play::Point2f m_pos{ 0, 0 };
+	Play::Point2f m_oldPos{ 0, 0 };
+	Play::Vector2f m_velocity{ 0, 0 };
+	Play::Vector2f m_acceleration{ 0, 0 };
 
-    // Static class members are shared between all instances of the class
-    static std::vector< GameObject* > s_vUpdateList;
-    static std::vector< GameObject* > s_vDrawList;
+	float m_frame{ -1 };
+	float m_frameTimer{ 0 };
+	float m_rotation{ 0 };
+	float m_rotSpeed{ 0 };
+	float m_animSpeed{ 1 }; 
+	float m_radius{ -1 };
 
+	int m_spriteID{ -1 };
+	int m_halfWidth{ -1 };
+	int m_halfHeight{ -1 };
+
+	bool m_destroy{ false };
+	bool m_hidden{ false };
 };
-

@@ -1,51 +1,37 @@
 #include "Play.h"
-
-#include "MainGame.h"
 #include "Laser.h"
-#include "Saucer.h"
+#include "ObjectManager.h"
+#include "Agent8.h"
 
-Laser::Laser( Matrix2D& mat ) : GameObject( mat )
+void Laser::Update()
 {
-	m_velocity = { 0, -LASER_SPEED };
-	m_type = OBJ_LASER;
-	m_spriteId = Play::GetSpriteId( "Laser" );
-	m_drawOrder = 1;
+	StandardMovementUpdate();
+
+	if( IsOutsideDisplay() )
+		m_destroy = true;
 }
 
-void Laser::Update( GameState& state )
+void Laser::OnCollision( GameObject* other )
 {
-	std::vector< GameObject* > vSaucerList;
-	GameObject::GetObjectList( GameObject::OBJ_SAUCER, vSaucerList );
+	Agent8* pPlayer = (Agent8*)GetObjectManager()->GetPlayer();
 
-	for( GameObject* p : vSaucerList )
+	switch( other->GetObjectType() )
 	{
-		Saucer* s = static_cast<Saucer*>( p );
-		
-		float  dist = ( m_worldMat.row[2].As2D() - s->GetPosition() ).Length();
+	case TYPE_TOOL:
+		other->Destroy();
+		Destroy( true );
+		pPlayer->AddScore( 100 );
+		break;
 
-		if( s->GetHit() == false &&  dist < LASER_COLLISION_DISTANCE )
-		{
-			s->SetHit( true );
-			state.score += SAUCER_SCORE;
-			Play::PlayAudio( "clang" );
-			m_active = false;
-		}
-	}
+	case TYPE_COIN:
+		other->Destroy();
+		Destroy( true );
+		Play::PlayAudio( "snd_error" );
+		pPlayer->AddScore( -300 );
 
-	m_worldMat.row[2] -= m_worldMat.row[1] * LASER_SPEED; // -ve is up the screen
+		if( pPlayer->GetScore() < 0 )
+			pPlayer->SetScore( 0 );
 
-	if( m_active && m_worldMat.row[2].y < 0 )
-	{
-		m_active = false;
-
-		if( state.score >= LASER_COST )
-			state.score -= LASER_COST;
+		break;
 	}
 }
-
-void Laser::Draw( GameState& ) const
-{
-	Play::DrawSpriteTransformed( m_spriteId, m_worldMat, 0 );
-}
-
-

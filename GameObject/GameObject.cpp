@@ -1,85 +1,128 @@
 #include "Play.h"
-
-#include "MainGame.h"
 #include "GameObject.h"
 
-std::vector< GameObject* > GameObject::s_vUpdateList;
-std::vector< GameObject* > GameObject::s_vDrawList;
-
-GameObject::GameObject( Point2f pos )
+GameObject::GameObject( GameObjectType objType, Play::Point2f position, Play::Vector2f velocity, std::string spriteName )
 {
-	m_worldMat = MatrixIdentity();
-	m_worldMat.row[2] = { pos.x, pos.y, 1.0f }; // The third [2] row of the matrix holds the position
+	m_type = objType;
 
-	s_vUpdateList.push_back( this );
-	s_vDrawList.push_back( this );
+	m_spriteID = Play::GetSpriteId( spriteName.c_str() );
+	m_frame = 1;
+	m_pos = position;
+	m_velocity = velocity;
+
+	m_halfWidth = Play::GetSpriteWidth( m_spriteID ) / 2;
+	m_halfHeight = Play::GetSpriteHeight( m_spriteID ) / 2;
+	m_radius = (float)m_halfWidth;
 }
 
-GameObject::GameObject( Matrix2D& mat )
+void GameObject::SetSprite( std::string spriteName, float animationSpeed )
 {
-	m_worldMat = mat;
+	m_spriteID = Play::GetSpriteId( spriteName.c_str() );
+	m_animSpeed = animationSpeed;
+};
 
-	s_vUpdateList.push_back( this );
-	s_vDrawList.push_back( this );
+// Code adapted from Play::IsColliding
+bool GameObject::IsColliding( GameObject* obj )
+{
+	//Don't collide with NULL objects
+	if( m_type == -1 || obj->m_type == -1 )
+		return false;
+
+	int xDiff = (int)m_pos.x- (int)obj->m_pos.x;
+	int yDiff = (int)m_pos.y - (int)obj->m_pos.y;
+	int radii = (int)m_radius + (int)obj->m_radius;
+
+	// Game programmers don't do square root!
+	return((xDiff * xDiff) + (yDiff * yDiff) < radii * radii);
 }
 
-GameObject::~GameObject()
+//  Code adapted from Play::IsLeavingDisplayArea
+bool GameObject::IsLeavingDisplay( bool vertical, bool horizontal )
 {
-	s_vDrawList.erase( std::find( s_vDrawList.begin(), s_vDrawList.end(), this ) );
-	s_vUpdateList.erase( std::find( s_vUpdateList.begin(), s_vUpdateList.end(), this ) );
-}
+	if( m_type == -1 ) return false; 
 
-void GameObject::UpdateAll( GameState& state )
-{
-	std::sort( s_vUpdateList.begin(), s_vUpdateList.end(), GameObject::UpdateOrder );
+	Play::Vector2f spriteSize = Play::Graphics::GetSpriteSize( m_spriteID );
+	Play::Vector2f spriteOrigin = Play::Graphics::GetSpriteOrigin( m_spriteID );
 
-	for( int n = 0; n < s_vUpdateList.size(); n++ )
+	if( horizontal )
 	{
-		s_vUpdateList[n]->Update( state );
-		   
-		if( !s_vUpdateList[n]->m_active )
-    		delete s_vUpdateList[n--];
+		if( m_pos.x - spriteOrigin.x < 0 && m_velocity.x < 0 )
+			return true;
+
+		if( m_pos.x + spriteSize.width - spriteOrigin.x > Play::Window::GetWidth() && m_velocity.x > 0 )
+			return true;
+	}
+
+	if( vertical )
+	{
+		if( m_pos.y - spriteOrigin.y < 0 && m_velocity.y < 0 )
+			return true;
+
+		if( m_pos.y + spriteSize.height - spriteOrigin.y > Play::Window::GetHeight() && m_velocity.y > 0 )
+			return true;
+	}
+
+	return false;
+}
+
+//  Code adapted from Play::IsVisible
+bool GameObject::IsOutsideDisplay()
+{
+	if( m_type == -1 ) return true;
+
+	Play::Vector2f spriteSize = Play::Graphics::GetSpriteSize( m_spriteID );
+	Play::Vector2f spriteOrigin = Play::Graphics::GetSpriteOrigin( m_spriteID );
+
+	return !(m_pos.x + spriteSize.width - spriteOrigin.x > 0 && m_pos.x - spriteOrigin.x < Play::Window::GetWidth() &&
+		m_pos.y + spriteSize.height - spriteOrigin.y > 0 && m_pos.y - spriteOrigin.y < Play::Window::GetHeight());
+}
+
+void GameObject::StandardMovementUpdate()
+{
+	m_rotation += m_rotSpeed;
+	m_oldPos = m_pos;
+	m_velocity += m_acceleration;
+	m_pos += m_velocity;
+}
+
+void GameObject::Destroy( bool inOne )
+{
+	// The first time we destroy something we want it to flash
+	// The second time we want rid of it
+	if( m_type != TYPE_DESTROYED && inOne == false )
+	{
+		m_frame = 0;
+		m_frameTimer = 0;
+		m_type = TYPE_DESTROYED;
+	}
+	else
+	{
+		m_destroy = true;
 	}
 }
 
-void GameObject::DrawAll( GameState& state )
+void GameObject::UpdateAnimation()
 {
-	std::sort( s_vDrawList.begin(), s_vDrawList.end(), GameObject::DrawOrder );
+	m_frameTimer += m_animSpeed;
 
-	for( int n = 0; n < s_vDrawList.size(); n++ )
-		s_vDrawList[n]->Draw( state );
-}
-
-void GameObject::DestroyAll()
-{
-	for( int n = 0; n < s_vDrawList.size(); n++ )
-		delete s_vUpdateList[n--];
-}
-
-int GameObject::GetObjectCount( GameObject::Type type )
-{
-	int count = 0;
-
-	for( GameObject* p : s_vUpdateList )
+	if( m_frameTimer >= 1 )
 	{
-		if( p->m_type == type || type == OBJ_ALL )
-			count++;
+		m_frame++;
+		m_frameTimer = 0;
 	}
-
-	return count;
 }
 
-int GameObject::GetObjectList( GameObject::Type type, std::vector< GameObject* >& vList )
+void GameObject::UpdateDestroyed()
 {
-	vList.clear();
+	m_animSpeed = 0.2f;
+	StandardMovementUpdate();
+	UpdateAnimation();
 
-	for( GameObject* p : s_vUpdateList )
-	{
-		if( p->m_type == type || type == OBJ_ALL )
-			vList.push_back( p );
-	}
+	if( (int)m_frame % 2 )
+		m_hidden = true;
+	else
+		m_hidden = false;
 
-	return vList.size();
+	if( IsOutsideDisplay() || m_frame >= 10 )
+		Destroy();
 }
-
-

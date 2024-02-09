@@ -18,6 +18,36 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Agent8.cpp" />
+    <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="Fan.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Laser.cpp" />
+    <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="Star.cpp" />
+    <ClCompile Include="StateAppear.cpp" />
+    <ClCompile Include="StateDead.cpp" />
+    <ClCompile Include="StateHalt.cpp" />
+    <ClCompile Include="StatePlay.cpp" />
+    <ClCompile Include="Tools.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Agent8.h" />
+    <ClInclude Include="Coin.h" />
+    <ClInclude Include="Fan.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Laser.h" />
+    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="Star.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="StateAppear.h" />
+    <ClInclude Include="StateDead.h" />
+    <ClInclude Include="StateHalt.h" />
+    <ClInclude Include="StatePlay.h" />
+    <ClInclude Include="Tools.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{6C18ED71-23FD-40D1-9F68-4BA93115AB9B}</ProjectGuid>
@@ -101,9 +131,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PlayBuffer%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,8 +150,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\PlayBuffer</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\PlayBuffer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -147,9 +177,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PlayBuffer%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,8 +200,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\PlayBuffer</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\PlayBuffer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -189,24 +219,6 @@
       </Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Laser.cpp" />
-    <ClCompile Include="MainGame.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Saucer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Play.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Laser.h" />
-    <ClInclude Include="MainGame.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Saucer.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

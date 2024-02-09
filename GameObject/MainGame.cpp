@@ -1,57 +1,51 @@
-// Play.h should be included in all cpp files, but PLAY_IMPLEMENTATION should only be defined in one 
 #define PLAY_IMPLEMENTATION
+
 #include "Play.h"
+#include "GameObject.h"
+#include "State.h"
 
-#include "MainGame.h"
-#include "Laser.h"
-#include "Saucer.h"
-#include "Player.h"
+#include "ObjectManager.h"
+#include "Agent8.h"
 
-// A global game state object accessible to everything (not ideal, but simple)
-GameState gState;
+int DISPLAY_WIDTH = 1280;
+int DISPLAY_HEIGHT = 720;
+int DISPLAY_SCALE = 1;
 
-// Avoid "magic numbers" in your code by using const or constexpr variables
-const Point2f PLAYER_START_POS{ 640, 650 };
-
-// MainGameEntry is the entry point for a PlayBuffer program: called once at the start of your program
-// The Play Manager automatically loads all sprites in advance from "Data\Sprites"
-// Backgrounds are loaded manually and audio is loaded from "Data\Audio" when requested
-// Sprite origins control their positioning and centre of rotation
-// GameObjects  add themselves to a managed internal list so no need to store the pointer from new (see GameObject.h)
+// The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 {
-    Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
-    Play::LoadBackground( "Data\\Backgrounds\\background.png" );
-    Play::CentreAllSpriteOrigins();
-    Play::StartAudioLoop( "music" );
-    new Player( PLAYER_START_POS );
+	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
+	Play::CentreAllSpriteOrigins();
+	Play::LoadBackground( "Data\\Backgrounds\\background.png" );
+	Play::StartAudioLoop( "snd_music" );
+	GetObjectManager()->CreateObject( TYPE_AGENT8, { 115, DISPLAY_HEIGHT }, { 0, 0 } );
+	GetObjectManager()->CreateObject( TYPE_FAN, { 1130, 250 }, { 0, 3 } );
 }
 
-// MainGameUpdate is called by the PlayBuffer once for each frame of the game (60 times a second!)
-// This is where you update and draw your game state for a single frame: it must return every frame or your game will hang!
-// elapsedTime can be used to implement a variable frame step, but it is ignored in this example
-bool MainGameUpdate( float elapsedTime )
+// Called by PlayBuffer every frame (60 times a second!)
+bool MainGameUpdate( float )
 {
-    gState.time += elapsedTime;
+	Play::DrawBackground();
+	GetObjectManager()->UpdateAll();
+	GetObjectManager()->DrawAll();
+	GetObjectManager()->CollideAll();
+	GetObjectManager()->CleanUpAll();
 
-    GameObject::UpdateAll( gState );
+	Play::DrawFontText( "32px", "ARROW KEYS TO MOVE UP AND DOWN AND SPACE TO FIRE",
+		{ DISPLAY_WIDTH / 2, 40 }, Play::CENTRE );
 
-    Play::DrawBackground();
-    GameObject::DrawAll( gState );
-    Play::DrawFontText( "105px", "SCORE: " + std::to_string( gState.score ), { DISPLAY_WIDTH / 2, 50 }, Play::CENTRE );
-    
-    Play::PresentDrawingBuffer();
-    return Play::KeyDown( VK_ESCAPE );
+	Play::DrawFontText( "72px", std::format("SCORE: {}", ((Agent8*)GetObjectManager()->GetPlayer())->GetScore()),
+		{ DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 70.0f }, Play::CENTRE );
+
+	Play::PresentDrawingBuffer();
+	return Play::KeyDown( Play::KEY_ESCAPE );
 }
 
-// MainGameExit gets called once when the player quits the game 
-// It needs to destroy everything, including the manager
+// Gets called once when the player quits the game 
 int MainGameExit( void )
 {
-    GameObject::DestroyAll();
-    Play::DestroyManager();
-    return PLAY_OK;
+	DestroyObjectManager();
+	Play::DestroyManager();
+	return PLAY_OK;
 }
-
-
 
