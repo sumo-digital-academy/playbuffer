@@ -646,13 +646,13 @@ Play::DrawSpriteTransformed( agent8_sprId, transformMatrix, 0);</code></pre><a i
 
 <p></p>
 <b>Example:</b><br><pre><code class="language-cpp">Play::DrawCircle( { 150, 150 }, 30, Play::cWhite );</code></pre><a id="funct-DrawRect"><h4>Play::DrawRect</h4></a>
-<p>Draws a rectangle, defined by the top left and bottom right corners, in the given colour. </p>
+<p>Draws a rectangle, defined by the bottom left and top right corners, in the given colour. </p>
 
-<code class="language-cpp">void DrawRect( Point2D topLeft, Point2D bottomRight, Colour col, bool fill )</code><br>
+<code class="language-cpp">void DrawRect( Point2D bottomLeft, Point2D topRight, Colour col, bool fill )</code><br>
 <table>
 <tr><th>Argument</th><th>Description</th></tr>
-<tr><td>topLeft</td><td>The x/y coordinate for the top left corner. </td></tr>
-<tr><td>bottomRight</td><td>The x/y coordinate for the bottom right corner. </td></tr>
+<tr><td>bottomLeft</td><td>The x/y coordinate for the bottom left corner. </td></tr>
+<tr><td>topRight</td><td>The x/y coordinate for the top right corner. </td></tr>
 <tr><td>col</td><td>The colour of the rectangle. </td></tr>
 <tr><td>fill</td><td>Is the rectangle filled in? Defaults to not filled in. </td></tr>
 </table>
@@ -1061,7 +1061,7 @@ agent8.pos.y = 75;</code></pre>
 	</div>
 	<footer class="page-footer"><br><br><br><br>The PlayManager and the PlayBuffer library are ©
 		<script>document.write(new Date().getFullYear())</script> Sumo Digital Ltd.<br>
-		Compiled on 08/02/2024, Commit ID UNKNOWN<br><br>
+		Compiled on 09/02/2024, Commit ID 4562a1b4f10dbdd518e117319e733b0a1ed83520<br><br>
 	</footer>
 </body>
 </html>
