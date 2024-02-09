@@ -18,7 +18,7 @@ bool MainGameUpdate( float elapsedTime )
 	Play::ClearDrawingBuffer( Play::cOrange );
 	Play::DrawDebugText( { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2 }, "Hello World!" );
 	Play::PresentDrawingBuffer();
-	return Play::KeyDown( VK_ESCAPE );
+	return Play::KeyDown( KEY_ESCAPE );
 }
 
 // Gets called once when the player quits the game 
