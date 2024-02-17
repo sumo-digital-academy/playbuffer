@@ -5,7 +5,12 @@
 * **LANGUAGE**: C++
 * **ENVIRONMENT**: Visual Studio
 
-## Why?
+## Version 2.0 Release Notes
+Please note that we have changed the way that our co-ordinate system works in PlayBuffer in this release! The Y axis now goes up the screen and rotation angles start at 0 degrees on the x-axis and rotate anti-clockwise. We've done this to better fit with traditional mathematical conventions taught in universities and schools outside of computer graphics. 
+
+![](/.github/images/angles.png)
+
+## Why Create PlayBuffer?
 Learning C++ is often seen as dry and difficult, partly because the examples used in teaching are usually text-based and uninspiring. PlayBuffer was designed to try and limit the demands of learning C++ while increasing the payoff for the learner by allowing them to make simple, 2D games.
 
 ## A Learning Scaffold
