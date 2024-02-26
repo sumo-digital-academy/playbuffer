@@ -196,9 +196,9 @@ namespace Play
 		Play::Graphics::DrawCircle( TRANSFORM_SPACE( pos ), radius, { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f } );
 	}
 
-	void DrawRect( Point2D topRight, Point2D bottomLeft, Colour c, bool fill )
+	void DrawRect(  Point2D bottomLeft, Point2D topRight, Colour c, bool fill )
 	{
-		Play::Graphics::DrawRect( TRANSFORM_SPACE( topRight ), TRANSFORM_SPACE( bottomLeft ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
+		Play::Graphics::DrawRect( TRANSFORM_SPACE( bottomLeft ), TRANSFORM_SPACE( topRight ), { c.red * 2.55f, c.green * 2.55f, c.blue * 2.55f }, fill );
 	}
 
 	void DrawSpriteLine( Point2D startPos, Point2D endPos, const char* penSprite, Colour col /*= cWhite */ )

@@ -7,8 +7,8 @@
 // Notes:		The GameObject management is "opt in" as many will want to create their own GameObject class
 //********************************************************************************************************************************
 
-#define TRANSFORM_SPACE( p )  (drawSpace == DrawingSpace::WORLD ? p - cameraPos : p)
-#define TRANSFORM_MATRIX_SPACE( t ) (drawSpace == DrawingSpace::WORLD ? t * (MatrixTranslation( -cameraPos.x, -cameraPos.y )) : t)
+#define TRANSFORM_SPACE( p )  (Play::drawSpace == Play::DrawingSpace::WORLD ? p - Play::cameraPos : p)
+#define TRANSFORM_MATRIX_SPACE( t ) (Play::drawSpace == Play::DrawingSpace::WORLD ? t * (MatrixTranslation( -Play::cameraPos.x, -Play::cameraPos.y )) : t)
 
 //! @brief Main Namespace for PlayBuffer
 namespace Play

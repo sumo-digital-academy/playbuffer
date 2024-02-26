@@ -33,9 +33,50 @@ PixelData g_spriteSheet = { 0 };
 char g_fontName[ 64 ] = { 0 };
 int g_fontPixelHeight = 0;
 int g_glyphYOffset = 0;
+int g_fontWeight = FW_DONTCARE;
+DWORD g_fontItalic = FALSE;
+string g_fontStyle;
+bool g_quitImmediately;
 
 // Forward declaration
 void CreateFontSpriteSheet( int pixelHeight, std::string fontName, PixelData& pixelData );
+
+bool ChooseWindowsFont()
+{
+	CHOOSEFONT cf;
+	LOGFONT lf;
+	wchar_t fontStyle[64] = {0};
+	char fontStyle_char[64] = {0};
+
+	memset(&cf, 0, sizeof(cf));
+	cf.lStructSize = sizeof(cf);
+	cf.Flags = CF_SCALABLEONLY | CF_USESTYLE;
+	cf.lpLogFont = &lf;
+	cf.lpszStyle = fontStyle;
+
+	// Throw up the font selection dialog - the point size is interpreted as a pixel height
+	bool result = ChooseFont(&cf);
+	PLAY_ASSERT_MSG(result, "You must select a font to continue");
+	if (result == false)
+	{
+		return false;
+	}
+	PLAY_ASSERT_MSG(cf.lpLogFont->lfFaceName[0] != 0, "Not a valid font");
+
+	// Grab the font at its initial size
+	g_fontPixelHeight = cf.iPointSize / 10; // cf.iPointSize is in 1/10 point units
+	WideCharToMultiByte(CP_ACP, 0, cf.lpLogFont->lfFaceName, -1, g_fontName, 32, NULL, NULL);
+
+	WideCharToMultiByte(CP_ACP, 0, fontStyle, -1, fontStyle_char, 32, NULL, NULL);
+	g_fontStyle = string(fontStyle_char);
+
+	g_fontItalic = lf.lfItalic;
+	g_fontWeight = lf.lfWeight;
+
+	g_glyphPadding = 2;
+	g_glyphYOffset = 0;
+	return true;
+}
 
 // The entry point for a Windows program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -43,32 +84,25 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 	// Create the PlayBuffer manager : has its own built-in font!
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 
-	// Begin by using a system dialog to ask the player to select a font that is already installed on their PC.
-	// The program must be launched again to choose a different font.
-
-	CHOOSEFONT cf;    
-	LOGFONT lf;       
-
-	memset( &cf, 0, sizeof( cf ) );
-	cf.lStructSize = sizeof( cf );
-	cf.Flags = CF_SCALABLEONLY;
-	cf.lpLogFont = &lf;
-
-	// Throw up the font selection dialog - the point size is interpreted as a pixel height
-	bool result = ChooseFont( &cf );
-	PLAY_ASSERT_MSG( result, "You must select a font to continue");
-	PLAY_ASSERT_MSG( cf.lpLogFont->lfFaceName[0] != 0, "Not a valid font" );
-
-	// Grab the font at its initial size
-	g_fontPixelHeight = cf.iPointSize / 10; // cf.iPointSize is in 1/10 point units
-	WideCharToMultiByte( CP_ACP, 0, cf.lpLogFont->lfFaceName, -1, g_fontName, 32, NULL, NULL );
-	CreateFontSpriteSheet( g_fontPixelHeight, g_fontName, g_spriteSheet );
-	int fId = Play::Graphics::AddSprite( "GRABBED", g_spriteSheet );
+	// Open a system dialog to ask the player to select a font that is already installed on their PC.
+	if (ChooseWindowsFont() == false)
+	{
+		g_quitImmediately = true;
+	}
+	else
+	{
+		CreateFontSpriteSheet(g_fontPixelHeight, g_fontName, g_spriteSheet);
+		int fId = Play::Graphics::AddSprite("GRABBED", g_spriteSheet);
+	}
 }
 
 // Called by the PlayBuffer once for each frame of the game (60 times a second!)
 bool MainGameUpdate( float elapsedTime )
 {
+	// Quit immediately.
+	if (g_quitImmediately)
+		return true;
+
 	// Simple logic to allow the font to be dragged around the viewing area
 	static Point2D fontPos = { 0, DISPLAY_HEIGHT * 2 / 3 };
 	static Point2D clickPos = { 0, 0 };
@@ -137,6 +171,13 @@ bool MainGameUpdate( float elapsedTime )
 		recreate = true;
 	}
 
+	if ( Play::KeyPressed(KEY_L) )
+	{
+		// Open a system dialog to ask the player to select a font that is already installed on their PC.
+		ChooseWindowsFont();
+		recreate = true;
+	}
+
 	// Regenerate the sprite sheet when the parameters change
 	if( recreate )
 	{
@@ -155,20 +196,38 @@ bool MainGameUpdate( float elapsedTime )
 		char desktopPath[ 1024 ];
 		SHGetFolderPathA( NULL, CSIDL_DESKTOPDIRECTORY, NULL, 0, desktopPath );
 
-		// Create the full path to the PNG file on the desktop
-		std::string desktopFolderPath( desktopPath );
-		std::string pngFileName = string( g_fontName ) + std::to_string( g_fontPixelHeight ) + "px_10x10.png"; // Change this to your desired filename
-		pngFilePath = desktopFolderPath + "\\" + pngFileName;
+		std::string pngFileName = string( g_fontName ) + " (" + g_fontStyle + ")_" + std::to_string( g_fontPixelHeight ) + "px_10x10.png"; // Change this to your desired filename
+		
+		OPENFILENAMEA ofn;
+		char fileName[MAX_PATH] = "";
+		strcpy_s(fileName, pngFileName.c_str());
 
-		SavePNGImage( pngFilePath, g_spriteSheet );
-		saveTimeout = 20;
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(OPENFILENAME);
+		ofn.hwndOwner = NULL;
+		ofn.lpstrFilter = "PNG files (*.png)\0*.png";
+		ofn.lpstrFile = fileName;
+		ofn.nMaxFile = MAX_PATH;
+		ofn.Flags = OFN_EXPLORER;
+		ofn.lpstrDefExt = "";
+		ofn.lpstrInitialDir = desktopPath;
+	
+		if (GetSaveFileNameA(&ofn))
+		{
+			pngFilePath = ofn.lpstrFile;
+			SavePNGImage( pngFilePath, g_spriteSheet );
+			saveTimeout = 20;
+		}
 	}
 
 	Play::ClearDrawingBuffer( BACKGROUND_COLOUR );
 
 	// Display info about the font
 	Play::DrawRect( { 0, FONT_NAME_Y }, { DISPLAY_WIDTH, FONT_NAME_Y + 16 }, cBlack, true );
-	Play::DrawDebugText( { DISPLAY_WIDTH / 2, FONT_NAME_Y + 8 }, (string( g_fontName ) + " " + std::to_string( g_fontPixelHeight ) + " : PAD " + std::to_string( g_glyphPadding ) + +" : YOFF " + std::to_string( g_glyphYOffset )).c_str(), Play::cYellow, true);
+	std::string style;
+
+
+	Play::DrawDebugText( { DISPLAY_WIDTH / 2, FONT_NAME_Y + 8 }, (string( g_fontName ) + " (" + g_fontStyle + ") " + std::to_string( g_fontPixelHeight ) + " : PAD " + std::to_string( g_glyphPadding ) + +" : YOFF " + std::to_string( g_glyphYOffset )).c_str(), Play::cYellow, true);
 
 	// Get PlayBuffer to treat the font as if it is a single frame and display it on screen
 	int fId = Play::Graphics::UpdateSprite( "GRABBED", g_spriteSheet ); 
@@ -191,7 +250,7 @@ bool MainGameUpdate( float elapsedTime )
 	else
 	{ 
 		Play::DrawRect( { 0, SAVE_PROMPT_Y }, { DISPLAY_WIDTH, SAVE_PROMPT_Y + 16 }, cBlack, true );
-		Play::DrawDebugText( { DISPLAY_WIDTH / 2, SAVE_PROMPT_Y + 8 }, "Plus and minus change the font size : [ and ] change the glyph padding : up and down position the glyph on the line : S saves the file to your desktop", Play::cWhite, true );
+		Play::DrawDebugText( { DISPLAY_WIDTH / 2, SAVE_PROMPT_Y + 8 }, "Plus and minus change the font size : [ and ] change the glyph padding : up and down position the glyph on the line : S save the font : L loads a new font", Play::cWhite, true );
 	}
 	
 	Play::PresentDrawingBuffer();
@@ -238,7 +297,7 @@ void CreateFontSpriteSheet( int pixelHeight, std::string fontName, PixelData& pi
 		if( hFont )
 			DeleteObject( hFont );
 
-		hFont = CreateFontA( -emHeight, 0, 0, 0, FW_DONTCARE, FALSE, TRUE, FALSE, ANSI_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, fontName.c_str() );
+		hFont = CreateFontA( -emHeight, 0, 0, 0, g_fontWeight, g_fontItalic, TRUE, FALSE, ANSI_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, fontName.c_str() );
 		PLAY_ASSERT_MSG( hFont, "Error creating font (wrong name?)" );
 		SelectObject( hdc, hFont );
 

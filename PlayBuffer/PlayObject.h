@@ -177,14 +177,20 @@ namespace Play
 	//! @param targetX The x coordinate of the point you wish the object to point at.
 	//! @param targetY The y coordinate of the point you wish the object to point at.
 	void PointGameObject(GameObject& obj,int targetX, int targetY);
-
 	//! @brief Changes the GameObject's current spite and resets its animation frame to the start.
 	//! @snippet PlayExamples.cpp SetSprite
 	//! @ingroup gameobject
 	//! @param obj The GameObject you wish to set the sprite for.
 	//! @param spriteName The name of the sprite you wish to set for the GameObject.
 	//! @param animSpeed The number of frames to increase the animation by each time the GameObject is updated.
-	void SetSprite(GameObject& obj, const char* spriteName, float animSpeed);
+	void SetSprite(GameObject& obj, const char* spriteName, float animSpeed );
+	//! @brief Changes the GameObject's current spite and resets its animation frame to the start.
+	//! @snippet PlayExamples.cpp SetSprite
+	//! @ingroup gameobject
+	//! @param obj The GameObject you wish to set the sprite for.
+	//! @param spriteIndex The index of the sprite you wish to set for the GameObject.
+	//! @param animSpeed The number of frames to increase the animation by each time the GameObject is updated.
+	void SetSprite( GameObject& obj, int spriteIndex, float animSpeed );
 	//! @brief Draws the GameObject's sprite without rotation or transparency. This is the fastest way to draw a GameObject, and so should be the preferred method when rotation and alpha are not required.
 	//! @snippet PlayExamples.cpp DrawObject
 	//! @ingroup gameobject
