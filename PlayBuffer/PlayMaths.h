@@ -83,9 +83,9 @@ namespace Play
 		// Returns the 2D part of the 3D vector
 		Vector2f As2D() const { return Vector2f(x, y); }
 		// Calculates and returns the length of the vector
-		float Length() const { return Dot( *this ); }
+		float Length() const { return sqrt( Dot( *this ) ); }
 		// Calculates and returns the length of the vector squared (faster)
-		float LengthSqr() const;
+		float LengthSqr() const { return Dot( *this ); }
 		// Scales this vector to a unit length (with the same direction)
 		void Normalize();
 		// Returns a vector at right angles to this one
